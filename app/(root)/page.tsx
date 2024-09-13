@@ -1,8 +1,8 @@
 "use client";
 import PodcastCard from "@/components/PodcastCard";
 import { podcastData } from "@/constants";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+// import { useQuery } from "convex/react";
+// import { api } from "@/convex/_generated/api";
 
 const Home = () => {
   // const tasks = useQuery(api.tasks.get);
