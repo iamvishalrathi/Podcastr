@@ -16,16 +16,18 @@ export const generateAudioAction = action({
                 headers: authorizationHeader,
                 data: {
                     'Text': input,
-                    'VoiceId': 'Amy', // Dan, Will, Scarlett, Liv, Amy
+                    'VoiceId': voice, // Dan, Will, Scarlett, Liv, Amy
                     'Bitrate': '192k', // 320k, 256k, 192k, ...
                     'Speed': '0', // -1.0 to 1.0
                     'Pitch': '1', // -0.5 to 1.5
                     'TimestampType': 'sentence', // word or sentence
                     //'CallbackUrl': '<URL>', // pinged when ready
                 },
-            });
-            
-            return response.data.SynthesisTask.OutputUri;
+            })
+            const audioUrl = response.data.SynthesisTask.OutputUri;
+            console.log(audioUrl);
+
+            return audioUrl;
         } catch (error) {
             console.error('Error generating audio:', error);
             throw error;

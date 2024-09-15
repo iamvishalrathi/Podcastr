@@ -36,7 +36,7 @@ const formSchema = z.object({
 });
 
 //Voices
-const voiceCategories = ["alloy", "shimmer", "nova", "echo", "fable", "onyx"];
+const voiceCategories = ["Dan", "Will", "Scarlett", "Liv", "Amy"];
 
 const CreatePodcast = () => {
     const [imagePrompt, setImagePrompt] = useState("");
