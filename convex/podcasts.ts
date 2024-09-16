@@ -100,14 +100,15 @@ export const getUrl = mutation({
 //   },
 // });
 
-// // this query will get the podcasts based on the views of the podcast , which we are showing in the Trending Podcasts section.
-// export const getTrendingPodcasts = query({
-//   handler: async (ctx) => {
-//     const podcast = await ctx.db.query("podcasts").collect();
+// this query will get the podcasts based on the views of the podcast , which we are showing in the Trending Podcasts section.
+export const getTrendingPodcasts = query({
+  handler: async (ctx) => {
+    const podcast = await ctx.db.query("podcasts").collect();
 
-//     return podcast.sort((a, b) => b.views - a.views).slice(0, 8);
-//   },
-// });
+    return podcast;
+    // return podcast.sort((a, b) => b.views - a.views).slice(0, 8);
+  },
+});
 
 // // this query will get the podcast by the authorId.
 // export const getPodcastByAuthorId = query({
