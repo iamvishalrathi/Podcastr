@@ -32,6 +32,12 @@ const useGeneratePodcast = ({
       })
       return setIsGenerating(false);
     }
+    if (!voiceType) {
+      toast({
+        title: "Please provide a Voice Type to generate a podcast",
+      })
+      return setIsGenerating(false);
+    }
 
     try {
       const response = await getPodcastAudio({
