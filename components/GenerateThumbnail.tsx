@@ -48,6 +48,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     catch (error) {
       console.log(error)
       toast({ title: 'Error generating thumbnail', variant: 'destructive' })
+      setIsImageLoading(false);
     }
   }
 
@@ -79,7 +80,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       const imgResponse = await fetch(response);
       const blob = await imgResponse.blob();
       // const blob = new Blob([response], { type: 'image/png' });
-      
+
       handleImage(blob, `thumbnail-${uuidv4()}`);
 
       // setImage(`data:image/png;base64,${ response }`);
