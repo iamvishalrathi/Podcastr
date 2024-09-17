@@ -21,7 +21,7 @@ const RightSidebar = () => {
 
     return (
         <section className={cn('right_sidebar h-[calc(100vh-5px)]', {
-            'h-[calc(100vh-140px)]': audio?.audioUrl
+            'h-[calc(100vh-112px)]': audio?.audioUrl
         })}>
             <SignedIn>
                 <Link href={`/profile/${user?.id}`} className="flex gap-3 pb-12">
@@ -57,7 +57,7 @@ const RightSidebar = () => {
                                 <h2 className="text-14 font-semibold text-white-1">{podcaster.name}</h2>
                             </figure>
                             <div className="flex items-center">
-                                <p className="text-12 font-normal text-white-1">{podcaster.totalPodcasts} podcasts</p>
+                                <p className="text-12 font-normal text-white-1">{podcaster.totalPodcasts} {podcaster.totalPodcasts > 1 ? "podcasts" : "podcast"}</p>
                             </div>
                         </div>
                     ))}

@@ -27,7 +27,6 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
   //Image Handler Func
   const handleImage = async (blob: Blob, fileName: string) => {
-    setIsImageLoading(true);
     setImage('');
 
     try {
@@ -57,6 +56,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     e.preventDefault();
 
     try {
+      setIsImageLoading(true);
       const files = e.target.files;
       if (!files) return;
       const file = files[0];
@@ -73,8 +73,10 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   }
 
   //AI Thumbnail
-  const generateImage = async () => {
+  const generateImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     try {
+      setIsImageLoading(true);
       const response = await handleGenerateThumbnail({ prompt: imagePrompt });
 
       const imgResponse = await fetch(response);
