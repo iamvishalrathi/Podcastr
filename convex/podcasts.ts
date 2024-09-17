@@ -110,6 +110,16 @@ export const getTrendingPodcasts = query({
   },
 });
 
+// this query will get the latest podcasts
+export const getLatestPodcasts = query({
+  handler: async (ctx) => {
+    const podcasts = await ctx.db.query("podcasts").collect();
+
+    // Sort podcasts by their creation time in descending order
+    return podcasts.sort((a, b) => b._creationTime - a._creationTime).slice(0, 4);
+  },
+});
+
 // this query will get the podcast by the authorId.
 export const getPodcastByAuthorId = query({
   args: {
