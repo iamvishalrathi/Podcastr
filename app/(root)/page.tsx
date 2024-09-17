@@ -11,6 +11,19 @@ const Home = () => {
   const trendingPodcasts = useQuery(api.podcasts.getTrendingPodcasts);
   const latestPodcasts = useQuery(api.podcasts.getLatestPodcasts);
   const router = useRouter();
+
+  function formatAudioDuration(duration: number): string {
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration % 3600) / 60);
+    const seconds = Math.floor(duration % 60);
+
+    const formattedHours = hours < 10 ? `0${hours}:` : `${hours}:`;
+    const formattedMinutes = minutes < 10 ? `0${minutes}:` : `${minutes}:`;
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+
+    return formattedHours + formattedMinutes + formattedSeconds;
+  }
+
   return (
     <div className="mt-5 flex flex-col gap-9 md:overflow-hidden">
       {/* Trending */}
@@ -38,30 +51,49 @@ const Home = () => {
           </Link>
         </header>
         <div className="flex flex-col gap-6">
-          {latestPodcasts?.map(({ _id, podcastTitle, imageUrl}, index) => (
+          {latestPodcasts?.map(({ _id, podcastTitle, imageUrl, views, audioDuration }, index) => (
             <div
               key={_id}
-              className="flex cursor-pointer justify-between"
               onClick={() => router.push(`/podcasts/${_id}`)}
+              className="flex cursor-pointer items-center"
             >
-              <figure className="flex items-center gap-2">
-                <span className="inline-block text-center w-6 text-sm text-white-1 mr-2">
-                  {index + 1}
-                </span>
-                <Image
-                  src={imageUrl!}
-                  alt={podcastTitle}
-                  width={44}
-                  height={44}
-                  className="aspect-square rounded-lg"
-                />
-                <h2 className="text-14 font-semibold text-white-1"></h2>
-              </figure>
-              <div className="flex items-center">
-                {/* <p className="text-12 font-normal text-white-1">
-                  {podcaster.totalPodcasts} {podcaster.totalPodcasts > 1 ? "podcasts" : "podcast"}
-                </p> */}
+              <span className="inline-block text-center w-6 text-sm text-white-1 mr-2">
+                {index + 1}
+              </span>
+              <div className="flex flex-col size-full gap-3">
+                <div className="flex justify-between">
+                  <figure className="flex items-center gap-2">
+                    <Image
+                      src={imageUrl!}
+                      alt={podcastTitle}
+                      width={64}
+                      height={64}
+                      className="aspect-square rounded-lg"
+                    />
+                    <h2 className="text-14 font-semibold text-white-1"></h2>
+                  </figure>
+                  <figure className="flex gap-3 items-center">
+                    <Image
+                      src="/icons/headphone.svg"
+                      width={24}
+                      height={24}
+                      alt="headphone"
+                    />
+                    <h2 className="text-16 font-bold text-white-1">{views}</h2>
+                  </figure>
+                  <figure className="flex gap-3 items-center">
+                    <Image
+                      src="/icons/watch.svg"
+                      width={24}
+                      height={24}
+                      alt="watch"
+                    />
+                    <h2 className="text-16 font-bold text-white-1">{formatAudioDuration(audioDuration)}</h2>
+                  </figure>
+                </div>
+                <hr className="border-gray-800" />
               </div>
+
             </div>
           ))}
         </div>
