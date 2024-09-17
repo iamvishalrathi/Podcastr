@@ -105,8 +105,8 @@ export const getTrendingPodcasts = query({
   handler: async (ctx) => {
     const podcast = await ctx.db.query("podcasts").collect();
 
-    return podcast;
-    // return podcast.sort((a, b) => b.views - a.views).slice(0, 8);
+    // return podcast;
+    return podcast.sort((a, b) => b.views - a.views).slice(0, 8);
   },
 });
 
@@ -163,7 +163,7 @@ export const getPodcastBySearch = query({
     return await ctx.db
       .query("podcasts")
       .withSearchIndex("search_body", (q) =>
-        q.search("podcastDescription" || "podcastTitle", args.search)
+        q.search("podcastDescription", args.search)
       )
       .take(10);
   },
