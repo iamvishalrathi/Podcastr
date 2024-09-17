@@ -130,7 +130,7 @@ const CreatePodcast = () => {
                                     <FormControl>
                                         <Input
                                             className="input-class focus-visible:ring-offset-orange-1"
-                                            placeholder="Vishal Kumar's Podcast"
+                                            placeholder="Shreemad Bhagawat Geeta"
                                             {...field}
                                         />
                                     </FormControl>
