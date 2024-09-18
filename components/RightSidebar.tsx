@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 const RightSidebar = () => {
     const { user } = useUser();
     const topPodcasters = useQuery(api.users.getTopUserByPodcastCount);
+    const slides = topPodcasters && topPodcasters?.filter((item: any) => item.totalPodcasts > 0)
     const router = useRouter();
 
     const { audio } = useAudio();
@@ -39,12 +40,12 @@ const RightSidebar = () => {
             </SignedIn>
             <section>
                 <Header headerTitle="Fans Like You" />
-                <Carousel fansLikeDetail={topPodcasters!} />
+                <Carousel fansLikeDetail={slides!} />
             </section>
             <section className="flex flex-col gap-8 pt-12">
-                <Header headerTitle="Top Podcastrs" />
+                <Header headerTitle="Top Podcasters" />
                 <div className="flex flex-col gap-6">
-                    {topPodcasters?.slice(0, 3).map((podcaster) => (
+                    {slides?.slice(0, 3).map((podcaster) => (
                         <div key={podcaster._id} className="flex cursor-pointer justify-between" onClick={() => router.push(`/profile/${podcaster.clerkId}`)}>
                             <figure className="flex items-center gap-2">
                                 <Image
@@ -57,7 +58,7 @@ const RightSidebar = () => {
                                 <h2 className="text-14 font-semibold text-white-1">{podcaster.name}</h2>
                             </figure>
                             <div className="flex items-center">
-                                <p className="text-12 font-normal text-white-1">{podcaster.totalPodcasts} {podcaster.totalPodcasts > 1 ? "podcasts" : "podcast"}</p>
+                                <p className="text-12 font-normal text-white-1">{podcaster.totalPodcasts}&nbsp;&nbsp;{podcaster.totalPodcasts > 1 ? "podcasts" : "podcast"}</p>
                             </div>
                         </div>
                     ))}
