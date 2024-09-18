@@ -1,12 +1,4 @@
-<p align="center">
-  <img src="https://github.com/iamvishalrathi/Podcastr/blob/main/public/icons/logo.svg" width="60%" alt="PODCASTR-logo">
-</p>
-<p align="center">
-    <h1 align="center">PODCASTR</h1>
-</p>
-<p align="center">
-    <em><code>❯ REPLACE-ME</code></em>
-</p>
+# **<img src="https://github.com/iamvishalrathi/Podcastr/blob/main/public/icons/logo.svg" alt="Sample Image" width="25"/> Podcastr**
 <p align="center">
 	<img src="https://img.shields.io/github/license/iamvishalrathi/Podcastr?style=flat&logo=opensourceinitiative&logoColor=white&color=0080ff" alt="license">
 	<img src="https://img.shields.io/github/last-commit/iamvishalrathi/Podcastr?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
