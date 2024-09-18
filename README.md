@@ -77,7 +77,7 @@ You can explore Podcastr live by visiting the website:
 
 [**Podcastr - Preview the App**](https://podcastr-two-rho.vercel.app/)
 
-### **📸 Screenshot**
+### 📸 Screenshot
 ![image](https://github.com/iamvishalrathi/Chatterly/blob/main/frontend/src/assets/sns.png)
 
 ---
