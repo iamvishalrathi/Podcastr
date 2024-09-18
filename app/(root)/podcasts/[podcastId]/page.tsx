@@ -5,13 +5,25 @@ import PodcastCard from '@/components/PodcastCard'
 import PodcastDetailPlayer from '@/components/PodcastDetailPlayer'
 import { api } from '@/convex/_generated/api'
 import { useUser } from '@clerk/nextjs'
-import { useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import Image from 'next/image'
-import React from 'react'
+import { useEffect, useState } from 'react'
 
 const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'podcasts'> } }) => {
   const { user } = useUser();
+  
   const podcast = useQuery(api.podcasts.getPodcastById, { podcastId }) //To fetch podcast details
+  const [hasUpdatedView, setHasUpdatedView] = useState(false);
+  const updateViewCount = useMutation(api.podcasts.updatePodcastViews);
+
+    useEffect(() => {
+      // Update the view count only once when the component mounts
+      if (!hasUpdatedView && podcast) {
+        updateViewCount({ podcastId }).then(() => setHasUpdatedView(true));
+      }
+    }, [podcast]); // Only rerun if dependencies change
+
+
 
   const similarPodcasts = useQuery(api.podcasts.getPodcastByVoiceType, { podcastId })
   if (!similarPodcasts || !podcast) return <LoaderSpinner />
