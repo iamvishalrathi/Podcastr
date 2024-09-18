@@ -17,7 +17,7 @@ export const generateAudioAction = action({
                 data: {
                     'Text': input,
                     'VoiceId': voice, // Dan, Will, Scarlett, Liv, Amy
-                    'Bitrate': '192k', // 320k, 256k, 192k, ...
+                    'Bitrate': '192k', // 320k, 256k, 192k
                     'Speed': '0', // -1.0 to 1.0
                     'Pitch': '1', // -0.5 to 1.5
                     'TimestampType': 'sentence', // word or sentence
