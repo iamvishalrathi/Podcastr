@@ -75,7 +75,7 @@ and many more, including code architecture and reusability
 
 ## 🔍 Website Preview
 
-You can explore Chatterly live by visiting the website:
+You can explore Podcastr live by visiting the website:
 
 [**Podcastr - Preview the App**](https://podcastr-two-rho.vercel.app/)
 
