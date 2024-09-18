@@ -21,7 +21,7 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
       if (!hasUpdatedView && podcast) {
         updateViewCount({ podcastId }).then(() => setHasUpdatedView(true));
       }
-    }, [podcastId]); // Only rerun if dependencies change
+    }, [podcast]); // Only rerun if dependencies change
 
 
 
