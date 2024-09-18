@@ -27,7 +27,12 @@ const Home = () => {
     <div className="mt-5 flex flex-col gap-9 md:overflow-hidden">
       {/* Trending */}
       <section className="flex flex-col gap-5">
-        <h1 className="text-20 font-bold text-white-1">Trending Podcasts</h1>
+        <header className="flex items-center justify-between">
+          <h1 className="text-20 font-bold text-white-1">Trending Podcasts</h1>
+          <Link href="/discover" className="text-16 font-semibold text-orange-1">
+            See all
+          </Link>
+        </header>
         <div className="podcast_grid">
           {trendingPodcasts?.map(({ _id, podcastTitle, podcastDescription, imageUrl }) => (
             <PodcastCard
@@ -69,7 +74,7 @@ const Home = () => {
                       height={64}
                       className="aspect-square rounded-lg"
                     />
-                    <h2 className="text-14 font-semibold text-white-1"></h2>
+                    <h2 className="text-14 font-semibold text-white-1 text-wrap w-[200px]">{podcastTitle}</h2>
                   </figure>
                   <figure className="flex gap-3 items-center">
                     <Image

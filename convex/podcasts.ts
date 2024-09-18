@@ -106,7 +106,7 @@ export const getTrendingPodcasts = query({
     const podcast = await ctx.db.query("podcasts").collect();
 
     // return podcast;
-    return podcast.sort((a, b) => b.views - a.views).slice(0, 8);
+    return podcast.sort((a, b) => b.views - a.views).slice(0, 4);
   },
 });
 
