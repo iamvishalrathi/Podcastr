@@ -1,6 +1,5 @@
 <p align="center">
-    <img src="https://github.com/iamvishalrathi/Podcastr/blob/main/public/icons/logo.svg" alt="Sample Image" width="25"/> 
-	<h1>Podcastr</h1>
+    <img src="https://github.com/iamvishalrathi/Podcastr/blob/main/public/icons/logo.svg" alt="Sample Image" width="25"/<h1>Podcastr</h1>
 </p>
 <p align="center">
 	<img src="https://img.shields.io/github/license/iamvishalrathi/Podcastr?style=flat&logo=opensourceinitiative&logoColor=white&color=0080ff" alt="license">
