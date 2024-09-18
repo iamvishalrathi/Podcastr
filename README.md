@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="LLM" width="60%" alt="PODCASTR-logo">
+  <img src="https://github.com/iamvishalrathi/Podcastr/blob/main/public/icons/logo.svg" width="60%" alt="PODCASTR-logo">
 </p>
 <p align="center">
     <h1 align="center">PODCASTR</h1>
