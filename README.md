@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/iamvishalrathi/Podcastr/blob/main/public/icons/logo.svg" width="25" alt="PODCASTR-logo">
+  <img src="https://github.com/iamvishalrathi/Podcastr/blob/main/public/icons/logo.svg" width="50" alt="PODCASTR-logo">
 </p>
 <p align="center">
     <h1 align="center">PODCASTR</h1>
@@ -70,6 +70,14 @@ A cutting-edge AI SaaS platform that enables users to create, discover, and enjo
 👉 Responsive Design: Fully functional and visually appealing across all devices and screen sizes.
 
 and many more, including code architecture and reusability
+
+---
+
+## **Preview the Website**
+
+You can explore Chatterly live by visiting the website:
+
+[**Chatterly - Preview the App**](https://chatterly-hp0h.onrender.com)
 
 ---
 
