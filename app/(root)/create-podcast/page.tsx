@@ -40,7 +40,7 @@ const formSchema = z.object({
 
 //Voices
 // const voiceCategories = ["Dan", "Will", "Scarlett", "Liv", "Amy"];
-const voiceCategories = ['Drew', "Rachel"];
+const voiceCategories = ['Drew', "Rachel","Sarah"];
 
 const CreatePodcast = () => {
     const router = useRouter()

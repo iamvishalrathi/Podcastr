@@ -22,6 +22,9 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'img.clerk.com'
             },
+            {
+                domains: ['https://podcastr-two-rho.vercel.app'],
+            },
         ]
     }
 };
