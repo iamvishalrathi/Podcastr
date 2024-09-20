@@ -19,7 +19,7 @@ const useGeneratePodcast = ({
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const { startUpload } = useUploadFiles(generateUploadUrl)
 
-  const getPodcastAudio = useAction(api.unreal.generateAudioAction)
+  // const getPodcastAudio = useAction(api.elevenlabs.generateAudioAction)
   const getAudioUrl = useMutation(api.podcasts.getUrl);
 
   const generatePodcast = async () => {
@@ -40,17 +40,28 @@ const useGeneratePodcast = ({
     }
 
     try {
-      const response = await getPodcastAudio({
-        voice: voiceType,
-        input: voicePrompt
-      })
-      const audioResponse = await fetch(response);
+      // const response = await getPodcastAudio({
+      //   voice: voiceType,
+      //   input: voicePrompt
+      // })
+
+      // const audioResponse = await fetch(response);
+
       // const blob = new Blob([response], { type: 'audio/mpeg' });
-      const blob = await audioResponse.blob();  // Convert the response to a Blob
+      // const blob = await response.blob();  // Convert the response to a Blob
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/elevenlabs`, {
+        method: 'POST',
+        body: JSON.stringify({
+          input: voicePrompt,
+          voice: voiceType
+        })
+      })
+
+      const blob = await response.blob();  // Convert the response to a Blob
       const fileName = `podcast-${uuidv4()}.mp3`;
       const file = new File([blob], fileName, { type: 'audio/mpeg' });
 
-      //Upload file
       const uploaded = await startUpload([file]);
       const storageId = (uploaded[0].response as any).storageId;
 
