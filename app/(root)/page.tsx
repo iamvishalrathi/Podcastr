@@ -74,7 +74,7 @@ const Home = () => {
                       height={64}
                       className="aspect-square rounded-lg"
                     />
-                    <h2 className="text-14 font-semibold text-white-1 text-wrap w-[200px]">{podcastTitle}</h2>
+                    <h2 className="text-14 font-semibold text-white-1 text-wrap w-[200px] max-sm:w-[100px] max-sm:truncate">{podcastTitle}</h2>
                   </figure>
                   <figure className="flex gap-3 items-center">
                     <Image
@@ -91,8 +91,9 @@ const Home = () => {
                       width={24}
                       height={24}
                       alt="watch"
+                      className="max-sm:hidden"
                     />
-                    <h2 className="text-16 font-bold text-white-1">{formatAudioDuration(audioDuration)}</h2>
+                    <h2 className="text-16 font-bold text-white-1 max-sm:hidden">{formatAudioDuration(audioDuration)}</h2>
                   </figure>
                 </div>
                 <hr className="border-gray-800" />

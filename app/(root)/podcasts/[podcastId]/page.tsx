@@ -4,6 +4,7 @@ import LoaderSpinner from '@/components/LoaderSpinner'
 import PodcastCard from '@/components/PodcastCard'
 import PodcastDetailPlayer from '@/components/PodcastDetailPlayer'
 import { api } from '@/convex/_generated/api'
+import { cn } from '@/lib/utils'
 import { useUser } from '@clerk/nextjs'
 import { useMutation, useQuery } from 'convex/react'
 import Image from 'next/image'
@@ -60,7 +61,7 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
           <p className="text-16 font-medium text-white-2">{podcast?.voicePrompt}</p>
         </div>
         <div className='flex flex-col gap-4'>
-          <h1 className='text-18 font-bold text-white-1'>Thumbnail Prompt</h1>
+          <h1 className={cn('text-18 font-bold text-white-1',{ "hidden": !podcast?.imagePrompt })}>Thumbnail Prompt</h1>
           <p className="text-16 font-medium text-white-2">{podcast?.imagePrompt}</p>
         </div>
       </div>

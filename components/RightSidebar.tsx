@@ -25,7 +25,7 @@ const RightSidebar = () => {
             'h-[calc(100vh-112px)]': audio?.audioUrl
         })}>
             <SignedIn>
-                <Link href={`/profile/${user?.id}`} className="flex gap-3 pb-12">
+                <Link href={`/profile/${user?.id}`} className="flex gap-3 pb-7">
                     <UserButton />
                     <div className="flex w-full items-center justify-between">
                         <h1 className="text-16 truncate font-semibold text-white-1">{user?.firstName} {user?.lastName}</h1>
@@ -42,7 +42,7 @@ const RightSidebar = () => {
                 <Header headerTitle="Fans Like You" />
                 <Carousel fansLikeDetail={slides!} />
             </section>
-            <section className="flex flex-col gap-8 pt-12">
+            <section className="flex flex-col gap-2 pt-7">
                 <Header headerTitle="Top Podcasters" />
                 <div className="flex flex-col gap-6">
                     {slides?.slice(0, 3).map((podcaster) => (
