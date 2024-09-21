@@ -2,7 +2,7 @@
   <img src="https://github.com/iamvishalrathi/Podcastr/blob/main/public/icons/logo.svg" width="50" alt="PODCASTR-logo">
 </p>
 <p align="center">
-    <h1 align="center">PODCASTR</h1>
+    <h1 align="center">[PODCASTR](hello)</h1>
 </p>
 <p align="center">
 	<img src="https://img.shields.io/github/license/iamvishalrathi/Podcastr?style=flat&logo=opensourceinitiative&logoColor=white&color=0080ff" alt="license">
