@@ -26,7 +26,7 @@
 
 - [📍 Overview](#-overview)
 - [👾 Features](#-features)
-- ⚙️ [Tech Stack](#tech-stack)
+- [⚙️ Tech Stack](#tech-stack)
 - [🔍 Website Preview](#-website-preview)
 - [📂 Repository Structure](#-repository-structure)
 - [🧩 Modules](#-modules)
