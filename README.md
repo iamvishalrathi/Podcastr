@@ -26,7 +26,7 @@
 
 - [📍 Overview](#-overview)
 - [👾 Features](#-features)
-- [Tech Stack](#-tech-stack)
+- ⚙️ [Tech Stack](#tech-stack)
 - [🔍 Website Preview](#-website-preview)
 - [📂 Repository Structure](#-repository-structure)
 - [🧩 Modules](#-modules)
@@ -68,7 +68,8 @@ A cutting-edge AI SaaS platform that enables users to create, discover, and enjo
 
 ---
 
-##Tech Stack
+## <a name="tech-stack">⚙️ Tech Stack</a>
+
 - Next.js
 - TypeScript
 - Convex
