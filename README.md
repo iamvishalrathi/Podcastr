@@ -69,7 +69,6 @@ A cutting-edge AI SaaS platform that enables users to create, discover, and enjo
 ---
 
 ##Tech Stack
-
 - Next.js
 - TypeScript
 - Convex
