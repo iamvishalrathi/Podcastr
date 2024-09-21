@@ -26,7 +26,7 @@
 
 - [📍 Overview](#-overview)
 - [👾 Features](#-features)
-- [⚙️ Tech](#-tech)
+- [Tech Stack](#-tech-stack)
 - [🔍 Website Preview](#-website-preview)
 - [📂 Repository Structure](#-repository-structure)
 - [🧩 Modules](#-modules)
@@ -68,7 +68,7 @@ A cutting-edge AI SaaS platform that enables users to create, discover, and enjo
 
 ---
 
-## ⚙️ Tech
+## Tech Stack
 
 - Next.js
 - TypeScript
