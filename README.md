@@ -78,6 +78,8 @@ A cutting-edge AI SaaS platform that enables users to create, discover, and enjo
 - ShadCN
 - Tailwind CSS
 
+---
+
 ## 🔍 Website Preview
 
 You can explore Podcastr live by visiting the website:
