@@ -80,6 +80,7 @@ A cutting-edge AI SaaS platform that enables users to create, discover, and enjo
 - Clerk
 - ShadCN
 - Tailwind CSS
+- Freepik
 
 ---
 
