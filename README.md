@@ -87,7 +87,7 @@ A cutting-edge AI SaaS platform that enables users to create, discover, and enjo
 
 You can explore Podcastr live by visiting the website:
 
-[**Podcastr - Preview the App**](https://podcastr-two-rho.vercel.app/)
+[**Podcastr - Preview the App**](https://my-podcastr.vercel.app/)
 
 ### 📸 Screenshot
 ![image](https://github.com/iamvishalrathi/Podcastr/blob/main/public/sns.png)
