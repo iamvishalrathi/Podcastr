@@ -32,15 +32,15 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
+import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
+import { chatSession } from "@/service/Gemini";
 
 const formSchema = z.object({
     podcastTitle: z.string().min(2),
     podcastDescription: z.string().min(2),
 });
 
-//Voices
-// const voiceCategories = ["Dan", "Will", "Scarlett", "Liv", "Amy"];
-const voiceCategories = ['Drew', "Rachel","Sarah"];
+const voiceCategories = ['Drew', "Rachel", "Sarah"];
 
 const CreatePodcast = () => {
     const router = useRouter()
@@ -60,6 +60,7 @@ const CreatePodcast = () => {
     const [voicePrompt, setVoicePrompt] = useState("");
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isGeneratingContent, setIsGeneratingContent] = useState(false);
 
     const createPodcast = useMutation(api.podcasts.createPodcast)
 
@@ -71,6 +72,39 @@ const CreatePodcast = () => {
             podcastDescription: "",
         },
     });
+
+    // Add function to generate content using Gemini
+    const generateAIContent = async (title: string) => {
+        try {
+            setIsGeneratingContent(true);
+            const Final_Gemini_Prompt = Gemini_Prompt.replace('{title}', title);
+            console.log(Final_Gemini_Prompt);
+            const result = await chatSession.sendMessage(Final_Gemini_Prompt);
+            const response = await result.response;
+            const text = response.text();
+
+            const content = JSON.parse(text);
+            console.log(content);
+
+            // Update form with AI generated content
+            form.setValue("podcastDescription", content.description);
+            setVoicePrompt(content.script);
+            
+            toast({
+                title: 'AI content generated successfully',
+                description: 'Description and script have been updated'
+            });
+        } catch (error) {
+            console.error('Error generating content:', error);
+            toast({
+                title: 'Error generating content',
+                description: 'Please try again',
+                variant: 'destructive'
+            });
+        } finally {
+            setIsGeneratingContent(false);
+        }
+    };
 
     // 2. Define a submit handler.
     async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -118,7 +152,7 @@ const CreatePodcast = () => {
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="mt-12 flex w-full flex-col"
                 >
-                    <div className="flex flex-col gap-[30px] border-b border-black-5 pb-10">
+                    <div className="flex flex-col gap-[30px]">
                         <FormField
                             control={form.control}
                             name="podcastTitle"
@@ -127,13 +161,30 @@ const CreatePodcast = () => {
                                     <FormLabel className="text-16 font-bold text-white-1">
                                         Title
                                     </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="input-class focus-visible:ring-offset-orange-1"
-                                            placeholder="Shreemad Bhagawat Geeta"
-                                            {...field}
-                                        />
-                                    </FormControl>
+                                    <div className="flex gap-2">
+                                        <FormControl>
+                                            <Input
+                                                className="input-class focus-visible:ring-offset-orange-1"
+                                                placeholder="Shreemad Bhagawat Geeta"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <Button 
+                                            type="button"
+                                            onClick={() => generateAIContent(field.value)}
+                                            disabled={!field.value || isGeneratingContent}
+                                            className="bg-orange-1 text-white-1 hover:bg-orange-2"
+                                        >
+                                            {isGeneratingContent ? (
+                                                <>
+                                                    Generating
+                                                    <Loader size={16} className="animate-spin ml-2" />
+                                                </>
+                                            ) : (
+                                                "Generate AI Content"
+                                            )}
+                                        </Button>
+                                    </div>
                                     <FormMessage className="text-white-1" />
                                 </FormItem>
                             )}
