@@ -33,6 +33,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   const handleGenerateThumbnail = useAction(api.freepik.generateThumbnailAction)
   const [imageLoading, setImageLoading] = useState(true);
   const [isAiGenerated, setIsAiGenerated] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   //To upload Image & fetch uploaded url
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
@@ -79,26 +80,107 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     }
   }
 
-  //Custom Thumbnail
+  // Loading UI component
+  const LoadingUI = ({ type }: { type: 'uploading' | 'generating' }) => (
+    <div className="absolute inset-0 flex items-center justify-center 
+      bg-gradient-to-br from-black/90 to-black/70 overflow-hidden">
+      {/* Skeleton image background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black-1/50 to-black-1/30 animate-pulse" />
+      
+      {/* Animated lines */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-orange-1/50 to-transparent 
+          animate-[moveDown_2s_linear_infinite]" />
+        <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-orange-1/50 to-transparent 
+          animate-[moveUp_2s_linear_infinite]" />
+      </div>
+
+      {/* Content */}
+      <div className="relative flex flex-col items-center gap-6 z-10">
+        {/* Icon */}
+        <div className="relative">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-orange-1/20 to-orange-1/10 
+            animate-pulse flex items-center justify-center">
+            <Image
+              src={type === 'uploading' ? "/icons/upload-image.svg" : "/icons/ai-generate.svg"}
+              alt={type}
+              width={24}
+              height={24}
+              className="opacity-60"
+            />
+            <div className="absolute -inset-1 border border-orange-1/20 rounded-full animate-spin duration-3000" />
+          </div>
+          <div className="absolute -inset-2 bg-orange-1/10 rounded-full blur-lg animate-pulse" />
+        </div>
+
+        {/* Status text */}
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-orange-1/80 animate-[bounce_1s_ease-in-out_infinite]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-orange-1/80 animate-[bounce_1s_ease-in-out_0.2s_infinite]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-orange-1/80 animate-[bounce_1s_ease-in-out_0.4s_infinite]" />
+          </div>
+          <span className="text-sm font-medium text-white/90">
+            {type === 'uploading' ? 'Uploading Image...' : 'Generating Image...'}
+          </span>
+        </div>
+
+        {/* Progress bar */}
+        <div className="w-48 bg-black/40 rounded-full h-1.5 overflow-hidden">
+          <div 
+            className="h-full bg-gradient-to-r from-orange-1 to-orange-400 rounded-full transition-all duration-300"
+            style={{ 
+              width: `${uploadProgress}%`,
+              transition: 'width 0.3s ease-in-out'
+            }}
+          />
+        </div>
+        <span className="text-xs text-white/60 font-medium">{uploadProgress}%</span>
+      </div>
+
+      {/* Grid overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),
+        linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)]
+        bg-[size:20px_20px] opacity-30" />
+    </div>
+  );
+
+  // Update upload function
   const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-
     try {
       setIsImageLoading(true);
+      setUploadProgress(0);
+      
       const files = e.target.files;
       if (!files) return;
+      
       const file = files[0];
-      // If the file is very large, directly creating a Blob from it 
-      // might consume more memory than using arrayBuffer().
-      const blob = await file.arrayBuffer()
-        .then((ab) => new Blob([ab]));
+      const totalSize = file.size;
+      let loadedSize = 0;
 
-      handleImage(blob, file.name, false);
+      const blob = await new Promise<Blob>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          loadedSize = e.loaded || 0;
+          setUploadProgress(Math.round((loadedSize / totalSize) * 100));
+          resolve(new Blob([e.target?.result as ArrayBuffer]));
+        };
+        reader.onprogress = (e) => {
+          if (e.lengthComputable) {
+            setUploadProgress(Math.round((e.loaded / e.total) * 100));
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      });
+
+      await handleImage(blob, file.name, false);
+      setUploadProgress(100);
     } catch (error) {
-      console.log(error)
-      toast({ title: 'Error uploading image', variant: 'destructive' })
+      console.error(error);
+      toast({ title: 'Error uploading image', variant: 'destructive' });
     }
-  }
+  };
 
   //AI Thumbnail
   const generateImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,24 +276,88 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
               disabled={isImageLoading}
             />
           </div>
-          <div className="w-full max-w-[200px]">
-            <Button 
-              type="submit" 
-              className="text-16 bg-orange-1 py-4 font-bold text-white-1 w-full
-                hover:bg-orange-600 transition-all duration-300 hover:scale-[1.02]
-                disabled:opacity-50 disabled:hover:scale-100"
-              onClick={generateImage}
-              disabled={isImageLoading || !imagePrompt.trim()}
-            >
-              {isImageLoading ? (
-                <div className="flex items-center gap-2">
-                  <Loader size={20} className="animate-spin" />
-                  <span>Generating...</span>
+
+          <div className="space-y-4">
+            <div className="w-full max-w-[200px]">
+              <Button 
+                type="submit" 
+                className="text-16 bg-orange-1 py-4 font-bold text-white-1 w-full
+                  hover:bg-orange-600 transition-all duration-300 hover:scale-[1.02]
+                  disabled:opacity-50 disabled:hover:scale-100"
+                onClick={generateImage}
+                disabled={isImageLoading || !imagePrompt.trim()}
+              >
+                {isImageLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader size={20} className="animate-spin" />
+                    <span>Generating...</span>
+                  </div>
+                ) : (
+                  'Generate'
+                )}
+              </Button>
+            </div>
+
+            {/* Progress Skeleton */}
+            {isImageLoading && (
+              <div className="w-full max-w-[300px] rounded-xl overflow-hidden bg-black-1/20 p-4
+                ring-1 ring-white/5 animate-in fade-in-50">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-orange-1/20 to-orange-1/10 
+                      animate-pulse flex items-center justify-center">
+                      <Image
+                        src="/icons/ai-generate.svg"
+                        alt="processing"
+                        width={20}
+                        height={20}
+                        className="opacity-60"
+                      />
+                    </div>
+                    <svg className="absolute -inset-1 w-[calc(100%+8px)] h-[calc(100%+8px)] rotate-90">
+                      <circle
+                        className="text-orange-1/20"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                        fill="transparent"
+                        r="22"
+                        cx="26"
+                        cy="26"
+                      />
+                      <circle
+                        className="text-orange-1"
+                        strokeWidth="2"
+                        strokeDasharray={138.2}
+                        strokeDashoffset={138.2 - (uploadProgress / 100) * 138.2}
+                        strokeLinecap="round"
+                        stroke="currentColor"
+                        fill="transparent"
+                        r="22"
+                        cx="26"
+                        cy="26"
+                      />
+                    </svg>
+                  </div>
+
+                  <div className="space-y-1 text-center">
+                    <p className="text-xs font-medium text-white/90">
+                      Generating Image...
+                    </p>
+                    <p className="text-[10px] font-medium text-white/60">
+                      {uploadProgress}%
+                    </p>
+                  </div>
+
+                  <div className="w-full h-1 bg-black/40 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-orange-1 to-orange-400 rounded-full 
+                        transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
                 </div>
-              ) : (
-                'Generate'
-              )}
-            </Button>
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -232,23 +378,8 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             disabled={isImageLoading}
           />
           
-          {!isImageLoading ? (
-            <div className="p-3 rounded-full bg-orange-1/10 group-hover:bg-orange-1/20 
-              transition-colors duration-200">
-              <Image
-                src="/icons/upload-image.svg"
-                alt="upload"
-                width={40}
-                height={40}
-                className="size-6"
-                style={{ width: 'auto', height: 'auto' }}
-              />
-            </div>
-          ) : (
-            <div className="text-16 flex-center font-medium text-white-1 gap-2">
-              <Loader size={20} className="animate-spin text-orange-1" />
-              <span>Uploading...</span>
-            </div>
+          {isImageLoading && (
+            <LoadingUI type="uploading" />
           )}
           <div className="flex flex-col items-center gap-1">
             <h2 className={cn(
@@ -266,126 +397,171 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       )}
 
       {image && (
-        <div className="flex-center w-full group animate-in fade-in-50 duration-200 mt-6">
-          {/* Title and dimensions outside the image */}
-          <div className="w-full max-w-md space-y-3">
-            <div className="flex items-center justify-between px-1">
-              <h3 className="font-bold text-sm bg-gradient-to-r from-orange-1 to-orange-400 
-                bg-clip-text text-transparent">
-                Podcast Thumbnail
-              </h3>
-              <span className="text-[10px] font-medium text-gray-400">
-                1080 × 1080px
-              </span>
+        <div className="flex-center w-full group animate-in fade-in-50 duration-300 mt-8">
+          <div className="w-full max-w-md space-y-4">
+            <div className="flex items-center justify-between px-2">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-1 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+                <div className="space-y-1">
+                  <h3 className="font-bold text-sm bg-gradient-to-r from-orange-1 to-orange-400 
+                    bg-clip-text text-transparent">
+                    Podcast Thumbnail
+                  </h3>
+                  <p className="text-[10px] font-medium text-gray-400">
+                    High quality • 1080 × 1080px
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-1 rounded-md bg-black-1/40 border border-white/5 
+                  text-[10px] font-medium text-gray-400">
+                  {isAiGenerated ? 'AI' : 'Custom'}
+                </span>
+              </div>
             </div>
 
-            {/* Image container */}
             <div className="relative aspect-video rounded-xl overflow-hidden bg-black-1/20
-              ring-1 ring-white/10 shadow-2xl">
-              {imageLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black-1/10 overflow-hidden">
-                  {/* Animated gradient background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/0 via-white/5 to-black/0 
-                    animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
-                  
-                  {/* Skeleton content layout */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                    {/* Animated logo placeholder */}
-                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-tr from-orange-1/20 to-orange-1/10 
-                      animate-pulse overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
-                        animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
-                    </div>
-
-                    {/* Loading text */}
-                    <div className="space-y-2 text-center">
-                      <div className="h-4 w-32 bg-gradient-to-r from-gray-800 to-gray-700 rounded-full 
-                        animate-pulse" />
-                      <div className="h-3 w-24 bg-gradient-to-r from-gray-800 to-gray-700 rounded-full 
-                        animate-pulse mx-auto" />
-                    </div>
-
-                    {/* Progress bar */}
-                    <div className="absolute bottom-8 w-2/3 max-w-[200px]">
-                      <div className="h-1 w-full bg-black/20 rounded-full overflow-hidden">
-                        <div className="h-full w-1/2 bg-gradient-to-r from-orange-1 to-orange-400 
-                          animate-progress rounded-full" />
-                      </div>
-                    </div>
+              ring-2 ring-white/5 shadow-[0_0_30px_-15px_rgba(0,0,0,0.8)]
+              backdrop-blur-sm group/image">
+              {isImageLoading ? (
+                <div className="absolute inset-0 bg-black-1/60 backdrop-blur-sm">
+                  <div className="absolute inset-0 bg-gradient-to-br from-black-1/50 to-black-1/30">
+                    <div className="h-full w-full animate-pulse bg-gradient-to-r from-black-1/10 via-black-1/5 to-black-1/10 
+                      bg-[length:200%_100%]" style={{ animation: 'shimmer 2s infinite' }} />
                   </div>
 
-                  {/* Corner decorations */}
-                  <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-orange-1/10 to-transparent 
-                    animate-pulse" />
-                  <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-orange-1/10 to-transparent 
-                    animate-pulse" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                    <div className="relative">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-orange-1/20 to-orange-1/10 
+                        animate-pulse flex items-center justify-center">
+                        <Image
+                          src={isAiThumbnail ? "/icons/ai-generate.svg" : "/icons/upload-image.svg"}
+                          alt="processing"
+                          width={24}
+                          height={24}
+                          className="opacity-60"
+                        />
+                      </div>
+                      <svg className="absolute -inset-1 w-[calc(100%+8px)] h-[calc(100%+8px)] rotate-90">
+                        <circle
+                          className="text-orange-1/20"
+                          strokeWidth="2"
+                          stroke="currentColor"
+                          fill="transparent"
+                          r="30"
+                          cx="34"
+                          cy="34"
+                        />
+                        <circle
+                          className="text-orange-1"
+                          strokeWidth="2"
+                          strokeDasharray={188.5}
+                          strokeDashoffset={188.5 - (uploadProgress / 100) * 188.5}
+                          strokeLinecap="round"
+                          stroke="currentColor"
+                          fill="transparent"
+                          r="30"
+                          cx="34"
+                          cy="34"
+                        />
+                      </svg>
+                    </div>
+
+                    <div className="space-y-2 text-center">
+                      <p className="text-sm font-medium text-white/90">
+                        {isAiThumbnail ? 'Generating Image...' : 'Uploading Image...'}
+                      </p>
+                      <p className="text-xs font-medium text-white/60">
+                        {uploadProgress}%
+                      </p>
+                    </div>
+
+                    <div className="w-48 h-1 bg-black/40 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-orange-1 to-orange-400 rounded-full 
+                          transition-all duration-300"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/10" />
+                  <div className="absolute inset-0">
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-orange-1/5 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-orange-1/5 via-transparent to-transparent" />
+                  </div>
+
+                  <Image
+                    src={image}
+                    width={500}
+                    height={300}
+                    className={cn(
+                      "w-full h-full object-cover transition-all duration-700",
+                      "group-hover/image:scale-105",
+                      "group-hover/image:rotate-1"
+                    )}
+                    alt="thumbnail"
+                    priority
+                  />
+
+                  <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.8)_0%,transparent_50%,rgba(0,0,0,0.2)_100%)]
+                    opacity-0 group-hover/image:opacity-100 transition-all duration-500" />
+
+                  <div className="absolute top-3 left-3 z-10">
+                    {isAiGenerated ? (
+                      <div className="flex items-center gap-2 px-3 py-1.5 
+                        bg-gradient-to-r from-orange-1 to-orange-400 
+                        backdrop-blur-md rounded-full border border-orange-1/50 
+                        shadow-[0_2px_10px_rgba(0,0,0,0.3)]
+                        animate-in fade-in-50 duration-300">
+                        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                        <span className="text-xs font-semibold text-white">AI Generated</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 px-3 py-1.5
+                        bg-gradient-to-r from-blue-400 to-blue-500
+                        backdrop-blur-md rounded-full border border-blue-400/50
+                        shadow-[0_2px_10px_rgba(0,0,0,0.3)]
+                        animate-in fade-in-50 duration-300">
+                        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                        <span className="text-xs font-semibold text-white">Custom Upload</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="absolute top-3 right-3 z-10 
+                    opacity-0 group-hover/image:opacity-100 
+                    translate-y-2 group-hover/image:translate-y-0
+                    transition-all duration-300">
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="h-8 w-8 rounded-full 
+                        bg-gradient-to-br from-red-500 to-red-600 
+                        hover:from-red-600 hover:to-red-700
+                        backdrop-blur-lg border border-red-400/30 
+                        shadow-[0_4px_10px_rgba(0,0,0,0.5)]
+                        transition-all duration-300 hover:scale-110"
+                      onClick={handleDelete}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),
+                    linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]
+                    bg-[size:20px_20px] opacity-40" />
+                </>
               )}
-              
-              {/* Premium image effects */}
-              <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/10" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.7))] opacity-60" />
-              
-              {/* Hover effects */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent 
-                opacity-0 group-hover:opacity-100 transition-all duration-500" />
-              
-              <Image
-                src={image}
-                width={500}
-                height={300}
-                className={cn(
-                  "w-full h-full object-cover transition-all duration-500",
-                  "group-hover:scale-105",
-                  imageLoading ? "opacity-0" : "opacity-100"
-                )}
-                alt="thumbnail"
-                onLoadingComplete={() => setImageLoading(false)}
-                priority
-              />
-
-              {/* Badge overlay */}
-              <div className="absolute top-3 left-3 z-10">
-                {isAiGenerated ? (
-                  <span className="text-xs px-3 py-1.5 bg-gradient-to-r from-orange-1 to-orange-400 
-                    backdrop-blur-md rounded-full border border-orange-1/50 
-                    text-white font-semibold shadow-lg
-                    animate-in fade-in-50 duration-300">
-                    AI Generated
-                  </span>
-                ) : (
-                  <span className="text-xs px-3 py-1.5 bg-gradient-to-r from-blue-400 to-blue-500 
-                    backdrop-blur-md rounded-full border border-blue-400/50 
-                    text-white font-semibold shadow-lg
-                    animate-in fade-in-50 duration-300">
-                    Custom Upload
-                  </span>
-                )}
-              </div>
-
-              {/* Delete button */}
-              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 
-                transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-10">
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="h-8 w-8 rounded-full bg-gradient-to-br from-red-500 to-red-600 
-                    hover:from-red-600 hover:to-red-700
-                    backdrop-blur-lg border border-red-400/30 shadow-lg
-                    transition-all duration-200 hover:scale-105"
-                  onClick={handleDelete}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {/* Premium corner effects */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent opacity-50" />
-              <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-orange-1/10 via-transparent to-transparent" />
-              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-orange-1/10 via-transparent to-transparent" />
             </div>
           </div>
         </div>
+      )}
+
+      {isImageLoading && (
+        <LoadingUI type="generating" />
       )}
     </>
   )
