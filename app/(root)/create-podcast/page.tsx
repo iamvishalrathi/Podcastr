@@ -78,19 +78,20 @@ const CreatePodcast = () => {
     async function onSubmit(data: z.infer<typeof formSchema>) {
         try {
             setIsSubmitting(true);
-            if (!audioUrl || !imageUrl) {
+            if (!audioUrl || !imageUrl || !voiceType) {
                 toast({
-                    title: 'Please generate audio and image',
+                    title: 'Please generate audio and image, and select a voice type',
+                    variant: 'destructive'
                 })
                 setIsSubmitting(false);
-                throw new Error('Please generate audio and image')
+                throw new Error('Missing required fields')
             }
             await createPodcast({
                 podcastTitle: data.podcastTitle,
                 podcastDescription: data.podcastDescription,
                 audioUrl,
                 imageUrl,
-                voiceType,
+                voiceType: voiceType,
                 imagePrompt,
                 voicePrompt,
                 views: 0,
@@ -134,6 +135,7 @@ const CreatePodcast = () => {
                                             <Input
                                                 className="input-class focus-visible:ring-offset-orange-1"
                                                 placeholder="Shreemad Bhagawat Geeta"
+                                                suppressHydrationWarning
                                                 {...field}
                                             />
                                         </FormControl>
@@ -221,6 +223,7 @@ const CreatePodcast = () => {
                                         <Textarea
                                             className="input-class focus-visible:ring-offset-orange-1"
                                             placeholder="Write description"
+                                            suppressHydrationWarning
                                             {...field}
                                         />
                                     </FormControl>
