@@ -113,119 +113,27 @@ const CreatePodcast = () => {
     }
 
     return (
-        <section className="mt-10 flex flex-col">
-            <h1 className="text-20 font-bold text-white-1">CreatePodcast</h1>
+        <section className="container max-w-4xl mx-auto px-4 py-10">
+            <h1 className="text-3xl font-bold text-white-1 mb-8">Create New Podcast</h1>
 
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="mt-12 flex w-full flex-col"
+                    className="space-y-8"
                 >
-                    <div className="flex flex-col gap-[30px]">
+                    <div className="grid gap-6">
                         <FormField
                             control={form.control}
                             name="podcastTitle"
                             render={({ field }) => (
-                                <FormItem className="flex flex-col gap-2.5">
-                                    <FormLabel className="text-16 font-bold text-white-1">
-                                        Title
-                                    </FormLabel>
-                                    <div className="flex gap-2">
-                                        <FormControl>
-                                            <Input
-                                                className="input-class focus-visible:ring-offset-orange-1"
-                                                placeholder="Shreemad Bhagawat Geeta"
-                                                suppressHydrationWarning
-                                                {...field}
-                                            />
-                                        </FormControl>
-
-                                    </div>
-                                    <FormMessage className="text-white-1" />
-                                </FormItem>
-                            )}
-                        />
-                        <div className="flex flex-col gap-2.5">
-                            <Label className="text-16 font-bold text-white-1">
-                                Select AI Voice
-                            </Label>
-                            <Select
-                                onValueChange={(value) => setVoiceType(value)}
-                                suppressHydrationWarning
-                            >
-                                <SelectTrigger
-                                    className={cn(
-                                        "text-16 w-full border-none bg-black-1 text-gray-1 focus-visible:ring-offset-orange-1"
-                                    )}
-                                >
-                                    <SelectValue
-                                        placeholder="Select AI Voice"
-                                        className="placeholder:text-gray-1 "
-                                    />
-                                </SelectTrigger>
-                                <SelectContent className="text-16 border-none bg-black-1 font-bold text-white-1 focus:ring-orange-1">
-                                    {voiceCategories.map((category) => (
-                                        <SelectItem
-                                            key={category}
-                                            value={category}
-                                            className="capitalize focus:bg-orange-1"
-                                        >
-                                            {category}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                                {voiceType && (
-                                    <audio
-                                        src={`/${voiceType}.mp3`}
-                                        autoPlay
-                                        className="hidden"
-                                    />
-                                )}
-                            </Select>
-                        </div>
-                        <div className="flex flex-col gap-2.5">
-                            <Label className="text-16 font-bold text-white-1">
-                                Select Content Language
-                            </Label>
-                            <Select
-                                onValueChange={setSelectedLanguage}
-                                defaultValue="english"
-                            >
-                                <SelectTrigger
-                                    className={cn(
-                                        "text-16 w-full border-none bg-black-1 text-gray-1 focus-visible:ring-offset-orange-1"
-                                    )}
-                                >
-                                    <SelectValue placeholder="Select Language" />
-                                </SelectTrigger>
-                                <SelectContent
-                                    className="max-h-[300px] overflow-y-auto text-16 border-none bg-black-1 font-bold text-white-1 focus:ring-orange-1"
-                                >
-                                    {languageOptions.map((lang) => (
-                                        <SelectItem
-                                            key={lang.value}
-                                            value={lang.value}
-                                            className="capitalize focus:bg-orange-1"
-                                        >
-                                            {lang.label} ({lang.native})
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <GenerateAIContent title={form.getValues("podcastTitle")} selectedLanguage={selectedLanguage} setSelectedLanguage={setSelectedLanguage} form={form} setVoicePrompt={setVoicePrompt} />
-                        <FormField
-                            control={form.control}
-                            name="podcastDescription"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col gap-2.5">
-                                    <FormLabel className="text-16 font-bold text-white-1">
-                                        Description
+                                <FormItem>
+                                    <FormLabel className="text-lg font-semibold text-white-1">
+                                        Podcast Title
                                     </FormLabel>
                                     <FormControl>
-                                        <Textarea
-                                            className="input-class focus-visible:ring-offset-orange-1"
-                                            placeholder="Write description"
+                                        <Input
+                                            className="input-class focus-visible:ring-offset-orange-1 h-12"
+                                            placeholder="Enter your podcast title..."
                                             suppressHydrationWarning
                                             {...field}
                                         />
@@ -234,39 +142,130 @@ const CreatePodcast = () => {
                                 </FormItem>
                             )}
                         />
-                    </div>
-                    <div className="flex flex-col">
-                        <GeneratePodcast
-                            setAudioStorageId={setAudioStorageId}
-                            audioStorageId={audioStorageId}
-                            setAudio={setAudioUrl}
-                            voiceType={voiceType!}
-                            audio={audioUrl}
-                            voicePrompt={voicePrompt}
-                            setVoicePrompt={setVoicePrompt}
-                            setAudioDuration={setAudioDuration}
-                        />
-                        <GenerateThumbnail
-                            setImage={setImageUrl}
-                            setImageStorageId={setImageStorageId}
-                            image={imageUrl}
-                            imagePrompt={imagePrompt}
-                            setImagePrompt={setImagePrompt}
-                        />
-                        <div className="mt-10 w-full">
-                            <Button
-                                type="submit"
-                                className="text-16 w-full bg-orange-1 py-4 font-extrabold text-white-1 transition-all duration-500 hover:bg-black-1"
+
+                        <div className="space-y-4">
+                            <Label className="text-lg font-semibold text-white-1">
+                                AI Voice Selection
+                            </Label>
+                            <Select
+                                onValueChange={(value) => setVoiceType(value)}
                             >
-                                {isSubmitting ? (
-                                    <>
-                                        Submitting
-                                        <Loader size={20} className="animate-spin ml-2" />
-                                    </>
-                                ) : (
-                                    "Submit & Publish Podcast"
+                                <SelectTrigger
+                                    className={cn(
+                                        "text-base w-full border border-gray-700 bg-black-1 text-gray-1 focus-visible:ring-offset-orange-1 h-12"
+                                    )}
+                                >
+                                    <SelectValue placeholder="Choose an AI voice" />
+                                </SelectTrigger>
+                                <SelectContent className="text-base border-none bg-black-1 font-medium text-white-1">
+                                    {voiceCategories.map((category) => (
+                                        <SelectItem
+                                            key={category}
+                                            value={category}
+                                            className="capitalize hover:bg-orange-1 hover:text-white transition-colors"
+                                        >
+                                            {category}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-4">
+                            <Label className="text-lg font-semibold text-white-1">
+                                Content Language
+                            </Label>
+                            <Select
+                                onValueChange={setSelectedLanguage}
+                                defaultValue="english"
+                            >
+                                <SelectTrigger
+                                    className={cn(
+                                        "text-base w-full border border-gray-700 bg-black-1 text-gray-1 focus-visible:ring-offset-orange-1 h-12"
+                                    )}
+                                >
+                                    <SelectValue placeholder="Select Language" />
+                                </SelectTrigger>
+                                <SelectContent
+                                    className="max-h-[300px] overflow-y-auto text-base border-none bg-black-1 font-medium text-white-1"
+                                >
+                                    {languageOptions.map((lang) => (
+                                        <SelectItem
+                                            key={lang.value}
+                                            value={lang.value}
+                                            className="hover:bg-orange-1 hover:text-white transition-colors"
+                                        >
+                                            {lang.label} ({lang.native})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <GenerateAIContent 
+                            title={form.getValues("podcastTitle")} 
+                            selectedLanguage={selectedLanguage} 
+                            setSelectedLanguage={setSelectedLanguage} 
+                            form={form} 
+                            setVoicePrompt={setVoicePrompt} 
+                        />
+
+                        <div className="grid">
+                            <FormField
+                                control={form.control}
+                                name="podcastDescription"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-lg font-semibold text-white-1">
+                                            Podcast Description
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                className="input-class focus-visible:ring-offset-orange-1 min-h-[120px]"
+                                                placeholder="Write a compelling description for your podcast..."
+                                                suppressHydrationWarning
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-white-1" />
+                                    </FormItem>
                                 )}
-                            </Button>
+                            />
+
+                            <div className="space-y-4">
+                                <GeneratePodcast
+                                    setAudioStorageId={setAudioStorageId}
+                                    audioStorageId={audioStorageId}
+                                    setAudio={setAudioUrl}
+                                    voiceType={voiceType!}
+                                    audio={audioUrl}
+                                    voicePrompt={voicePrompt}
+                                    setVoicePrompt={setVoicePrompt}
+                                    setAudioDuration={setAudioDuration}
+                                />
+                                <GenerateThumbnail
+                                    setImage={setImageUrl}
+                                    setImageStorageId={setImageStorageId}
+                                    image={imageUrl}
+                                    imagePrompt={imagePrompt}
+                                    setImagePrompt={setImagePrompt}
+                                />
+                                
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-orange-1 hover:bg-orange-600 text-white-1 font-bold py-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 h-14 mt-4"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            Creating Podcast
+                                            <Loader size={20} className="animate-spin" />
+                                        </>
+                                    ) : (
+                                        "Publish Podcast"
+                                    )}
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </form>
