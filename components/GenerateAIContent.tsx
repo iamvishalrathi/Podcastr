@@ -87,20 +87,39 @@ const GenerateAIContent = ({
             const response = await result.response;
             const text = response.text();
 
-            const content = JSON.parse(text);
+            try {
+                const content = JSON.parse(text);
+                form.setValue("podcastDescription", content.description);
+                setVoicePrompt(content.script);
 
-            form.setValue("podcastDescription", content.description);
-            setVoicePrompt(content.script);
-
-            toast({
-                title: 'AI content generated successfully',
-                description: 'Description and script have been updated'
-            });
+                toast({
+                    title: 'AI content generated successfully',
+                    description: 'Description and script have been updated'
+                });
+            } catch (parseError) {
+                console.error('Error parsing AI response:', parseError);
+                toast({
+                    title: 'Error processing AI response',
+                    description: 'The AI response was not in the expected format',
+                    variant: 'destructive'
+                });
+            }
         } catch (error) {
             console.error('Error generating content:', error);
+            let errorMessage = 'Failed to generate content';
+            
+            // Handle specific Gemini API errors
+            if (error instanceof Error) {
+                if (error.message.includes('model is overloaded')) {
+                    errorMessage = 'AI service is temporarily busy. Please try again in a moment.';
+                } else if (error.message.includes('fetch')) {
+                    errorMessage = 'Network error. Please check your connection.';
+                }
+            }
+
             toast({
-                title: 'Error generating content',
-                description: 'Please try again',
+                title: 'Error',
+                description: errorMessage,
                 variant: 'destructive'
             });
         } finally {
