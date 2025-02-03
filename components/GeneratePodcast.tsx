@@ -18,7 +18,7 @@ const FADE_IN_ANIMATION = "animate-in fade-in duration-500";
 const SLIDE_IN_ANIMATION = "animate-in slide-in-from-bottom-4 duration-500";
 
 const useGeneratePodcast = ({
-  setAudio, voiceType, voicePrompt, setAudioStorageId
+  setAudio, voiceType, voicePrompt, setAudioStorageId, audioStorageId
 }: GeneratePodcastProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -32,6 +32,7 @@ const useGeneratePodcast = ({
   const { toast } = useToast()
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const [uploadError, setUploadError] = useState<Error | null>(null);
+  const deleteFile = useMutation(api.files.deleteFile);
 
   const { startUpload, isUploading } = useUploadFiles(generateUploadUrl, {
     onUploadComplete: async (uploadedFiles) => {
@@ -91,7 +92,11 @@ const useGeneratePodcast = ({
     }
   }, []);
 
-  const togglePlayPause = () => {
+  const togglePlayPause = (e: React.MouseEvent) => {
+    // Stop event from bubbling up to the form
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
@@ -176,6 +181,26 @@ const useGeneratePodcast = ({
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      if (audioStorageId) {
+        await deleteFile({ storageId: audioStorageId });
+      }
+      setAudio("");
+      setAudioStorageId(null);
+      toast({
+        title: "Audio deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting audio:', error);
+      toast({
+        title: 'Error deleting audio',
+        description: error instanceof Error ? error.message : 'Failed to delete audio',
+        variant: 'destructive',
+      });
+    }
+  };
+
   return {
     isGenerating,
     generatePodcast,
@@ -189,7 +214,8 @@ const useGeneratePodcast = ({
     currentTime,
     duration,
     formatTime,
-    handleAudioEnded
+    handleAudioEnded,
+    handleDelete,
   }
 }
 
@@ -207,13 +233,9 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     currentTime,
     duration,
     formatTime,
-    handleAudioEnded
+    handleAudioEnded,
+    handleDelete,
   } = useGeneratePodcast(props);
-
-  const handleDelete = () => {
-    props.setAudio("");
-    props.setVoicePrompt("");
-  };
 
   // Add client-side only rendering for the audio player
   const [isMounted, setIsMounted] = useState(false);
@@ -277,9 +299,9 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
 
         {isGenerating && !props.audio && (
           <div className={`flex flex-col gap-3 bg-black-1/50 p-5 rounded-xl ${FADE_IN_ANIMATION}`}>
-            <Progress 
-              value={progress} 
-              className="h-2.5 bg-black-1/50" 
+            <Progress
+              value={progress}
+              className="h-2.5 bg-black-1/50"
             />
             <div className="flex items-center gap-2 text-sm text-gray-1">
               <Loader size={14} className="animate-spin" />
@@ -292,7 +314,7 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
           <div className={`flex flex-col gap-4 bg-black-1/80 p-5 rounded-xl backdrop-blur-sm ${FADE_IN_ANIMATION}`}>
             <div className="flex items-center gap-4">
               <Button
-                onClick={togglePlayPause}
+                onClick={(e) => togglePlayPause(e)}
                 size="icon"
                 variant="ghost"
                 className={cn(

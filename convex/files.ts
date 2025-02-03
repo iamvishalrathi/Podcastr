@@ -32,3 +32,16 @@ export const getUrl = mutation({
         }
     },
 });
+
+export const deleteFile = mutation({
+    args: { storageId: v.string() },
+    handler: async (ctx, args) => {
+        try {
+            await ctx.storage.delete(args.storageId);
+            return true;
+        } catch (error) {
+            console.error("Error deleting file:", error);
+            throw new Error("Failed to delete file");
+        }
+    },
+});

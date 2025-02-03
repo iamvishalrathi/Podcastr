@@ -51,7 +51,8 @@ export interface ProfilePodcastProps {
 }
 
 export interface GeneratePodcastProps {
-  setAudioStorageId: (id: Id<"_storage">) => void;
+  setAudioStorageId: (id: Id<"_storage"> | null) => void;
+  audioStorageId: Id<"_storage"> | null;
   setAudio: (url: string) => void;
   voiceType: string;
   audio: string;
