@@ -14,35 +14,60 @@ import { api } from '@/convex/_generated/api';
 import { v4 as uuidv4 } from 'uuid';
 import { Skeleton } from "./ui/skeleton";
 import { Trash2 } from 'lucide-react';
+import { Id } from '@/convex/_generated/dataModel';
 
-const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, setImagePrompt }: GenerateThumbnailProps) => {
+interface GenerateThumbnailProps {
+  setImage: (url: string) => void;
+  setImageStorageId: (id: Id<"_storage"> | null) => void;
+  image: string;
+  imagePrompt: string;
+  setImagePrompt: (prompt: string) => void;
+  imageStorageId: Id<"_storage"> | null;
+}
+
+const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, setImagePrompt, imageStorageId }: GenerateThumbnailProps) => {
   const [isAiThumbnail, setIsAiThumbnail] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const imageRef = useRef<HTMLInputElement>(null); //To store Img ref
   const { toast } = useToast();
   const handleGenerateThumbnail = useAction(api.freepik.generateThumbnailAction)
   const [imageLoading, setImageLoading] = useState(true);
+  const [isAiGenerated, setIsAiGenerated] = useState(false);
 
   //To upload Image & fetch uploaded url
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const { startUpload } = useUploadFiles(generateUploadUrl)
   const getImageUrl = useMutation(api.podcasts.getUrl);
+  const deleteFile = useMutation(api.files.deleteFile);
+
+  // Helper function to delete previous image
+  const deletePreviousImage = async () => {
+    if (imageStorageId) {
+      try {
+        await deleteFile({ storageId: imageStorageId });
+      } catch (error) {
+        console.error('Error deleting previous image:', error);
+      }
+    }
+  };
 
   //Image Handler Func
-  const handleImage = async (blob: Blob, fileName: string) => {
+  const handleImage = async (blob: Blob, fileName: string, isAI: boolean) => {
     setImage('');
 
     try {
-      const file = new File([blob], fileName, { type: 'image/png' });
+      // Delete previous image if exists
+      await deletePreviousImage();
 
+      const file = new File([blob], fileName, { type: 'image/png' });
       const uploaded = await startUpload([file]);
       const storageId = (uploaded[0].response as any).storageId;
 
       setImageStorageId(storageId);
-
       const imageUrl = await getImageUrl({ storageId });
       setImage(imageUrl!);
       setIsImageLoading(false);
+      setIsAiGenerated(isAI);
       toast({
         title: "Thumbnail generated successfully",
       })
@@ -68,7 +93,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       const blob = await file.arrayBuffer()
         .then((ab) => new Blob([ab]));
 
-      handleImage(blob, file.name);
+      handleImage(blob, file.name, false);
     } catch (error) {
       console.log(error)
       toast({ title: 'Error uploading image', variant: 'destructive' })
@@ -86,7 +111,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       const blob = await imgResponse.blob();
       // const blob = new Blob([response], { type: 'image/png' });
 
-      handleImage(blob, `thumbnail-${uuidv4()}`);
+      handleImage(blob, `thumbnail-${uuidv4()}`, true);
 
       // setImage(`data:image/png;base64,${ response }`);
     } catch (error) {
@@ -94,6 +119,27 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       toast({ title: 'Error generating thumbnail', variant: 'destructive' })
     }
   }
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    try {
+      e.stopPropagation();
+      if (imageStorageId) {
+        await deleteFile({ storageId: imageStorageId });
+      }
+      setImage("");
+      setImageStorageId(null);
+      toast({
+        title: "Thumbnail deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting thumbnail:', error);
+      toast({
+        title: 'Error deleting thumbnail',
+        description: error instanceof Error ? error.message : 'Failed to delete thumbnail',
+        variant: 'destructive',
+      });
+    }
+  };
 
   return (
     <>
@@ -130,10 +176,12 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             </Label>
             <Textarea
               className="input-class font-light focus-visible:ring-offset-orange-1 min-h-[120px] 
-                bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200"
+                bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200
+                disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Describe how you want your thumbnail to look..."
               value={imagePrompt}
               onChange={(e) => setImagePrompt(e.target.value)}
+              disabled={isImageLoading}
             />
           </div>
           <div className="w-full max-w-[200px]">
@@ -158,9 +206,12 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
         </div>
       ) : (
         <div 
-          onClick={() => imageRef?.current?.click()}
-          className="image_div hover:border-orange-1/50 hover:bg-black-1/30 
-            transition-all duration-200 group animate-in fade-in-50"
+          onClick={() => !isImageLoading && imageRef?.current?.click()}
+          className={cn(
+            "image_div hover:border-orange-1/50 hover:bg-black-1/30",
+            "transition-all duration-200 group animate-in fade-in-50",
+            isImageLoading && "opacity-50 cursor-not-allowed hover:border-gray-700 hover:bg-transparent"
+          )}
         >
           <Input
             type="file"
@@ -168,6 +219,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             ref={imageRef}
             onChange={(e) => uploadImage(e)}
             accept="image/*"
+            disabled={isImageLoading}
           />
           
           {!isImageLoading ? (
@@ -189,8 +241,11 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             </div>
           )}
           <div className="flex flex-col items-center gap-1">
-            <h2 className="text-12 font-bold text-orange-1 group-hover:text-orange-400 
-              transition-colors duration-200">
+            <h2 className={cn(
+              "text-12 font-bold text-orange-1 group-hover:text-orange-400",
+              "transition-colors duration-200",
+              isImageLoading && "group-hover:text-orange-1"
+            )}>
               Click to upload
             </h2>
             <p className="text-12 font-normal text-gray-1">
@@ -240,7 +295,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                     drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                     Podcast Thumbnail
                   </span>
-                  {isAiThumbnail ? (
+                  {isAiGenerated ? (
                     <span className="text-xs px-3 py-1.5 bg-orange-1/40 
                       backdrop-blur-md rounded-full border border-orange-1/40 
                       text-white shadow-[0_2px_4px_rgba(0,0,0,0.3)]
@@ -276,11 +331,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                 className="h-8 w-8 rounded-full bg-black/70 hover:bg-red-500 
                   backdrop-blur-md border border-white/30 shadow-lg
                   transition-colors duration-200"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setImage("");
-                  setImageStorageId(null);
-                }}
+                onClick={handleDelete}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

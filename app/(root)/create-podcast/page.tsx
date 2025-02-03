@@ -256,6 +256,7 @@ const CreatePodcast = () => {
                                     image={imageUrl}
                                     imagePrompt={imagePrompt}
                                     setImagePrompt={setImagePrompt}
+                                    imageStorageId={imageStorageId}
                                 />
                                 
                                 <Button
