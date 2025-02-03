@@ -11,6 +11,7 @@ import { useUploadFiles } from '@xixixao/uploadstuff/react';
 import { useToast } from "@/components/ui/use-toast"
 import { Progress } from './ui/progress';
 import { cn } from '@/lib/utils';
+import { Id } from 'convex/react';
 
 const MAX_CHARACTERS = 2500;
 const CHARACTERS_PER_CREDIT = 150;

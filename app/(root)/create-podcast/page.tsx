@@ -229,7 +229,7 @@ const CreatePodcast = () => {
                                         <FormControl>
                                             <Textarea
                                                 className="input-class focus-visible:ring-offset-orange-1 min-h-[120px]"
-                                                placeholder="Write a compelling description for your podcast..."
+                                                placeholder="Write or generate a compelling description for your podcast..."
                                                 suppressHydrationWarning
                                                 {...field}
                                             />
