@@ -12,6 +12,8 @@ import { useAction, useMutation } from 'convex/react';
 import { useUploadFiles } from '@xixixao/uploadstuff/react';
 import { api } from '@/convex/_generated/api';
 import { v4 as uuidv4 } from 'uuid';
+import { Skeleton } from "./ui/skeleton";
+import { Trash2 } from 'lucide-react';
 
 const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, setImagePrompt }: GenerateThumbnailProps) => {
   const [isAiThumbnail, setIsAiThumbnail] = useState(false);
@@ -19,6 +21,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   const imageRef = useRef<HTMLInputElement>(null); //To store Img ref
   const { toast } = useToast();
   const handleGenerateThumbnail = useAction(api.freepik.generateThumbnailAction)
+  const [imageLoading, setImageLoading] = useState(true);
 
   //To upload Image & fetch uploaded url
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
@@ -198,18 +201,90 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       )}
 
       {image && (
-        <div className="flex-center w-full group animate-in fade-in-50 duration-200">
-          <div className="relative rounded-xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent 
-              opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        <div className="flex-center w-full group animate-in fade-in-50 duration-200 mt-6">
+          <div className="relative w-full max-w-md aspect-video rounded-xl overflow-hidden bg-black-1/20">
+            {imageLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black-1/10">
+                <Skeleton className="w-full h-full animate-pulse" />
+              </div>
+            )}
+            
+            {/* Stronger vignette effect */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.9))] opacity-70" />
+            
+            {/* Strong bottom gradient for text */}
+            <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black via-black/80 to-transparent" />
+            
+            {/* Hover overlay */}
+            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+            
             <Image
               src={image}
-              width={300}
+              width={500}
               height={300}
-              className="mt-5 rounded-xl shadow-lg transition-transform duration-200 
-                group-hover:scale-[1.02]"
+              className={cn(
+                "w-full h-full object-cover transition-all duration-300",
+                "group-hover:scale-105",
+                imageLoading ? "opacity-0" : "opacity-100"
+              )}
               alt="thumbnail"
+              onLoadingComplete={() => setImageLoading(false)}
+              priority
             />
+
+            {/* Image info overlay with stronger text effects */}
+            <div className="absolute inset-x-0 bottom-0 p-4 z-10">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-sm text-white 
+                    drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    Podcast Thumbnail
+                  </span>
+                  {isAiThumbnail ? (
+                    <span className="text-xs px-3 py-1.5 bg-orange-1/40 
+                      backdrop-blur-md rounded-full border border-orange-1/40 
+                      text-white shadow-[0_2px_4px_rgba(0,0,0,0.3)]
+                      drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
+                      AI Generated
+                    </span>
+                  ) : (
+                    <span className="text-xs px-3 py-1.5 bg-white/30 
+                      backdrop-blur-md rounded-full border border-white/40 
+                      text-white shadow-[0_2px_4px_rgba(0,0,0,0.3)]
+                      drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
+                      Custom Upload
+                    </span>
+                  )}
+                </div>
+                
+                <div className="flex items-center gap-3 text-[10px] text-white">
+                  <div className="flex-1 h-px bg-white/40" />
+                  <span className="font-medium tracking-wider uppercase 
+                    drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    1080 × 1080px
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Delete button with improved visibility */}
+            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 
+              transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-10">
+              <Button
+                variant="destructive"
+                size="icon"
+                className="h-8 w-8 rounded-full bg-black/70 hover:bg-red-500 
+                  backdrop-blur-md border border-white/30 shadow-lg
+                  transition-colors duration-200"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setImage("");
+                  setImageStorageId(null);
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       )}
