@@ -8,8 +8,17 @@ Content Parameters:
 Return the response in the following JSON format:
 {
     "description": "engaging podcast description here",
-    "script": "detailed podcast script here"
+    "script": "continuous monologue script here"
 }
+
+Script Guidelines:
+- Write as a continuous monologue for a single speaker
+- Avoid any special characters, stage directions, or speaker labels
+- Do not include timestamps, pauses, or audio cues
+- Write in natural, conversational sentences
+- Avoid line breaks between sentences
+- Remove any non-speaking elements (like [pause], [music], etc.)
+- Keep paragraphs flowing naturally without artificial breaks
 
 Make the content engaging and natural sounding. The description should be 2-3 sentences and the script should be appropriate length for {duration} minutes of speaking time.
 
@@ -68,4 +77,5 @@ Content Guidelines:
 - Use commonly understood terms in the target language
 - Follow standard dialect of the chosen language
 - Maintain natural flow and expression in the target language
+- Write in a way that sounds natural when spoken aloud
 - Ensure the script length matches approximately {duration} minutes of speaking time`;

@@ -148,7 +148,14 @@ const CreatePodcast = () => {
                                 AI Voice Selection
                             </Label>
                             <Select
-                                onValueChange={(value) => setVoiceType(value)}
+                                onValueChange={(value) => {
+                                    setVoiceType(value);
+                                    // Play the voice sample when selected
+                                    const audio = new Audio(`/${value}.mp3`);
+                                    audio.play().catch(error => {
+                                        console.error("Error playing voice sample:", error);
+                                    });
+                                }}
                             >
                                 <SelectTrigger
                                     className={cn(
