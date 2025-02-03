@@ -257,84 +257,88 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
       {image && (
         <div className="flex-center w-full group animate-in fade-in-50 duration-200 mt-6">
-          <div className="relative w-full max-w-md aspect-video rounded-xl overflow-hidden bg-black-1/20">
-            {imageLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black-1/10">
-                <Skeleton className="w-full h-full animate-pulse" />
-              </div>
-            )}
-            
-            {/* Stronger vignette effect */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.9))] opacity-70" />
-            
-            {/* Strong bottom gradient for text */}
-            <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black via-black/80 to-transparent" />
-            
-            {/* Hover overlay */}
-            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300" />
-            
-            <Image
-              src={image}
-              width={500}
-              height={300}
-              className={cn(
-                "w-full h-full object-cover transition-all duration-300",
-                "group-hover:scale-105",
-                imageLoading ? "opacity-0" : "opacity-100"
-              )}
-              alt="thumbnail"
-              onLoadingComplete={() => setImageLoading(false)}
-              priority
-            />
-
-            {/* Image info overlay with stronger text effects */}
-            <div className="absolute inset-x-0 bottom-0 p-4 z-10">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-sm text-white 
-                    drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                    Podcast Thumbnail
-                  </span>
-                  {isAiGenerated ? (
-                    <span className="text-xs px-3 py-1.5 bg-orange-1/40 
-                      backdrop-blur-md rounded-full border border-orange-1/40 
-                      text-white shadow-[0_2px_4px_rgba(0,0,0,0.3)]
-                      drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
-                      AI Generated
-                    </span>
-                  ) : (
-                    <span className="text-xs px-3 py-1.5 bg-white/30 
-                      backdrop-blur-md rounded-full border border-white/40 
-                      text-white shadow-[0_2px_4px_rgba(0,0,0,0.3)]
-                      drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
-                      Custom Upload
-                    </span>
-                  )}
-                </div>
-                
-                <div className="flex items-center gap-3 text-[10px] text-white">
-                  <div className="flex-1 h-px bg-white/40" />
-                  <span className="font-medium tracking-wider uppercase 
-                    drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                    1080 × 1080px
-                  </span>
-                </div>
-              </div>
+          {/* Title and dimensions outside the image */}
+          <div className="w-full max-w-md space-y-3">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="font-bold text-sm bg-gradient-to-r from-orange-1 to-orange-400 
+                bg-clip-text text-transparent">
+                Podcast Thumbnail
+              </h3>
+              <span className="text-[10px] font-medium text-gray-400">
+                1080 × 1080px
+              </span>
             </div>
 
-            {/* Delete button with improved visibility */}
-            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 
-              transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-10">
-              <Button
-                variant="destructive"
-                size="icon"
-                className="h-8 w-8 rounded-full bg-black/70 hover:bg-red-500 
-                  backdrop-blur-md border border-white/30 shadow-lg
-                  transition-colors duration-200"
-                onClick={handleDelete}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+            {/* Image container */}
+            <div className="relative aspect-video rounded-xl overflow-hidden bg-black-1/20
+              ring-1 ring-white/10 shadow-2xl">
+              {imageLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black-1/10">
+                  <Skeleton className="w-full h-full animate-pulse" />
+                </div>
+              )}
+              
+              {/* Premium image effects */}
+              <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/10" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.7))] opacity-60" />
+              
+              {/* Hover effects */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent 
+                opacity-0 group-hover:opacity-100 transition-all duration-500" />
+              
+              <Image
+                src={image}
+                width={500}
+                height={300}
+                className={cn(
+                  "w-full h-full object-cover transition-all duration-500",
+                  "group-hover:scale-105",
+                  imageLoading ? "opacity-0" : "opacity-100"
+                )}
+                alt="thumbnail"
+                onLoadingComplete={() => setImageLoading(false)}
+                priority
+              />
+
+              {/* Badge overlay */}
+              <div className="absolute top-3 left-3 z-10">
+                {isAiGenerated ? (
+                  <span className="text-xs px-3 py-1.5 bg-gradient-to-r from-orange-1 to-orange-400 
+                    backdrop-blur-md rounded-full border border-orange-1/50 
+                    text-white font-semibold shadow-lg
+                    animate-in fade-in-50 duration-300">
+                    AI Generated
+                  </span>
+                ) : (
+                  <span className="text-xs px-3 py-1.5 bg-gradient-to-r from-blue-400 to-blue-500 
+                    backdrop-blur-md rounded-full border border-blue-400/50 
+                    text-white font-semibold shadow-lg
+                    animate-in fade-in-50 duration-300">
+                    Custom Upload
+                  </span>
+                )}
+              </div>
+
+              {/* Delete button */}
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 
+                transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-10">
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="h-8 w-8 rounded-full bg-gradient-to-br from-red-500 to-red-600 
+                    hover:from-red-600 hover:to-red-700
+                    backdrop-blur-lg border border-red-400/30 shadow-lg
+                    transition-all duration-200 hover:scale-105"
+                  onClick={handleDelete}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Premium corner effects */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent opacity-50" />
+              <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-orange-1/10 via-transparent to-transparent" />
+              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-orange-1/10 via-transparent to-transparent" />
             </div>
           </div>
         </div>
