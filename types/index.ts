@@ -51,13 +51,13 @@ export interface ProfilePodcastProps {
 }
 
 export interface GeneratePodcastProps {
+  setAudioStorageId: (id: Id<"_storage">) => void;
+  setAudio: (url: string) => void;
   voiceType: string;
-  setAudio: Dispatch<SetStateAction<string>>;
   audio: string;
-  setAudioStorageId: Dispatch<SetStateAction<Id<"_storage"> | null>>;
   voicePrompt: string;
-  setVoicePrompt: Dispatch<SetStateAction<string>>;
-  setAudioDuration: Dispatch<SetStateAction<number>>;
+  setVoicePrompt: (prompt: string) => void;
+  setAudioDuration: (duration: number) => void;
 }
 
 export interface GenerateThumbnailProps {
