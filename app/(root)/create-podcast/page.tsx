@@ -139,7 +139,7 @@ const CreatePodcast = () => {
                                                 {...field}
                                             />
                                         </FormControl>
-                                        
+
                                     </div>
                                     <FormMessage className="text-white-1" />
                                 </FormItem>
@@ -149,7 +149,10 @@ const CreatePodcast = () => {
                             <Label className="text-16 font-bold text-white-1">
                                 Select AI Voice
                             </Label>
-                            <Select onValueChange={(value) => setVoiceType(value)}>
+                            <Select
+                                onValueChange={(value) => setVoiceType(value)}
+                                suppressHydrationWarning
+                            >
                                 <SelectTrigger
                                     className={cn(
                                         "text-16 w-full border-none bg-black-1 text-gray-1 focus-visible:ring-offset-orange-1"

@@ -107,7 +107,7 @@ const GenerateAIContent = ({
         } catch (error) {
             console.error('Error generating content:', error);
             let errorMessage = 'Failed to generate content';
-            
+
             // Handle specific Gemini API errors
             if (error instanceof Error) {
                 if (error.message.includes('model is overloaded')) {
