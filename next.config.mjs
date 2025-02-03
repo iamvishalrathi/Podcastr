@@ -9,7 +9,7 @@ const nextConfig = {
         dirs: ['app', 'components'], // Specify the directories to lint
     },
     images: {
-        domains: ['https://podcastr-two-rho.vercel.app'],
+        domains: ['https://my-podcastr.vercel.app/'],
     },
     images: {
         remotePatterns: [

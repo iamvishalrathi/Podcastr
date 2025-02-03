@@ -15,6 +15,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as config from "../config.js";
 import type * as files from "../files.js";
 import type * as freepik from "../freepik.js";
 import type * as http from "../http.js";
@@ -31,6 +32,7 @@ import type * as users from "../users.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  config: typeof config;
   files: typeof files;
   freepik: typeof freepik;
   http: typeof http;

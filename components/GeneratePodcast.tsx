@@ -8,7 +8,6 @@ import { useAction, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { v4 as uuidv4 } from 'uuid';
 import { useUploadFiles } from '@xixixao/uploadstuff/react';
-import { generateUploadUrl } from '@/convex/files';
 import { useToast } from "@/components/ui/use-toast"
 
 const useGeneratePodcast = ({
@@ -17,79 +16,95 @@ const useGeneratePodcast = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast()
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
-  const { startUpload } = useUploadFiles(generateUploadUrl)
+  const [uploadError, setUploadError] = useState<Error | null>(null);
+  
+  const { startUpload, isUploading } = useUploadFiles(generateUploadUrl, {
+    onUploadComplete: async (uploadedFiles) => {
+      console.log("Upload completed:", uploadedFiles);
+      setUploadError(null);
+    },
+    onUploadError: (error) => {
+      console.error("Upload error:", error);
+      setUploadError(error);
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
 
-  // const getPodcastAudio = useAction(api.elevenlabs.generateAudioAction)
   const getAudioUrl = useMutation(api.podcasts.getUrl);
 
   const generatePodcast = async () => {
-    setIsGenerating(true);
-    setAudio('');
-
-    if (!voicePrompt) {
-      toast({
-        title: "Please provide a Voice Prompt to generate a podcast",
-      })
-      return setIsGenerating(false);
-    }
-    if (!voiceType) {
-      toast({
-        title: "Please provide a Voice Type to generate a podcast",
-      })
-      return setIsGenerating(false);
-    }
-
     try {
-      // const response = await getPodcastAudio({
-      //   voice: voiceType,
-      //   input: voicePrompt
-      // })
+      setIsGenerating(true);
+      setAudio('');
+      setUploadError(null);
 
-      // const audioResponse = await fetch(response);
-
-      // const blob = new Blob([response], { type: 'audio/mpeg' });
-      // const blob = await response.blob();  // Convert the response to a Blob
+      if (!voicePrompt || !voiceType) {
+        throw new Error(!voicePrompt ? "Please provide a Voice Prompt" : "Please provide a Voice Type");
+      }
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/elevenlabs`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           input: voicePrompt,
           voice: voiceType
         })
-      })
+      });
 
-      const blob = await response.blob();  // Convert the response to a Blob
+      if (!response.ok) {
+        throw new Error('Failed to generate audio');
+      }
+
+      const blob = await response.blob();
       const fileName = `podcast-${uuidv4()}.mp3`;
       const file = new File([blob], fileName, { type: 'audio/mpeg' });
 
-      const uploaded = await startUpload([file]);
-      const storageId = (uploaded[0].response as any).storageId;
+      console.log('Starting file upload...');
+      const uploadResult = await startUpload([file]);
+      console.log('Upload result:', uploadResult);
 
+      if (!uploadResult?.[0]?.response?.storageId) {
+        throw new Error('No storage ID received');
+      }
+
+      const storageId = uploadResult[0].response.storageId;
       setAudioStorageId(storageId);
+      console.log('Getting audio URL for storageId:', storageId);
 
       const audioUrl = await getAudioUrl({ storageId });
-      setAudio(audioUrl!);
-      setIsGenerating(false);
+      if (!audioUrl) {
+        throw new Error('Failed to get audio URL');
+      }
+
+      setAudio(audioUrl);
       toast({
         title: "Podcast generated successfully",
-      })
+      });
 
     } catch (error) {
-      console.log('Error generating podcast', error)
+      console.error('Error generating podcast:', error);
       toast({
-        title: "Error creating a podcast",
+        title: 'Error creating podcast',
+        description: error instanceof Error ? error.message : 'Unknown error occurred',
         variant: 'destructive',
-      })
+      });
+    } finally {
       setIsGenerating(false);
     }
-  }
+  };
 
-  return { isGenerating, generatePodcast }
+  return { isGenerating, generatePodcast, isUploading }
 }
 
 
 const GeneratePodcast = (props: GeneratePodcastProps) => {
-  const { isGenerating, generatePodcast } = useGeneratePodcast(props);
+  const { isGenerating, generatePodcast, isUploading } = useGeneratePodcast(props);
   return (
     <div>
       <div className="flex flex-col gap-2.5">

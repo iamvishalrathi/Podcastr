@@ -32,8 +32,8 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
-import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
-import { chatSession } from "@/service/Gemini";
+import GenerateAIContent from "@/components/GenerateAIContent";
+import { languageOptions } from "@/constants/Language_Options";
 
 const formSchema = z.object({
     podcastTitle: z.string().min(2),
@@ -60,7 +60,6 @@ const CreatePodcast = () => {
     const [voicePrompt, setVoicePrompt] = useState("");
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isGeneratingContent, setIsGeneratingContent] = useState(false);
 
     const createPodcast = useMutation(api.podcasts.createPodcast)
 
@@ -73,38 +72,7 @@ const CreatePodcast = () => {
         },
     });
 
-    // Add function to generate content using Gemini
-    const generateAIContent = async (title: string) => {
-        try {
-            setIsGeneratingContent(true);
-            const Final_Gemini_Prompt = Gemini_Prompt.replace('{title}', title);
-            console.log(Final_Gemini_Prompt);
-            const result = await chatSession.sendMessage(Final_Gemini_Prompt);
-            const response = await result.response;
-            const text = response.text();
-
-            const content = JSON.parse(text);
-            console.log(content);
-
-            // Update form with AI generated content
-            form.setValue("podcastDescription", content.description);
-            setVoicePrompt(content.script);
-            
-            toast({
-                title: 'AI content generated successfully',
-                description: 'Description and script have been updated'
-            });
-        } catch (error) {
-            console.error('Error generating content:', error);
-            toast({
-                title: 'Error generating content',
-                description: 'Please try again',
-                variant: 'destructive'
-            });
-        } finally {
-            setIsGeneratingContent(false);
-        }
-    };
+    const [selectedLanguage, setSelectedLanguage] = useState('english');
 
     // 2. Define a submit handler.
     async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -169,21 +137,7 @@ const CreatePodcast = () => {
                                                 {...field}
                                             />
                                         </FormControl>
-                                        <Button 
-                                            type="button"
-                                            onClick={() => generateAIContent(field.value)}
-                                            disabled={!field.value || isGeneratingContent}
-                                            className="bg-orange-1 text-white-1 hover:bg-orange-2"
-                                        >
-                                            {isGeneratingContent ? (
-                                                <>
-                                                    Generating
-                                                    <Loader size={16} className="animate-spin ml-2" />
-                                                </>
-                                            ) : (
-                                                "Generate AI Content"
-                                            )}
-                                        </Button>
+                                        
                                     </div>
                                     <FormMessage className="text-white-1" />
                                 </FormItem>
@@ -224,6 +178,37 @@ const CreatePodcast = () => {
                                 )}
                             </Select>
                         </div>
+                        <div className="flex flex-col gap-2.5">
+                            <Label className="text-16 font-bold text-white-1">
+                                Select Content Language
+                            </Label>
+                            <Select
+                                onValueChange={setSelectedLanguage}
+                                defaultValue="english"
+                            >
+                                <SelectTrigger
+                                    className={cn(
+                                        "text-16 w-full border-none bg-black-1 text-gray-1 focus-visible:ring-offset-orange-1"
+                                    )}
+                                >
+                                    <SelectValue placeholder="Select Language" />
+                                </SelectTrigger>
+                                <SelectContent
+                                    className="max-h-[300px] overflow-y-auto text-16 border-none bg-black-1 font-bold text-white-1 focus:ring-orange-1"
+                                >
+                                    {languageOptions.map((lang) => (
+                                        <SelectItem
+                                            key={lang.value}
+                                            value={lang.value}
+                                            className="capitalize focus:bg-orange-1"
+                                        >
+                                            {lang.label} ({lang.native})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <GenerateAIContent title={form.getValues("podcastTitle")} selectedLanguage={selectedLanguage} setSelectedLanguage={setSelectedLanguage} form={form} setVoicePrompt={setVoicePrompt} />
                         <FormField
                             control={form.control}
                             name="podcastDescription"
@@ -244,7 +229,7 @@ const CreatePodcast = () => {
                             )}
                         />
                     </div>
-                    <div className="flex flex-col pt-10">
+                    <div className="flex flex-col">
                         <GeneratePodcast
                             setAudioStorageId={setAudioStorageId}
                             setAudio={setAudioUrl}
