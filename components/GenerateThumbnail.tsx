@@ -105,20 +105,30 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     e.preventDefault();
     try {
       setIsImageLoading(true);
-      const response = await handleGenerateThumbnail({ prompt: imagePrompt });
+      const imageUrl = await handleGenerateThumbnail({ prompt: imagePrompt });
+      
+      if (!imageUrl) {
+        throw new Error("No image URL received");
+      }
 
-      const imgResponse = await fetch(response);
+      const imgResponse = await fetch(imageUrl);
+      if (!imgResponse.ok) {
+        throw new Error(`Failed to fetch image: ${imgResponse.status}`);
+      }
+
       const blob = await imgResponse.blob();
-      // const blob = new Blob([response], { type: 'image/png' });
+      await handleImage(blob, `thumbnail-${uuidv4()}`, true);
 
-      handleImage(blob, `thumbnail-${uuidv4()}`, true);
-
-      // setImage(`data:image/png;base64,${ response }`);
     } catch (error) {
-      console.log(error)
-      toast({ title: 'Error generating thumbnail', variant: 'destructive' })
+      console.error("Error generating thumbnail:", error);
+      toast({ 
+        title: 'Error generating thumbnail', 
+        description: error instanceof Error ? error.message : 'Failed to generate thumbnail',
+        variant: 'destructive' 
+      });
+      setIsImageLoading(false);
     }
-  }
+  };
 
   const handleDelete = async (e: React.MouseEvent) => {
     try {
@@ -273,8 +283,42 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             <div className="relative aspect-video rounded-xl overflow-hidden bg-black-1/20
               ring-1 ring-white/10 shadow-2xl">
               {imageLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black-1/10">
-                  <Skeleton className="w-full h-full animate-pulse" />
+                <div className="absolute inset-0 flex items-center justify-center bg-black-1/10 overflow-hidden">
+                  {/* Animated gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/0 via-white/5 to-black/0 
+                    animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+                  
+                  {/* Skeleton content layout */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                    {/* Animated logo placeholder */}
+                    <div className="relative w-16 h-16 rounded-full bg-gradient-to-tr from-orange-1/20 to-orange-1/10 
+                      animate-pulse overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
+                        animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+                    </div>
+
+                    {/* Loading text */}
+                    <div className="space-y-2 text-center">
+                      <div className="h-4 w-32 bg-gradient-to-r from-gray-800 to-gray-700 rounded-full 
+                        animate-pulse" />
+                      <div className="h-3 w-24 bg-gradient-to-r from-gray-800 to-gray-700 rounded-full 
+                        animate-pulse mx-auto" />
+                    </div>
+
+                    {/* Progress bar */}
+                    <div className="absolute bottom-8 w-2/3 max-w-[200px]">
+                      <div className="h-1 w-full bg-black/20 rounded-full overflow-hidden">
+                        <div className="h-full w-1/2 bg-gradient-to-r from-orange-1 to-orange-400 
+                          animate-progress rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Corner decorations */}
+                  <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-orange-1/10 to-transparent 
+                    animate-pulse" />
+                  <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-orange-1/10 to-transparent 
+                    animate-pulse" />
                 </div>
               )}
               

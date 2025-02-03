@@ -2,25 +2,37 @@ import { action } from "./_generated/server";
 import { v } from "convex/values";
 
 export const generateThumbnailAction = action({
-    args: { prompt: v.string() },
-    handler: async (_, { prompt }) => {
+    args: { prompt: "string" },
+    handler: async (ctx, args) => {
         try {
-            const options = {
+            const response = await fetch(`${process.env.FREEPIK_API_URL}`, {
                 method: 'POST',
-                headers: { 'x-freepik-api-key': `${process.env.FREEPIK_API_KEY}`, 'Content-Type': 'application/json', Accept: 'application/json' },
-                body: JSON.stringify({ prompt, num_images: 1 }),
-            };
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.FREEPIK_API_KEY}`
+                },
+                body: JSON.stringify({
+                    prompt: args.prompt
+                })
+            });
 
-            const response = await fetch('https://api.freepik.com/v1/ai/text-to-image', options);
-            const resJson = await response.json();
-            const base64 = resJson.data[0].base64
-            const imgUrl = `data:image/png;base64,${base64}`
-            console.log(imgUrl);
-            return imgUrl;
+            if (!response.ok) {
+                throw new Error(`API responded with status ${response.status}`);
+            }
 
+            // First check if the response is JSON
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                const text = await response.text();
+                throw new Error(`Invalid response format: ${text.substring(0, 100)}...`);
+            }
+
+            const data = await response.json();
+            return data.url || data.image_url; // adjust based on actual API response structure
+            
         } catch (error) {
-            console.error('Error generating Thumbnail:', error);
-            throw error;
+            console.error("Error generating thumbnail:", error);
+            throw new Error(error instanceof Error ? error.message : "Failed to generate thumbnail");
         }
-    }
-})
+    },
+});
