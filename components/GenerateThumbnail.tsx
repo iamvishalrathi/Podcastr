@@ -12,7 +12,6 @@ import { useAction, useMutation } from 'convex/react';
 import { useUploadFiles } from '@xixixao/uploadstuff/react';
 import { api } from '@/convex/_generated/api';
 import { v4 as uuidv4 } from 'uuid';
-import { Skeleton } from "./ui/skeleton";
 import { Trash2 } from 'lucide-react';
 import { Id } from '@/convex/_generated/dataModel';
 
@@ -31,9 +30,6 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   const imageRef = useRef<HTMLInputElement>(null); //To store Img ref
   const { toast } = useToast();
   const handleGenerateThumbnail = useAction(api.freepik.generateThumbnailAction)
-  const [imageLoading, setImageLoading] = useState(true);
-  const [isAiGenerated, setIsAiGenerated] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   //To upload Image & fetch uploaded url
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
@@ -57,21 +53,16 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     setImage('');
 
     try {
-      // Delete previous image if exists
       await deletePreviousImage();
 
       const file = new File([blob], fileName, { type: 'image/png' });
       const uploaded = await startUpload([file]);
-      const storageId = (uploaded[0].response as any).storageId;
+      const storageId = uploaded[0].response?.storageId as Id<"_storage">;
 
       setImageStorageId(storageId);
       const imageUrl = await getImageUrl({ storageId });
       setImage(imageUrl!);
       setIsImageLoading(false);
-      setIsAiGenerated(isAI);
-      toast({
-        title: "Thumbnail generated successfully",
-      })
     }
     catch (error) {
       console.log(error)
@@ -80,115 +71,33 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     }
   }
 
-  // Loading UI component
-  const LoadingUI = ({ type }: { type: 'uploading' | 'generating' }) => (
-    <div className="absolute inset-0 flex items-center justify-center 
-      bg-gradient-to-br from-black/90 to-black/70 overflow-hidden">
-      {/* Skeleton image background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black-1/50 to-black-1/30 animate-pulse" />
-      
-      {/* Animated lines */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-orange-1/50 to-transparent 
-          animate-[moveDown_2s_linear_infinite]" />
-        <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-orange-1/50 to-transparent 
-          animate-[moveUp_2s_linear_infinite]" />
-      </div>
-
-      {/* Content */}
-      <div className="relative flex flex-col items-center gap-6 z-10">
-        {/* Icon */}
-        <div className="relative">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-orange-1/20 to-orange-1/10 
-            animate-pulse flex items-center justify-center">
-            <Image
-              src={type === 'uploading' ? "/icons/upload-image.svg" : "/icons/ai-generate.svg"}
-              alt={type}
-              width={24}
-              height={24}
-              className="opacity-60"
-            />
-            <div className="absolute -inset-1 border border-orange-1/20 rounded-full animate-spin duration-3000" />
-          </div>
-          <div className="absolute -inset-2 bg-orange-1/10 rounded-full blur-lg animate-pulse" />
-        </div>
-
-        {/* Status text */}
-        <div className="flex flex-col items-center gap-2">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-orange-1/80 animate-[bounce_1s_ease-in-out_infinite]" />
-            <div className="w-1.5 h-1.5 rounded-full bg-orange-1/80 animate-[bounce_1s_ease-in-out_0.2s_infinite]" />
-            <div className="w-1.5 h-1.5 rounded-full bg-orange-1/80 animate-[bounce_1s_ease-in-out_0.4s_infinite]" />
-          </div>
-          <span className="text-sm font-medium text-white/90">
-            {type === 'uploading' ? 'Uploading Image...' : 'Generating Image...'}
-          </span>
-        </div>
-
-        {/* Progress bar */}
-        <div className="w-48 bg-black/40 rounded-full h-1.5 overflow-hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-orange-1 to-orange-400 rounded-full transition-all duration-300"
-            style={{ 
-              width: `${uploadProgress}%`,
-              transition: 'width 0.3s ease-in-out'
-            }}
-          />
-        </div>
-        <span className="text-xs text-white/60 font-medium">{uploadProgress}%</span>
-      </div>
-
-      {/* Grid overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),
-        linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)]
-        bg-[size:20px_20px] opacity-30" />
-    </div>
-  );
-
   // Update upload function
   const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     try {
       setIsImageLoading(true);
-      setUploadProgress(0);
-      
       const files = e.target.files;
       if (!files) return;
-      
-      const file = files[0];
-      const totalSize = file.size;
-      let loadedSize = 0;
 
-      const blob = await new Promise<Blob>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          loadedSize = e.loaded || 0;
-          setUploadProgress(Math.round((loadedSize / totalSize) * 100));
-          resolve(new Blob([e.target?.result as ArrayBuffer]));
-        };
-        reader.onprogress = (e) => {
-          if (e.lengthComputable) {
-            setUploadProgress(Math.round((e.loaded / e.total) * 100));
-          }
-        };
-        reader.readAsArrayBuffer(file);
-      });
+      const file = files[0];
+      const blob = await file.arrayBuffer()
+        .then((ab) => new Blob([ab]));
 
       await handleImage(blob, file.name, false);
-      setUploadProgress(100);
     } catch (error) {
       console.error(error);
       toast({ title: 'Error uploading image', variant: 'destructive' });
+      setIsImageLoading(false);
     }
   };
 
   //AI Thumbnail
-  const generateImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const generateImage = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       setIsImageLoading(true);
       const imageUrl = await handleGenerateThumbnail({ prompt: imagePrompt });
-      
+
       if (!imageUrl) {
         throw new Error("No image URL received");
       }
@@ -203,10 +112,10 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
     } catch (error) {
       console.error("Error generating thumbnail:", error);
-      toast({ 
-        title: 'Error generating thumbnail', 
+      toast({
+        title: 'Error generating thumbnail',
         description: error instanceof Error ? error.message : 'Failed to generate thumbnail',
-        variant: 'destructive' 
+        variant: 'destructive'
       });
       setIsImageLoading(false);
     }
@@ -279,8 +188,8 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
           <div className="space-y-4">
             <div className="w-full max-w-[200px]">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="text-16 bg-orange-1 py-4 font-bold text-white-1 w-full
                   hover:bg-orange-600 transition-all duration-300 hover:scale-[1.02]
                   disabled:opacity-50 disabled:hover:scale-100"
@@ -297,71 +206,10 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                 )}
               </Button>
             </div>
-
-            {/* Progress Skeleton */}
-            {isImageLoading && (
-              <div className="w-full max-w-[300px] rounded-xl overflow-hidden bg-black-1/20 p-4
-                ring-1 ring-white/5 animate-in fade-in-50">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="relative">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-orange-1/20 to-orange-1/10 
-                      animate-pulse flex items-center justify-center">
-                      <Image
-                        src="/icons/ai-generate.svg"
-                        alt="processing"
-                        width={20}
-                        height={20}
-                        className="opacity-60"
-                      />
-                    </div>
-                    <svg className="absolute -inset-1 w-[calc(100%+8px)] h-[calc(100%+8px)] rotate-90">
-                      <circle
-                        className="text-orange-1/20"
-                        strokeWidth="2"
-                        stroke="currentColor"
-                        fill="transparent"
-                        r="22"
-                        cx="26"
-                        cy="26"
-                      />
-                      <circle
-                        className="text-orange-1"
-                        strokeWidth="2"
-                        strokeDasharray={138.2}
-                        strokeDashoffset={138.2 - (uploadProgress / 100) * 138.2}
-                        strokeLinecap="round"
-                        stroke="currentColor"
-                        fill="transparent"
-                        r="22"
-                        cx="26"
-                        cy="26"
-                      />
-                    </svg>
-                  </div>
-
-                  <div className="space-y-1 text-center">
-                    <p className="text-xs font-medium text-white/90">
-                      Generating Image...
-                    </p>
-                    <p className="text-[10px] font-medium text-white/60">
-                      {uploadProgress}%
-                    </p>
-                  </div>
-
-                  <div className="w-full h-1 bg-black/40 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-orange-1 to-orange-400 rounded-full 
-                        transition-all duration-300"
-                      style={{ width: `${uploadProgress}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       ) : (
-        <div 
+        <div
           onClick={() => !isImageLoading && imageRef?.current?.click()}
           className={cn(
             "image_div hover:border-orange-1/50 hover:bg-black-1/30",
@@ -377,10 +225,6 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             accept="image/*"
             disabled={isImageLoading}
           />
-          
-          {isImageLoading && (
-            <LoadingUI type="uploading" />
-          )}
           <div className="flex flex-col items-center gap-1">
             <h2 className={cn(
               "text-12 font-bold text-orange-1 group-hover:text-orange-400",
@@ -415,7 +259,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
               <div className="flex items-center gap-2">
                 <span className="px-2 py-1 rounded-md bg-black-1/40 border border-white/5 
                   text-[10px] font-medium text-gray-400">
-                  {isAiGenerated ? 'AI' : 'Custom'}
+                  {isAiThumbnail ? 'AI' : 'Custom'}
                 </span>
               </div>
             </div>
@@ -431,57 +275,10 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                   </div>
 
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                    <div className="relative">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-orange-1/20 to-orange-1/10 
-                        animate-pulse flex items-center justify-center">
-                        <Image
-                          src={isAiThumbnail ? "/icons/ai-generate.svg" : "/icons/upload-image.svg"}
-                          alt="processing"
-                          width={24}
-                          height={24}
-                          className="opacity-60"
-                        />
-                      </div>
-                      <svg className="absolute -inset-1 w-[calc(100%+8px)] h-[calc(100%+8px)] rotate-90">
-                        <circle
-                          className="text-orange-1/20"
-                          strokeWidth="2"
-                          stroke="currentColor"
-                          fill="transparent"
-                          r="30"
-                          cx="34"
-                          cy="34"
-                        />
-                        <circle
-                          className="text-orange-1"
-                          strokeWidth="2"
-                          strokeDasharray={188.5}
-                          strokeDashoffset={188.5 - (uploadProgress / 100) * 188.5}
-                          strokeLinecap="round"
-                          stroke="currentColor"
-                          fill="transparent"
-                          r="30"
-                          cx="34"
-                          cy="34"
-                        />
-                      </svg>
-                    </div>
-
                     <div className="space-y-2 text-center">
                       <p className="text-sm font-medium text-white/90">
                         {isAiThumbnail ? 'Generating Image...' : 'Uploading Image...'}
                       </p>
-                      <p className="text-xs font-medium text-white/60">
-                        {uploadProgress}%
-                      </p>
-                    </div>
-
-                    <div className="w-48 h-1 bg-black/40 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-orange-1 to-orange-400 rounded-full 
-                          transition-all duration-300"
-                        style={{ width: `${uploadProgress}%` }}
-                      />
                     </div>
                   </div>
                 </div>
@@ -510,7 +307,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                     opacity-0 group-hover/image:opacity-100 transition-all duration-500" />
 
                   <div className="absolute top-3 left-3 z-10">
-                    {isAiGenerated ? (
+                    {isAiThumbnail ? (
                       <div className="flex items-center gap-2 px-3 py-1.5 
                         bg-gradient-to-r from-orange-1 to-orange-400 
                         backdrop-blur-md rounded-full border border-orange-1/50 
@@ -558,10 +355,6 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             </div>
           </div>
         </div>
-      )}
-
-      {isImageLoading && (
-        <LoadingUI type="generating" />
       )}
     </>
   )

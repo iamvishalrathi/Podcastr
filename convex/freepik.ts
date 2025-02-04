@@ -2,7 +2,7 @@ import { action } from "./_generated/server";
 import { v } from "convex/values";
 
 export const generateThumbnailAction = action({
-    args: { prompt: "string" },
+    args: { prompt: v.string() },
     handler: async (ctx, args) => {
         try {
             const response = await fetch(`${process.env.FREEPIK_API_URL}`, {

@@ -148,29 +148,3 @@ html {
 .cl-internal-wkkub3 {
   color: #f97535;
 }
-
-@keyframes moveDown {
-  from { transform: translateY(-100%); }
-  to { transform: translateY(100%); }
-}
-
-@keyframes moveUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(-100%); }
-}
-
-@keyframes moveRight {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100%); }
-}
-
-@keyframes moveLeft {
-  from { transform: translateX(100%); }
-  to { transform: translateX(-100%); }
-}
-
-@keyframes progressWidth {
-  0% { transform: translateX(-100%); }
-  50% { transform: translateX(0); }
-  100% { transform: translateX(100%); }
-}
