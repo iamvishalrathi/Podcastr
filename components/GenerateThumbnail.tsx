@@ -188,41 +188,45 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
       {isAiThumbnail ? (
         <div className="flex flex-col gap-5 animate-in fade-in-50">
-          <div className="mt-5 flex flex-col gap-2.5">
-            <Label className="text-16 font-bold text-white-1">
-              Select a Thumbnail Prompt
-            </Label>
-            <div className="grid gap-2">
-              {thumbnailPrompts.map((prompt, index) => (
-                <Button
-                  key={index}
-                  type="button"
-                  variant={imagePrompt === prompt ? "default" : "outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    "hover:bg-orange-1/10 transition-colors duration-200",
-                    "bg-black-1/50 hover:bg-black-1/70 border-black-6",
-                    imagePrompt === prompt && "bg-orange-1 hover:bg-orange-1/90 text-white border-none"
-                  )}
-                  onClick={() => setImagePrompt(prompt)}
-                >
-                  <span className="mr-2 font-semibold">#{index + 1}</span>
-                  {prompt}
-                </Button>
-              ))}
+          {thumbnailPrompts.length > 0 && (
+            <div className="mt-5 flex flex-col gap-2.5">
+              <Label className="text-16 font-bold text-white-1">
+                Select a Thumbnail Prompt
+              </Label>
+              <div className="grid gap-2">
+                {thumbnailPrompts.map((prompt, index) => (
+                  <Button
+                    key={index}
+                    type="button"
+                    variant={imagePrompt === prompt ? "default" : "outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      "hover:bg-orange-1/10 transition-colors duration-200",
+                      "bg-black-1/50 hover:bg-black-1/70 border-black-6",
+                      imagePrompt === prompt && "bg-orange-1 hover:bg-orange-1/90 text-white border-none"
+                    )}
+                    onClick={() => setImagePrompt(prompt)}
+                  >
+                    <span className="mr-2 font-semibold">#{index + 1}</span>
+                    {prompt}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="space-y-2">
             <Label className="text-16 font-bold text-white-1">
-              Customize Prompt
+              {thumbnailPrompts.length > 0 ? 'Customize Prompt' : 'Enter Prompt'}
             </Label>
             <Textarea
               className="input-class font-light focus-visible:ring-offset-orange-1 min-h-[120px] 
                 bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200
                 disabled:opacity-50 disabled:cursor-not-allowed
                 border border-black-6"
-              placeholder="Customize the selected prompt or write your own..."
+              placeholder={thumbnailPrompts.length > 0 
+                ? "Customize the selected prompt or write your own..." 
+                : "Write a prompt for your thumbnail..."}
               value={imagePrompt}
               onChange={(e) => setImagePrompt(e.target.value)}
               disabled={isImageLoading}
