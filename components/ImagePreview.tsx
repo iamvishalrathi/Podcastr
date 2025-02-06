@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Button } from './ui/button';
 import { Download, Expand, Trash2 } from 'lucide-react';
 import { Id } from '@/convex/_generated/dataModel';
+import { useState } from 'react';
 
 interface ImagePreviewProps {
   image: string;
@@ -15,6 +16,36 @@ interface ImagePreviewProps {
   handleDelete: (e: React.MouseEvent) => Promise<void>;
 }
 
+const LoadingSkeleton = () => (
+  <div className="absolute inset-0 overflow-hidden">
+    {/* Background with shimmer effect */}
+    <div className="absolute inset-0 bg-gradient-to-br from-black-1/20 to-black-1/10">
+      <div className="h-full w-full animate-[shimmer_2s_infinite] bg-[length:200%_100%]
+        bg-gradient-to-r from-transparent via-orange-1/5 to-transparent" />
+    </div>
+
+    {/* Placeholder content */}
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-32 h-32 rounded-lg bg-orange-1/5 animate-pulse">
+        <div className="h-full w-full flex items-center justify-center">
+          <svg 
+            className="w-16 h-16 text-orange-1/20" 
+            fill="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    {/* Grid overlay */}
+    <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),
+      linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]
+      bg-[size:20px_20px] opacity-10" />
+  </div>
+);
+
 const ImagePreview = ({
   image,
   isImageLoading,
@@ -25,6 +56,9 @@ const ImagePreview = ({
   handleDownload,
   handleDelete,
 }: ImagePreviewProps) => {
+  // Add a loading state for image preview
+  const [isPreviewLoading, setIsPreviewLoading] = useState(true);
+
   return (
     <div className="flex-center w-full group animate-in fade-in-50 duration-300 mt-8">
       <div className="w-full max-w-md space-y-4">
@@ -78,87 +112,100 @@ const ImagePreview = ({
             </div>
           ) : image ? (
             <>
+              {isPreviewLoading && <LoadingSkeleton />}
               <Image
                 src={image}
                 width={500}
                 height={300}
                 className={cn(
-                  "w-full h-full object-cover transition-all duration-500",
-                  "group-hover/image:scale-105"
+                  "relative w-full h-full object-cover transition-all duration-500",
+                  "group-hover/image:scale-105",
+                  "group-hover/image:rotate-1",
+                  "transform-gpu",
+                  isPreviewLoading ? "opacity-0" : "opacity-100"
                 )}
                 alt="thumbnail"
                 priority
+                onLoad={() => setIsPreviewLoading(false)}
               />
 
-              {/* Overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent 
-                opacity-0 group-hover/image:opacity-100 transition-all duration-300">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      className="h-9 w-9 rounded-full 
-                        bg-white/10 hover:bg-white/20
-                        backdrop-blur-lg border border-white/10 
-                        transition-all duration-300 hover:scale-110"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsPreviewOpen(true);
-                      }}
-                    >
-                      <Expand className="h-4 w-4" />
-                    </Button>
+              {/* Only show overlay when preview is loaded */}
+              {!isPreviewLoading && (
+                <>
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent 
+                    opacity-0 group-hover/image:opacity-100 transition-all duration-300
+                    group-hover/image:rotate-1 transform-gpu">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="flex items-center gap-3">
+                        <Button
+                          variant="secondary"
+                          size="icon"
+                          className="h-9 w-9 rounded-full 
+                            bg-white/10 hover:bg-white/20
+                            backdrop-blur-lg border border-white/10 
+                            transition-all duration-300 hover:scale-110"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsPreviewOpen(true);
+                          }}
+                        >
+                          <Expand className="h-4 w-4" />
+                        </Button>
 
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      className="h-9 w-9 rounded-full 
-                        bg-white/10 hover:bg-white/20
-                        backdrop-blur-lg border border-white/10 
-                        transition-all duration-300 hover:scale-110"
-                      onClick={handleDownload}
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
+                        <Button
+                          variant="secondary"
+                          size="icon"
+                          className="h-9 w-9 rounded-full 
+                            bg-white/10 hover:bg-white/20
+                            backdrop-blur-lg border border-white/10 
+                            transition-all duration-300 hover:scale-110"
+                          onClick={handleDownload}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
 
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="h-9 w-9 rounded-full 
-                        bg-red-500/80 hover:bg-red-500
-                        backdrop-blur-lg border border-red-400/30 
-                        transition-all duration-300 hover:scale-110"
-                      onClick={handleDelete}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          className="h-9 w-9 rounded-full 
+                            bg-red-500/80 hover:bg-red-500
+                            backdrop-blur-lg border border-red-400/30 
+                            transition-all duration-300 hover:scale-110"
+                          onClick={handleDelete}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Badge */}
-              <div className="absolute top-3 left-3">
-                {isAiGenerated ? (
-                  <div className="flex items-center gap-2 px-3 py-1.5 
-                    bg-gradient-to-r from-orange-1 to-orange-400 
-                    backdrop-blur-md rounded-full border border-orange-1/50 
-                    shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
-                    <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                    <span className="text-xs font-semibold text-white">AI Generated</span>
+                  {/* Badge */}
+                  <div className="absolute top-3 left-3">
+                    {isAiGenerated ? (
+                      <div className="flex items-center gap-2 px-3 py-1.5 
+                        bg-gradient-to-r from-orange-1 to-orange-400 
+                        backdrop-blur-md rounded-full border border-orange-1/50 
+                        shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+                        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                        <span className="text-xs font-semibold text-white">AI Generated</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 px-3 py-1.5
+                        bg-gradient-to-r from-blue-400 to-blue-500
+                        backdrop-blur-md rounded-full border border-blue-400/50
+                        shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+                        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                        <span className="text-xs font-semibold text-white">Custom Upload</span>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="flex items-center gap-2 px-3 py-1.5
-                    bg-gradient-to-r from-blue-400 to-blue-500
-                    backdrop-blur-md rounded-full border border-blue-400/50
-                    shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
-                    <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                    <span className="text-xs font-semibold text-white">Custom Upload</span>
-                  </div>
-                )}
-              </div>
+                </>
+              )}
             </>
-          ) : null}
+          ) : (
+            <LoadingSkeleton />
+          )}
         </div>
       </div>
     </div>
