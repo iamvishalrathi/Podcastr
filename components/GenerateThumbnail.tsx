@@ -284,44 +284,18 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
               disabled={isImageLoading}
             />
             
-            {isImageLoading ? (
-              <div className="flex flex-col gap-3 animate-in fade-in-50">
-                <Progress
-                  value={progress}
-                  className="h-2.5 w-48 bg-black-1/50"
-                />
-                <div className="flex items-center gap-2 text-sm text-gray-1">
-                  <Loader size={14} className="animate-spin" />
-                  <p>Uploading image... {progress}%</p>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-1">
-                <h2 className={cn(
-                  "text-12 font-bold text-orange-1 group-hover:text-orange-400",
-                  "transition-colors duration-200"
-                )}>
-                  Click to upload
-                </h2>
-                <p className="text-12 font-normal text-gray-1">
-                  SVG, PNG, JPG, or GIF (max. 1080x1080px)
-                </p>
-              </div>
-            )}
-          </div>
-
-          {isImageLoading && (
-            <div className="flex flex-col gap-3 bg-black-1/50 p-5 rounded-xl border border-black-6">
-              <Progress
-                value={progress}
-                className="h-2.5 bg-black-1/50"
-              />
-              <div className="flex items-center gap-2 text-sm text-gray-1">
-                <Loader size={14} className="animate-spin" />
-                <p>Uploading image... {progress}%</p>
-              </div>
+            <div className="flex flex-col items-center gap-1">
+              <h2 className={cn(
+                "text-12 font-bold text-orange-1 group-hover:text-orange-400",
+                "transition-colors duration-200"
+              )}>
+                Click to upload
+              </h2>
+              <p className="text-12 font-normal text-gray-1">
+                SVG, PNG, JPG, or GIF (max. 1080x1080px)
+              </p>
             </div>
-          )}
+          </div>
         </div>
       )}
 
@@ -353,18 +327,22 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
               ring-2 ring-white/5 shadow-[0_0_30px_-15px_rgba(0,0,0,0.8)]
               backdrop-blur-sm group/image">
               {isImageLoading ? (
-                <div className="absolute inset-0 bg-black-1/60 backdrop-blur-sm">
-                  <div className="absolute inset-0 bg-gradient-to-br from-black-1/50 to-black-1/30">
-                    <div className="h-full w-full animate-pulse bg-gradient-to-r from-black-1/10 via-black-1/5 to-black-1/10 
-                      bg-[length:200%_100%]" style={{ animation: 'shimmer 2s infinite' }} />
-                  </div>
-
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                    <div className="space-y-2 text-center">
-                      <p className="text-sm font-medium text-white/90">
-                        {isAiThumbnail ? 'Generating Image...' : 'Uploading Image...'}
-                      </p>
+                <div className="absolute inset-0 flex items-center justify-center bg-black-1/60 backdrop-blur-sm">
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="relative">
+                      <div className="w-20 h-20 rounded-full border-4 border-orange-1/20">
+                        <div 
+                          className="absolute top-0 left-0 w-20 h-20 rounded-full border-4 border-orange-1 border-t-transparent 
+                          animate-[spin_1.5s_linear_infinite]"
+                        />
+                      </div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-lg font-semibold text-orange-1">{progress}%</span>
+                      </div>
                     </div>
+                    <p className="text-sm font-medium text-white/90">
+                      {isAiThumbnail ? 'Generating Thumbnail...' : 'Uploading Image...'}
+                    </p>
                   </div>
                 </div>
               ) : (
