@@ -149,10 +149,11 @@ const CreatePodcast = () => {
                 const content = JSON.parse(text);
                 form.setValue("podcastDescription", content.description);
                 setVoicePrompt(content.script);
+                setImagePrompt(content.thumbnailPrompt);
 
                 toast({
                     title: 'AI content generated successfully',
-                    description: 'Description and script have been updated'
+                    description: 'Description, script, and thumbnail prompt have been updated'
                 });
             } catch (parseError) {
                 console.error('Error parsing AI response:', parseError);
