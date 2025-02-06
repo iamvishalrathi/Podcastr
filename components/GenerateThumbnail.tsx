@@ -14,6 +14,7 @@ import { api } from '@/convex/_generated/api';
 import { v4 as uuidv4 } from 'uuid';
 import { Trash2 } from 'lucide-react';
 import { Id } from '@/convex/_generated/dataModel';
+import { Progress } from './ui/progress';
 
 interface GenerateThumbnailProps {
   setImage: (url: string) => void;
@@ -32,6 +33,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   const { toast } = useToast();
   const handleGenerateThumbnail = useAction(api.freepik.generateThumbnailAction)
   const [isAiGenerated, setIsAiGenerated] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   //To upload Image & fetch uploaded url
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
@@ -79,18 +81,24 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     e.preventDefault();
     try {
       setIsImageLoading(true);
+      setProgress(20);
       const files = e.target.files;
       if (!files) return;
 
       const file = files[0];
+      setProgress(40);
       const blob = await file.arrayBuffer()
         .then((ab) => new Blob([ab]));
-
+      
+      setProgress(60);
       await handleImage(blob, file.name, false);
+      setProgress(100);
     } catch (error) {
       console.error(error);
       toast({ title: 'Error uploading image', variant: 'destructive' });
       setIsImageLoading(false);
+    } finally {
+      setProgress(0);
     }
   };
 
@@ -99,19 +107,23 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     e.preventDefault();
     try {
       setIsImageLoading(true);
+      setProgress(20);
       const imageUrl = await handleGenerateThumbnail({ prompt: imagePrompt });
 
       if (!imageUrl) {
         throw new Error("No image URL received");
       }
-
+      
+      setProgress(40);
       const imgResponse = await fetch(imageUrl);
       if (!imgResponse.ok) {
         throw new Error(`Failed to fetch image: ${imgResponse.status}`);
       }
 
+      setProgress(60);
       const blob = await imgResponse.blob();
       await handleImage(blob, `thumbnail-${uuidv4()}`, true);
+      setProgress(100);
 
     } catch (error) {
       console.error("Error generating thumbnail:", error);
@@ -121,6 +133,8 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
         variant: 'destructive'
       });
       setIsImageLoading(false);
+    } finally {
+      setProgress(0);
     }
   };
 
@@ -247,16 +261,44 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             accept="image/*"
             disabled={isImageLoading}
           />
-          <div className="flex flex-col items-center gap-1">
-            <h2 className={cn(
-              "text-12 font-bold text-orange-1 group-hover:text-orange-400",
-              "transition-colors duration-200",
-              isImageLoading && "group-hover:text-orange-1"
-            )}>
-              Click to upload
-            </h2>
-            <p className="text-12 font-normal text-gray-1">
-              SVG, PNG, JPG, or GIF (max. 1080x1080px)
+          
+          {isImageLoading ? (
+            <div className="flex flex-col gap-3 animate-in fade-in-50">
+              <Progress
+                value={progress}
+                className="h-2.5 w-48 bg-black-1/50"
+              />
+              <div className="flex items-center gap-2 text-sm text-gray-1">
+                <Loader size={14} className="animate-spin" />
+                <p>Uploading image... {progress}%</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-1">
+              <h2 className={cn(
+                "text-12 font-bold text-orange-1 group-hover:text-orange-400",
+                "transition-colors duration-200"
+              )}>
+                Click to upload
+              </h2>
+              <p className="text-12 font-normal text-gray-1">
+                SVG, PNG, JPG, or GIF (max. 1080x1080px)
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {isImageLoading && (
+        <div className="flex flex-col gap-3 bg-black-1/50 p-5 rounded-xl animate-in fade-in-50">
+          <Progress
+            value={progress}
+            className="h-2.5 bg-black-1/50"
+          />
+          <div className="flex items-center gap-2 text-sm text-gray-1">
+            <Loader size={14} className="animate-spin" />
+            <p>
+              {isAiThumbnail ? 'Generating thumbnail' : 'Uploading image'}... {progress}%
             </p>
           </div>
         </div>
