@@ -230,19 +230,6 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
           </div>
 
           <div className="space-y-4">
-            {isImageLoading && (
-              <div className="flex flex-col gap-3 bg-black-1/50 p-5 rounded-xl border border-black-6">
-                <Progress
-                  value={progress}
-                  className="h-2.5 bg-black-1/50"
-                />
-                <div className="flex items-center gap-2 text-sm text-gray-1">
-                  <Loader size={14} className="animate-spin" />
-                  <p>Generating thumbnail... {progress}%</p>
-                </div>
-              </div>
-            )}
-
             <div className="w-full max-w-[200px]">
               <Button
                 type="submit"
@@ -299,7 +286,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
         </div>
       )}
 
-      {image && (
+      {(image || isImageLoading) && (
         <div className="flex-center w-full group animate-in fade-in-50 duration-300 mt-8">
           <div className="w-full max-w-md space-y-4">
             <div className="flex items-center justify-between px-2">
@@ -345,7 +332,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                     </p>
                   </div>
                 </div>
-              ) : (
+              ) : image ? (
                 <>
                   <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/10" />
                   <div className="absolute inset-0">
@@ -414,7 +401,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                     linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]
                     bg-[size:20px_20px] opacity-40" />
                 </>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
