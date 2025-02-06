@@ -334,38 +334,51 @@ const CreatePodcast = () => {
                                 />
                             </div>
 
-                            {/* Media Generation */}
+                            {/* Audio Generation - Renamed from Media Generation */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2">
                                     <div className="h-4 w-1 bg-orange-1 rounded-full" />
-                                    <h2 className="text-lg font-semibold text-white-1">Media Generation</h2>
+                                    <h2 className="text-lg font-semibold text-white-1">Audio Generation</h2>
                                 </div>
 
-                                <div className="grid gap-6">
-                                    <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
-                                        <GeneratePodcast
-                                            setAudioStorageId={setAudioStorageId}
-                                            audioStorageId={audioStorageId}
-                                            setAudio={setAudioUrl}
-                                            voiceType={voiceType!}
-                                            audio={audioUrl}
-                                            voicePrompt={voicePrompt}
-                                            setVoicePrompt={setVoicePrompt}
-                                            setAudioDuration={setAudioDuration}
-                                        />
-                                    </div>
+                                <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
+                                    <GeneratePodcast
+                                        setAudioStorageId={setAudioStorageId}
+                                        audioStorageId={audioStorageId}
+                                        setAudio={setAudioUrl}
+                                        voiceType={voiceType!}
+                                        audio={audioUrl}
+                                        voicePrompt={voicePrompt}
+                                        setVoicePrompt={setVoicePrompt}
+                                        setAudioDuration={setAudioDuration}
+                                    />
+                                </div>
+                            </div>
 
-                                    <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
-                                        <GenerateThumbnail
-                                            setImage={setImageUrl}
-                                            setImageStorageId={setImageStorageId}
-                                            image={imageUrl}
-                                            imagePrompt={imagePrompt}
-                                            setImagePrompt={setImagePrompt}
-                                            imageStorageId={imageStorageId}
-                                            thumbnailPrompts={thumbnailPrompts}
-                                        />
+                            {/* Thumbnail Generation - New separate section */}
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-4 w-1 bg-orange-1 rounded-full" />
+                                        <h2 className="text-lg font-semibold text-white-1">Thumbnail Generation</h2>
                                     </div>
+                                    {thumbnailPrompts.length > 0 && (
+                                        <span className="text-sm text-gray-1">
+                                            {thumbnailPrompts.length} AI suggestions available
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
+                                    <GenerateThumbnail
+                                        setImage={setImageUrl}
+                                        setImageStorageId={setImageStorageId}
+                                        image={imageUrl}
+                                        imagePrompt={imagePrompt}
+                                        setImagePrompt={setImagePrompt}
+                                        imageStorageId={imageStorageId}
+                                        thumbnailPrompts={thumbnailPrompts}
+                                    />
                                 </div>
                             </div>
 
