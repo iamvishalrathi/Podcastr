@@ -12,9 +12,10 @@ import { useAction, useMutation } from 'convex/react';
 import { useUploadFiles } from '@xixixao/uploadstuff/react';
 import { api } from '@/convex/_generated/api';
 import { v4 as uuidv4 } from 'uuid';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Expand, Download, X } from 'lucide-react';
 import { Id } from '@/convex/_generated/dataModel';
 import { Progress } from './ui/progress';
+import { Dialog, DialogContent } from './ui/dialog';
 
 interface GenerateThumbnailProps {
   setImage: (url: string) => void;
@@ -34,6 +35,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   const handleGenerateThumbnail = useAction(api.freepik.generateThumbnailAction)
   const [isAiGenerated, setIsAiGenerated] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   //To upload Image & fetch uploaded url
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
@@ -154,6 +156,32 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       toast({
         title: 'Error deleting thumbnail',
         description: error instanceof Error ? error.message : 'Failed to delete thumbnail',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const response = await fetch(image);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `podcast-thumbnail-${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Image downloaded successfully",
+      });
+    } catch (error) {
+      toast({
+        title: 'Error downloading image',
+        description: 'Failed to download image',
         variant: 'destructive',
       });
     }
@@ -398,7 +426,36 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                   <div className="absolute top-3 right-3 z-10 
                     opacity-0 group-hover/image:opacity-100 
                     translate-y-2 group-hover/image:translate-y-0
-                    transition-all duration-300">
+                    transition-all duration-300 flex items-center gap-2">
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      className="h-8 w-8 rounded-full 
+                        bg-white/10 hover:bg-white/20
+                        backdrop-blur-lg border border-white/10 
+                        shadow-[0_4px_10px_rgba(0,0,0,0.5)]
+                        transition-all duration-300 hover:scale-110"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsPreviewOpen(true);
+                      }}
+                    >
+                      <Expand className="h-4 w-4" />
+                    </Button>
+                    
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      className="h-8 w-8 rounded-full 
+                        bg-white/10 hover:bg-white/20
+                        backdrop-blur-lg border border-white/10 
+                        shadow-[0_4px_10px_rgba(0,0,0,0.5)]
+                        transition-all duration-300 hover:scale-110"
+                      onClick={handleDownload}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+
                     <Button
                       variant="destructive"
                       size="icon"
@@ -470,6 +527,52 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             </div>
           </div>
         </div>
+      )}
+
+      {image && (
+        <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+          <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black-1/95 border-white/5">
+            <div className="relative group">
+              <Image
+                src={image}
+                width={1920}
+                height={1080}
+                className="w-full h-full object-contain"
+                alt="thumbnail preview"
+                priority
+              />
+              
+              <div className="absolute top-4 right-4 flex items-center gap-2 
+                opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="h-10 w-10 rounded-full 
+                    bg-white/10 hover:bg-white/20
+                    backdrop-blur-lg border border-white/10 
+                    shadow-[0_4px_10px_rgba(0,0,0,0.5)]
+                    transition-all duration-300 hover:scale-110"
+                  onClick={handleDownload}
+                >
+                  <Download className="h-5 w-5" />
+                </Button>
+                
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="h-10 w-10 rounded-full 
+                    bg-white/10 hover:bg-white/20
+                    backdrop-blur-lg border border-white/10 
+                    shadow-[0_4px_10px_rgba(0,0,0,0.5)]
+                    transition-all duration-300 hover:scale-110"
+                  onClick={() => setIsPreviewOpen(false)}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   )
