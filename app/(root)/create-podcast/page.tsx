@@ -83,6 +83,9 @@ const CreatePodcast = () => {
 
     const [selectedLanguage, setSelectedLanguage] = useState('english');
 
+    // Add new state for thumbnail prompts
+    const [thumbnailPrompts, setThumbnailPrompts] = useState<string[]>([]);
+
     // 2. Define a submit handler.
     async function onSubmit(data: z.infer<typeof formSchema>) {
         try {
@@ -149,11 +152,21 @@ const CreatePodcast = () => {
                 const content = JSON.parse(text);
                 form.setValue("podcastDescription", content.description);
                 setVoicePrompt(content.script);
-                setImagePrompt(content.thumbnailPrompt);
+                
+                // Set multiple thumbnail prompts
+                if (Array.isArray(content.thumbnailPrompts)) {
+                    setThumbnailPrompts(content.thumbnailPrompts);
+                    // Set the first prompt as default
+                    setImagePrompt(content.thumbnailPrompts[0]);
+                } else {
+                    // Fallback if the response doesn't contain multiple prompts
+                    setThumbnailPrompts([content.thumbnailPrompt]);
+                    setImagePrompt(content.thumbnailPrompt);
+                }
 
                 toast({
                     title: 'AI content generated successfully',
-                    description: 'Description, script, and thumbnail prompt have been updated'
+                    description: 'Description, script, and thumbnail prompts have been updated'
                 });
             } catch (parseError) {
                 console.error('Error parsing AI response:', parseError);
@@ -337,6 +350,7 @@ const CreatePodcast = () => {
                                     imagePrompt={imagePrompt}
                                     setImagePrompt={setImagePrompt}
                                     imageStorageId={imageStorageId}
+                                    thumbnailPrompts={thumbnailPrompts}
                                 />
 
                                 <Button

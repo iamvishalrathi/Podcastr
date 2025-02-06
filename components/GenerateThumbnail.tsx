@@ -22,9 +22,10 @@ interface GenerateThumbnailProps {
   imagePrompt: string;
   setImagePrompt: (prompt: string) => void;
   imageStorageId: Id<"_storage"> | null;
+  thumbnailPrompts: string[];
 }
 
-const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, setImagePrompt, imageStorageId }: GenerateThumbnailProps) => {
+const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, setImagePrompt, imageStorageId, thumbnailPrompts }: GenerateThumbnailProps) => {
   const [isAiThumbnail, setIsAiThumbnail] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const imageRef = useRef<HTMLInputElement>(null); //To store Img ref
@@ -175,18 +176,37 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
         <div className="flex flex-col gap-5 animate-in fade-in-50">
           <div className="mt-5 flex flex-col gap-2.5">
             <Label className="text-16 font-bold text-white-1">
-              AI Prompt to generate Thumbnail
+              Select a Thumbnail Prompt
             </Label>
-            <Textarea
-              className="input-class font-light focus-visible:ring-offset-orange-1 min-h-[120px] 
-                bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200
-                disabled:opacity-50 disabled:cursor-not-allowed"
-              placeholder="Describe how you want your thumbnail to look..."
-              value={imagePrompt}
-              onChange={(e) => setImagePrompt(e.target.value)}
-              disabled={isImageLoading}
-            />
+            <div className="grid gap-2">
+              {thumbnailPrompts.map((prompt, index) => (
+                <Button
+                  key={index}
+                  type="button"
+                  variant={imagePrompt === prompt ? "default" : "outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    "hover:bg-orange-1/10 transition-colors duration-200",
+                    imagePrompt === prompt && "bg-orange-1 text-white"
+                  )}
+                  onClick={() => setImagePrompt(prompt)}
+                >
+                  <span className="mr-2 font-semibold">#{index + 1}</span>
+                  {prompt}
+                </Button>
+              ))}
+            </div>
           </div>
+
+          <Textarea
+            className="input-class font-light focus-visible:ring-offset-orange-1 min-h-[120px] 
+              bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200
+              disabled:opacity-50 disabled:cursor-not-allowed"
+            placeholder="Customize the selected prompt or write your own..."
+            value={imagePrompt}
+            onChange={(e) => setImagePrompt(e.target.value)}
+            disabled={isImageLoading}
+          />
 
           <div className="space-y-4">
             <div className="w-full max-w-[200px]">

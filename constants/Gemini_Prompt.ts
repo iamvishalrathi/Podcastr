@@ -9,7 +9,11 @@ Return the response in the following JSON format:
 {
     "description": "engaging podcast description here",
     "script": "continuous monologue script here",
-    "thumbnailPrompt": "brief description for thumbnail image generation"
+    "thumbnailPrompts": [
+        "First thumbnail prompt in English",
+        "Second thumbnail prompt in English",
+        "Third thumbnail prompt in English"
+    ]
 }
 
 Script Guidelines:
@@ -79,4 +83,7 @@ Content Guidelines:
 - Follow standard dialect of the chosen language
 - Maintain natural flow and expression in the target language
 - Write in a way that sounds natural when spoken aloud
-- Ensure the script length matches approximately {duration} minutes of speaking time`;
+- Ensure the script length matches approximately {duration} minutes of speaking time
+
+Note: Always generate thumbnail prompts in English regardless of the content language
+Each thumbnail prompt should be unique and focus on different aspects or styles`;
