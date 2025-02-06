@@ -34,6 +34,8 @@ import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import GenerateAIContent from "@/components/GenerateAIContent";
 import { languageOptions } from "@/constants/Language_Options";
+import { chatSession } from "@/service/Gemini";
+import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
 
 const formSchema = z.object({
     podcastTitle: z.string().min(2),
@@ -44,21 +46,28 @@ const voiceCategories = ['Drew', "Rachel", "Sarah"];
 
 const CreatePodcast = () => {
     const router = useRouter()
+    //Image States
     const [imagePrompt, setImagePrompt] = useState("");
-    const [imageStorageId, setImageStorageId] = useState<Id<"_storage"> | null>(
-        null
-    );
+    const [imageStorageId, setImageStorageId] = useState<Id<"_storage"> | null>(null);
     const [imageUrl, setImageUrl] = useState("");
 
+    //Audio States
     const [audioUrl, setAudioUrl] = useState("");
-    const [audioStorageId, setAudioStorageId] = useState<Id<"_storage"> | null>(
-        null
-    );
+    const [audioStorageId, setAudioStorageId] = useState<Id<"_storage"> | null>(null);
     const [audioDuration, setAudioDuration] = useState(0);
 
+    //Voice States
     const [voiceType, setVoiceType] = useState<string | null>(null);
     const [voicePrompt, setVoicePrompt] = useState("");
 
+    //AI States
+    const [duration, setDuration] = useState([1]);
+    const [tone, setTone] = useState('casual');
+    const [targetAudience, setTargetAudience] = useState('general');
+    const [style, setStyle] = useState('conversational');
+
+    //Form States
+    const [isGeneratingContent, setIsGeneratingContent] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const createPodcast = useMutation(api.podcasts.createPodcast)
@@ -111,6 +120,70 @@ const CreatePodcast = () => {
             setIsSubmitting(false);
         }
     }
+
+    const generateAIContent = async () => {
+        if (!form.getValues("podcastTitle")) {
+            toast({
+                title: 'Please enter a title first',
+                variant: 'destructive'
+            });
+            return;
+        }
+
+        try {
+            setIsGeneratingContent(true);
+            const Final_Gemini_Prompt = Gemini_Prompt
+                .replace('{title}', form.getValues("podcastTitle"))
+                .replace('{language}', selectedLanguage)
+                .replace('{duration}', duration[0].toString())
+                .replace('{tone}', tone)
+                .replace('{targetAudience}', targetAudience)
+                .replace('{style}', style);
+
+            console.log(Final_Gemini_Prompt);
+            const result = await chatSession.sendMessage(Final_Gemini_Prompt);
+            const response = await result.response;
+            const text = response.text();
+
+            try {
+                const content = JSON.parse(text);
+                form.setValue("podcastDescription", content.description);
+                setVoicePrompt(content.script);
+
+                toast({
+                    title: 'AI content generated successfully',
+                    description: 'Description and script have been updated'
+                });
+            } catch (parseError) {
+                console.error('Error parsing AI response:', parseError);
+                toast({
+                    title: 'Error processing AI response',
+                    description: 'The AI response was not in the expected format',
+                    variant: 'destructive'
+                });
+            }
+        } catch (error) {
+            console.error('Error generating content:', error);
+            let errorMessage = 'Failed to generate content';
+
+            // Handle specific Gemini API errors
+            if (error instanceof Error) {
+                if (error.message.includes('model is overloaded')) {
+                    errorMessage = 'AI service is temporarily busy. Please try again in a moment.';
+                } else if (error.message.includes('fetch')) {
+                    errorMessage = 'Network error. Please check your connection.';
+                }
+            }
+
+            toast({
+                title: 'Error',
+                description: errorMessage,
+                variant: 'destructive'
+            });
+        } finally {
+            setIsGeneratingContent(false);
+        }
+    };
 
     return (
         <section className="container max-w-4xl mx-auto px-4 py-10">
@@ -209,12 +282,18 @@ const CreatePodcast = () => {
                             </Select>
                         </div>
 
-                        <GenerateAIContent 
-                            title={form.getValues("podcastTitle")} 
-                            selectedLanguage={selectedLanguage} 
-                            setSelectedLanguage={setSelectedLanguage} 
-                            form={form} 
-                            setVoicePrompt={setVoicePrompt} 
+                        <GenerateAIContent
+                            title={form.getValues("podcastTitle")}
+                            setDuration={setDuration}
+                            duration={duration}
+                            setTone={setTone}
+                            tone={tone}
+                            setTargetAudience={setTargetAudience}
+                            targetAudience={targetAudience}
+                            setStyle={setStyle}
+                            style={style}
+                            generateAIContent={generateAIContent}
+                            isGeneratingContent={isGeneratingContent}
                         />
 
                         <div className="grid">
@@ -258,7 +337,7 @@ const CreatePodcast = () => {
                                     setImagePrompt={setImagePrompt}
                                     imageStorageId={imageStorageId}
                                 />
-                                
+
                                 <Button
                                     type="submit"
                                     className="w-full bg-orange-1 hover:bg-orange-600 text-white-1 font-bold py-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 h-14 mt-4"

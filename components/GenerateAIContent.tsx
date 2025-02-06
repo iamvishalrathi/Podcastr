@@ -3,129 +3,40 @@ import { Loader } from "lucide-react";
 import { useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { chatSession } from "@/service/Gemini";
-import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
-import { toast } from "@/components/ui/use-toast";
-import { UseFormReturn } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
+import { toneOptions, targetAudienceOptions, styleOptions } from "@/constants/AIContent";
 interface GenerateAIContentProps {
     title: string;
-    selectedLanguage: string;
-    setSelectedLanguage: (value: string) => void;
-    form: UseFormReturn<{
-        podcastTitle: string;
-        podcastDescription: string;
-    }>;
-    setVoicePrompt: (value: string) => void;
+    setTone: (value: string) => void;
+    tone: string;
+    setTargetAudience: (value: string) => void;
+    targetAudience: string;
+    setStyle: (value: string) => void;
+    style: string;
+    setDuration: (value: number[]) => void;
+    duration: number[];
+    generateAIContent: () => void;
+    isGeneratingContent: boolean;
 }
 
-const toneOptions = [
-    { value: 'casual', label: 'Casual & Friendly' },
-    { value: 'professional', label: 'Professional & Formal' },
-    { value: 'humorous', label: 'Humorous & Light' },
-    { value: 'educational', label: 'Educational & Informative' },
-    { value: 'storytelling', label: 'Storytelling & Narrative' },
-    { value: 'motivational', label: 'Motivational & Inspiring' }
-];
-
-const targetAudienceOptions = [
-    { value: 'general', label: 'General Audience' },
-    { value: 'beginners', label: 'Beginners' },
-    { value: 'intermediate', label: 'Intermediate Level' },
-    { value: 'advanced', label: 'Advanced Level' },
-    { value: 'professionals', label: 'Professionals' },
-    { value: 'students', label: 'Students' },
-    { value: 'elderly', label: 'Elderly' },
-    { value: 'youth', label: 'Youth' }
-];
-
-const styleOptions = [
-    { value: 'conversational', label: 'Conversational' },
-    { value: 'interview', label: 'Interview Style' },
-    { value: 'monologue', label: 'Monologue' },
-    { value: 'debate', label: 'Debate Style' },
-    { value: 'tutorial', label: 'Tutorial/How-to' },
-    { value: 'storytelling', label: 'Storytelling' }
-];
 
 const GenerateAIContent = ({
     title,
-    selectedLanguage,
-    form,
-    setVoicePrompt,
+    setTone,
+    tone,
+    setTargetAudience,
+    targetAudience,
+    setStyle,
+    style,
+
+    setDuration,
+    duration,
+    generateAIContent,
+    isGeneratingContent,
 }: GenerateAIContentProps) => {
-    const [isGeneratingContent, setIsGeneratingContent] = useState(false);
-    const [duration, setDuration] = useState([1]);
     const [isAiContent, setIsAiContent] = useState(false);
-    const [tone, setTone] = useState('casual');
-    const [targetAudience, setTargetAudience] = useState('general');
-    const [style, setStyle] = useState('conversational');
 
-    const generateAIContent = async () => {
-        if (!title) {
-            toast({
-                title: 'Please enter a title first',
-                variant: 'destructive'
-            });
-            return;
-        }
-
-        try {
-            setIsGeneratingContent(true);
-            const Final_Gemini_Prompt = Gemini_Prompt
-                .replace('{title}', title)
-                .replace('{language}', selectedLanguage)
-                .replace('{duration}', duration[0].toString())
-                .replace('{tone}', tone)
-                .replace('{targetAudience}', targetAudience)
-                .replace('{style}', style);
-
-            console.log(Final_Gemini_Prompt);
-            const result = await chatSession.sendMessage(Final_Gemini_Prompt);
-            const response = await result.response;
-            const text = response.text();
-
-            try {
-                const content = JSON.parse(text);
-                form.setValue("podcastDescription", content.description);
-                setVoicePrompt(content.script);
-
-                toast({
-                    title: 'AI content generated successfully',
-                    description: 'Description and script have been updated'
-                });
-            } catch (parseError) {
-                console.error('Error parsing AI response:', parseError);
-                toast({
-                    title: 'Error processing AI response',
-                    description: 'The AI response was not in the expected format',
-                    variant: 'destructive'
-                });
-            }
-        } catch (error) {
-            console.error('Error generating content:', error);
-            let errorMessage = 'Failed to generate content';
-
-            // Handle specific Gemini API errors
-            if (error instanceof Error) {
-                if (error.message.includes('model is overloaded')) {
-                    errorMessage = 'AI service is temporarily busy. Please try again in a moment.';
-                } else if (error.message.includes('fetch')) {
-                    errorMessage = 'Network error. Please check your connection.';
-                }
-            }
-
-            toast({
-                title: 'Error',
-                description: errorMessage,
-                variant: 'destructive'
-            });
-        } finally {
-            setIsGeneratingContent(false);
-        }
-    };
 
     return (
         <div className="flex flex-col gap-4">

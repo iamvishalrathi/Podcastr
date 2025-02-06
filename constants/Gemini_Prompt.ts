@@ -8,7 +8,8 @@ Content Parameters:
 Return the response in the following JSON format:
 {
     "description": "engaging podcast description here",
-    "script": "continuous monologue script here"
+    "script": "continuous monologue script here",
+    "thumbnailPrompt": "brief description for thumbnail image generation"
 }
 
 Script Guidelines:
