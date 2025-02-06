@@ -316,7 +316,9 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
             <div className="relative aspect-video rounded-xl overflow-hidden bg-black-1/20
               ring-2 ring-white/5 shadow-[0_0_30px_-15px_rgba(0,0,0,0.8)]
-              backdrop-blur-sm group/image">
+              backdrop-blur-sm group/image
+              before:absolute before:inset-0 before:bg-gradient-to-br before:from-orange-1/5 before:to-transparent before:opacity-0
+              before:group-hover/image:opacity-100 before:transition-all before:duration-500">
               {isImageLoading ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-black-1/60 backdrop-blur-sm">
                   <div className="flex flex-col items-center gap-4">
@@ -338,10 +340,19 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                 </div>
               ) : image ? (
                 <>
-                  <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/10" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/10 
+                    transition-opacity duration-500 group-hover/image:opacity-0" 
+                  />
+                  
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-1/20 via-transparent to-orange-1/20
+                    animate-[gradient_3s_ease_infinite] opacity-0 group-hover/image:opacity-100 transition-opacity duration-500" 
+                  />
+                  
                   <div className="absolute inset-0">
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-orange-1/5 via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-orange-1/5 via-transparent to-transparent" />
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-orange-1/10 via-transparent to-transparent
+                      group-hover/image:scale-150 transition-transform duration-700" />
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-orange-1/10 via-transparent to-transparent
+                      group-hover/image:scale-150 transition-transform duration-700" />
                   </div>
 
                   <Image
@@ -350,15 +361,17 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                     height={300}
                     className={cn(
                       "w-full h-full object-cover transition-all duration-700",
-                      "group-hover/image:scale-105",
-                      "group-hover/image:rotate-1"
+                      "group-hover/image:scale-110",
+                      "group-hover/image:rotate-2",
+                      "filter group-hover/image:brightness-110"
                     )}
                     alt="thumbnail"
                     priority
                   />
 
                   <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.8)_0%,transparent_50%,rgba(0,0,0,0.2)_100%)]
-                    opacity-0 group-hover/image:opacity-100 transition-all duration-500" />
+                    opacity-0 group-hover/image:opacity-100 transition-all duration-500
+                    scale-110 group-hover/image:scale-100" />
 
                   <div className="absolute top-3 left-3 z-10">
                     {isAiGenerated ? (
@@ -403,9 +416,19 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
                   <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),
                     linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]
-                    bg-[size:20px_20px] opacity-40" />
+                    bg-[size:20px_20px] opacity-0 group-hover/image:opacity-40
+                    transition-opacity duration-500
+                    scale-95 group-hover/image:scale-100" />
                 </>
-              ) : null}
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-black-1/5 to-black-1/10">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-1/5 to-transparent
+                    animate-[shimmer_2s_infinite] bg-[length:200%_100%]" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full border-2 border-orange-1/20 animate-pulse" />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
