@@ -86,6 +86,9 @@ const CreatePodcast = () => {
     // Add new state for thumbnail prompts
     const [thumbnailPrompts, setThumbnailPrompts] = useState<string[]>([]);
 
+    // Add new state for note
+    const [note, setNote] = useState("");
+
     // 2. Define a submit handler.
     async function onSubmit(data: z.infer<typeof formSchema>) {
         try {
@@ -141,7 +144,8 @@ const CreatePodcast = () => {
                 .replace('{duration}', duration[0].toString())
                 .replace('{tone}', tone)
                 .replace('{targetAudience}', targetAudience)
-                .replace('{style}', style);
+                .replace('{style}', style)
+                .replace('{note}', note || 'No additional notes');
 
             console.log(Final_Gemini_Prompt);
             const result = await chatSession.sendMessage(Final_Gemini_Prompt);
@@ -308,6 +312,8 @@ const CreatePodcast = () => {
                             style={style}
                             generateAIContent={generateAIContent}
                             isGeneratingContent={isGeneratingContent}
+                            note={note}
+                            setNote={setNote}
                         />
 
                         <div className="grid">

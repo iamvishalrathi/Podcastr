@@ -4,6 +4,7 @@ Content Parameters:
 - Tone: {tone}
 - Target Audience: {targetAudience}
 - Style: {style}
+- Additional Notes: {note}
 
 Return the response in the following JSON format:
 {

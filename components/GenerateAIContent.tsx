@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toneOptions, targetAudienceOptions, styleOptions } from "@/constants/AIContent";
+import { Textarea } from "@/components/ui/textarea";
+
 interface GenerateAIContentProps {
     title: string;
     setTone: (value: string) => void;
@@ -18,8 +20,9 @@ interface GenerateAIContentProps {
     duration: number[];
     generateAIContent: () => void;
     isGeneratingContent: boolean;
+    note: string;
+    setNote: (value: string) => void;
 }
-
 
 const GenerateAIContent = ({
     title,
@@ -29,14 +32,14 @@ const GenerateAIContent = ({
     targetAudience,
     setStyle,
     style,
-
     setDuration,
     duration,
     generateAIContent,
     isGeneratingContent,
+    note,
+    setNote,
 }: GenerateAIContentProps) => {
     const [isAiContent, setIsAiContent] = useState(false);
-
 
     return (
         <div className="flex flex-col gap-4">
@@ -157,6 +160,19 @@ const GenerateAIContent = ({
                                     <span>10 min</span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2.5 md:col-span-2">
+                            <Label className="text-16 font-bold text-white-1">
+                                Additional Notes (Optional)
+                            </Label>
+                            <Textarea
+                                className="input-class font-light focus-visible:ring-offset-orange-1 min-h-[100px] 
+                                    bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200"
+                                placeholder="Add any specific requirements or points you want to include in the content..."
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
+                            />
                         </div>
                     </div>
 
