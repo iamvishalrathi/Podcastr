@@ -30,6 +30,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   const imageRef = useRef<HTMLInputElement>(null); //To store Img ref
   const { toast } = useToast();
   const handleGenerateThumbnail = useAction(api.freepik.generateThumbnailAction)
+  const [isAiGenerated, setIsAiGenerated] = useState(false);
 
   //To upload Image & fetch uploaded url
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
@@ -51,6 +52,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   //Image Handler Func
   const handleImage = async (blob: Blob, fileName: string, isAI: boolean) => {
     setImage('');
+    setIsAiGenerated(isAI);
 
     try {
       await deletePreviousImage();
@@ -307,7 +309,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                     opacity-0 group-hover/image:opacity-100 transition-all duration-500" />
 
                   <div className="absolute top-3 left-3 z-10">
-                    {isAiThumbnail ? (
+                    {isAiGenerated ? (
                       <div className="flex items-center gap-2 px-3 py-1.5 
                         bg-gradient-to-r from-orange-1 to-orange-400 
                         backdrop-blur-md rounded-full border border-orange-1/50 
