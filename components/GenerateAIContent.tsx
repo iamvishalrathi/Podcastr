@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toneOptions, targetAudienceOptions, styleOptions } from "@/constants/AIContent";
 import { Textarea } from "@/components/ui/textarea";
+import { languageOptions } from "@/constants/Language_Options";
 
 interface GenerateAIContentProps {
     title: string;
@@ -22,6 +23,8 @@ interface GenerateAIContentProps {
     isGeneratingContent: boolean;
     note: string;
     setNote: (value: string) => void;
+    selectedLanguage: string;
+    setSelectedLanguage: (value: string) => void;
 }
 
 const GenerateAIContent = ({
@@ -38,6 +41,8 @@ const GenerateAIContent = ({
     isGeneratingContent,
     note,
     setNote,
+    selectedLanguage,
+    setSelectedLanguage,
 }: GenerateAIContentProps) => {
     const [isAiContent, setIsAiContent] = useState(false);
 
@@ -64,6 +69,29 @@ const GenerateAIContent = ({
                 >
                     Write custom content
                 </Button>
+            </div>
+
+            {/* Language Selection - Always visible */}
+            <div className="flex flex-col gap-2.5">
+                <Label className="text-16 font-bold text-white-1">
+                    Content Language
+                </Label>
+                <Select onValueChange={setSelectedLanguage} defaultValue={selectedLanguage}>
+                    <SelectTrigger className="bg-black-1 border-none text-gray-1">
+                        <SelectValue placeholder="Select language" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-black-1 text-white-1">
+                        {languageOptions.map((option) => (
+                            <SelectItem
+                                key={option.value}
+                                value={option.value}
+                                className="focus:bg-orange-1"
+                            >
+                                {option.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
 
             {isAiContent && (

@@ -81,13 +81,14 @@ const CreatePodcast = () => {
         },
     });
 
-    const [selectedLanguage, setSelectedLanguage] = useState('english');
-
     // Add new state for thumbnail prompts
     const [thumbnailPrompts, setThumbnailPrompts] = useState<string[]>([]);
 
     // Add new state for note
     const [note, setNote] = useState("");
+
+    // Add new state for language
+    const [selectedLanguage, setSelectedLanguage] = useState('english');
 
     // 2. Define a submit handler.
     async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -217,36 +218,7 @@ const CreatePodcast = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <div className="grid gap-8">
-                            {/* Title Section */}
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-2">
-                                    <div className="h-4 w-1 bg-orange-1 rounded-full" />
-                                    <h2 className="text-lg font-semibold text-white-1">Basic Information</h2>
-                                </div>
-                                
-                                <FormField
-                                    control={form.control}
-                                    name="podcastTitle"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-white-1">
-                                                Podcast Title
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    className="input-class focus-visible:ring-offset-orange-1 h-12"
-                                                    placeholder="Enter your podcast title..."
-                                                    suppressHydrationWarning
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage className="text-white-1" />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            {/* Voice Selection */}
+                            {/* Voice Selection - Moved to top */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2">
                                     <div className="h-4 w-1 bg-orange-1 rounded-full" />
@@ -281,27 +253,36 @@ const CreatePodcast = () => {
                                             </SelectContent>
                                         </Select>
                                     </div>
-
-                                    <div className="space-y-2">
-                                        <Label className="text-white-1">Content Language</Label>
-                                        <Select onValueChange={setSelectedLanguage} defaultValue="english">
-                                            <SelectTrigger className="input-class h-12">
-                                                <SelectValue placeholder="Select Language" />
-                                            </SelectTrigger>
-                                            <SelectContent className="max-h-[300px] bg-black-1 text-white-1 border-gray-800">
-                                                {languageOptions.map((lang) => (
-                                                    <SelectItem
-                                                        key={lang.value}
-                                                        value={lang.value}
-                                                        className="hover:bg-orange-1 hover:text-white"
-                                                    >
-                                                        {lang.label} ({lang.native})
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
                                 </div>
+                            </div>
+
+                            {/* Basic Information */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="h-4 w-1 bg-orange-1 rounded-full" />
+                                    <h2 className="text-lg font-semibold text-white-1">Basic Information</h2>
+                                </div>
+                                
+                                <FormField
+                                    control={form.control}
+                                    name="podcastTitle"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-white-1">
+                                                Podcast Title
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    className="input-class focus-visible:ring-offset-orange-1 h-12"
+                                                    placeholder="Enter your podcast title..."
+                                                    suppressHydrationWarning
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage className="text-white-1" />
+                                        </FormItem>
+                                    )}
+                                />
                             </div>
 
                             {/* Content Generation */}
@@ -326,6 +307,8 @@ const CreatePodcast = () => {
                                         isGeneratingContent={isGeneratingContent}
                                         note={note}
                                         setNote={setNote}
+                                        selectedLanguage={selectedLanguage}
+                                        setSelectedLanguage={setSelectedLanguage}
                                     />
                                 </div>
 
