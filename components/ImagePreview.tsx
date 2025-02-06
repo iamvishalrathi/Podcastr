@@ -68,9 +68,12 @@ const ImagePreview = ({
                     <span className="text-base font-medium text-orange-1">{progress}%</span>
                   </div>
                 </div>
-                <p className="text-sm font-medium text-white/90">
-                  {isAiThumbnail ? 'Generating Thumbnail...' : 'Uploading Image...'}
-                </p>
+                <div className="flex flex-col items-center gap-1">
+                  <p className="text-sm font-semibold text-white">
+                    {isAiThumbnail ? 'Generating Thumbnail...' : 'Uploading Image...'}
+                  </p>
+                  <span className="text-xs text-orange-1/80">Please wait a moment</span>
+                </div>
               </div>
             </div>
           ) : image ? (
