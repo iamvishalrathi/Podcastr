@@ -421,12 +421,34 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                     scale-95 group-hover/image:scale-100" />
                 </>
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-black-1/5 to-black-1/10">
+                <div className="absolute inset-0 overflow-hidden">
+                  {/* Gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-black-1/10 to-black-1/5" />
+                  
+                  {/* Placeholder thumbnail */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-orange-1/10 via-orange-1/5 to-transparent
+                      animate-pulse">
+                      <div className="w-full h-full flex items-center justify-center">
+                        <svg 
+                          className="w-16 h-16 text-orange-1/20" 
+                          fill="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Shimmer overlay */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-1/5 to-transparent
                     animate-[shimmer_2s_infinite] bg-[length:200%_100%]" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full border-2 border-orange-1/20 animate-pulse" />
-                  </div>
+
+                  {/* Grid overlay */}
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),
+                    linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]
+                    bg-[size:20px_20px] opacity-20" />
                 </div>
               )}
             </div>
