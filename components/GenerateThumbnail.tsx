@@ -160,7 +160,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   };
 
   return (
-    <>
+    <div className="space-y-6 animate-in fade-in-50">
       <div className="generate_thumbnail">
         <Button
           type="button"
@@ -201,7 +201,8 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                   className={cn(
                     "w-full justify-start text-left font-normal",
                     "hover:bg-orange-1/10 transition-colors duration-200",
-                    imagePrompt === prompt && "bg-orange-1 text-white"
+                    "bg-black-1/50 hover:bg-black-1/70 border-black-6",
+                    imagePrompt === prompt && "bg-orange-1 hover:bg-orange-1/90 text-white border-none"
                   )}
                   onClick={() => setImagePrompt(prompt)}
                 >
@@ -212,17 +213,36 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             </div>
           </div>
 
-          <Textarea
-            className="input-class font-light focus-visible:ring-offset-orange-1 min-h-[120px] 
-              bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200
-              disabled:opacity-50 disabled:cursor-not-allowed"
-            placeholder="Customize the selected prompt or write your own..."
-            value={imagePrompt}
-            onChange={(e) => setImagePrompt(e.target.value)}
-            disabled={isImageLoading}
-          />
+          <div className="space-y-2">
+            <Label className="text-16 font-bold text-white-1">
+              Customize Prompt
+            </Label>
+            <Textarea
+              className="input-class font-light focus-visible:ring-offset-orange-1 min-h-[120px] 
+                bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200
+                disabled:opacity-50 disabled:cursor-not-allowed
+                border border-black-6"
+              placeholder="Customize the selected prompt or write your own..."
+              value={imagePrompt}
+              onChange={(e) => setImagePrompt(e.target.value)}
+              disabled={isImageLoading}
+            />
+          </div>
 
           <div className="space-y-4">
+            {isImageLoading && (
+              <div className="flex flex-col gap-3 bg-black-1/50 p-5 rounded-xl border border-black-6">
+                <Progress
+                  value={progress}
+                  className="h-2.5 bg-black-1/50"
+                />
+                <div className="flex items-center gap-2 text-sm text-gray-1">
+                  <Loader size={14} className="animate-spin" />
+                  <p>Generating thumbnail... {progress}%</p>
+                </div>
+              </div>
+            )}
+
             <div className="w-full max-w-[200px]">
               <Button
                 type="submit"
@@ -245,62 +265,63 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
           </div>
         </div>
       ) : (
-        <div
-          onClick={() => !isImageLoading && imageRef?.current?.click()}
-          className={cn(
-            "image_div hover:border-orange-1/50 hover:bg-black-1/30",
-            "transition-all duration-200 group animate-in fade-in-50",
-            isImageLoading && "opacity-50 cursor-not-allowed hover:border-gray-700 hover:bg-transparent"
-          )}
-        >
-          <Input
-            type="file"
-            className="hidden"
-            ref={imageRef}
-            onChange={(e) => uploadImage(e)}
-            accept="image/*"
-            disabled={isImageLoading}
-          />
-          
-          {isImageLoading ? (
-            <div className="flex flex-col gap-3 animate-in fade-in-50">
+        <div className="space-y-4">
+          <div
+            onClick={() => !isImageLoading && imageRef?.current?.click()}
+            className={cn(
+              "image_div hover:border-orange-1/50 hover:bg-black-1/30",
+              "transition-all duration-200 group animate-in fade-in-50",
+              "border-black-6 bg-black-1/50",
+              isImageLoading && "opacity-50 cursor-not-allowed hover:border-gray-700 hover:bg-transparent"
+            )}
+          >
+            <Input
+              type="file"
+              className="hidden"
+              ref={imageRef}
+              onChange={(e) => uploadImage(e)}
+              accept="image/*"
+              disabled={isImageLoading}
+            />
+            
+            {isImageLoading ? (
+              <div className="flex flex-col gap-3 animate-in fade-in-50">
+                <Progress
+                  value={progress}
+                  className="h-2.5 w-48 bg-black-1/50"
+                />
+                <div className="flex items-center gap-2 text-sm text-gray-1">
+                  <Loader size={14} className="animate-spin" />
+                  <p>Uploading image... {progress}%</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-1">
+                <h2 className={cn(
+                  "text-12 font-bold text-orange-1 group-hover:text-orange-400",
+                  "transition-colors duration-200"
+                )}>
+                  Click to upload
+                </h2>
+                <p className="text-12 font-normal text-gray-1">
+                  SVG, PNG, JPG, or GIF (max. 1080x1080px)
+                </p>
+              </div>
+            )}
+          </div>
+
+          {isImageLoading && (
+            <div className="flex flex-col gap-3 bg-black-1/50 p-5 rounded-xl border border-black-6">
               <Progress
                 value={progress}
-                className="h-2.5 w-48 bg-black-1/50"
+                className="h-2.5 bg-black-1/50"
               />
               <div className="flex items-center gap-2 text-sm text-gray-1">
                 <Loader size={14} className="animate-spin" />
                 <p>Uploading image... {progress}%</p>
               </div>
             </div>
-          ) : (
-            <div className="flex flex-col items-center gap-1">
-              <h2 className={cn(
-                "text-12 font-bold text-orange-1 group-hover:text-orange-400",
-                "transition-colors duration-200"
-              )}>
-                Click to upload
-              </h2>
-              <p className="text-12 font-normal text-gray-1">
-                SVG, PNG, JPG, or GIF (max. 1080x1080px)
-              </p>
-            </div>
           )}
-        </div>
-      )}
-
-      {isImageLoading && (
-        <div className="flex flex-col gap-3 bg-black-1/50 p-5 rounded-xl animate-in fade-in-50">
-          <Progress
-            value={progress}
-            className="h-2.5 bg-black-1/50"
-          />
-          <div className="flex items-center gap-2 text-sm text-gray-1">
-            <Loader size={14} className="animate-spin" />
-            <p>
-              {isAiThumbnail ? 'Generating thumbnail' : 'Uploading image'}... {progress}%
-            </p>
-          </div>
         </div>
       )}
 
@@ -420,7 +441,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
