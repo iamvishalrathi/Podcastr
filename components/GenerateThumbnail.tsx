@@ -276,26 +276,31 @@ const GenerateThumbnail = ({
       {isAiThumbnail ? (
         <div className="flex flex-col gap-5 animate-in fade-in-50">
           {thumbnailPrompts.length > 0 && (
-            <div className="mt-5 flex flex-col gap-2.5">
-              <div className="flex items-center justify-between">
-                <Label className="text-14 sm:text-16 font-bold text-white-1 flex items-center gap-2">
-                  <div className="h-5 w-1 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
-                  Select a Thumbnail Prompt
-                </Label>
-                <span className="text-sm font-normal text-gray-1">{thumbnailPrompts.length} suggestions</span>
+            <div className="mt-8 flex flex-col gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="h-6 w-1.5 flex-shrink-0 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+                  <Label className="text-16 sm:text-18 font-bold text-white-1 leading-tight">
+                    Select a Thumbnail Prompt
+                  </Label>
+                </div>
+                <span className="text-sm font-medium text-gray-1 whitespace-nowrap px-3 py-1.5 
+                  bg-black-1/40 rounded-full border border-white/5">
+                  {thumbnailPrompts.length} suggestions
+                </span>
               </div>
 
-              <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto pr-2">
+              <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-3">
                 {thumbnailPrompts.map((prompt, index) => (
                   <Button
                     key={index}
                     type="button"
                     variant={imagePrompt === prompt ? "default" : "outline"}
                     className={cn(
-                      "w-full text-left font-normal text-sm sm:text-base",
+                      "w-full text-center font-normal text-sm sm:text-base",
                       "transition-all duration-300 group/prompt",
                       "rounded-xl relative overflow-hidden",
-                      "py-3 px-4",
+                      "py-4 px-5",
                       "hover:scale-[1.01]",
                       imagePrompt === prompt
                         ? "bg-gradient-to-r from-orange-1 to-orange-400 text-white border-none shadow-lg hover:shadow-orange-1/20"
@@ -303,39 +308,32 @@ const GenerateThumbnail = ({
                     )}
                     onClick={() => setImagePrompt(prompt)}
                   >
-                    {/* Shimmer effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover/prompt:translate-x-[100%] transition-transform duration-1000" />
-
-                    {/* Content wrapper */}
-                    <div className="flex gap-3 relative">
-                      {/* Number indicator */}
-                      <div
-                        className={cn(
-                          "flex-shrink-0 flex items-center justify-center size-6 rounded-full text-xs font-semibold",
-                          "transition-all duration-300 group-hover/prompt:scale-110",
-                          imagePrompt === prompt ? "bg-white/20 text-white" : "bg-orange-1/10 text-orange-1",
-                        )}
-                      >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent 
+                      translate-x-[-100%] group-hover/prompt:translate-x-[100%] transition-transform duration-1000" />
+                    
+                    <div className="flex items-start gap-4 relative min-h-[24px]">
+                      <div className={cn(
+                        "flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full text-xs font-semibold",
+                        "transition-all duration-300 group-hover/prompt:scale-110",
+                        imagePrompt === prompt 
+                          ? "bg-white/20 text-white" 
+                          : "bg-orange-1/10 text-orange-1"
+                      )}>
                         #{index + 1}
                       </div>
-
-                      {/* Prompt text with full content */}
+                      
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm sm:text-base leading-relaxed">{prompt}</p>
+                        <p className="text-sm sm:text-base leading-relaxed break-words whitespace-pre-wrap text-center">
+                          {prompt}
+                        </p>
                       </div>
-
-                      {/* Selection indicator */}
-                      <div
-                        className={cn(
-                          "flex-shrink-0 ml-2 flex items-center justify-center",
-                          "size-4 rounded-full transition-all duration-300",
-                          "opacity-0 scale-50 translate-x-4",
-                          imagePrompt === prompt && "opacity-100 scale-100 translate-x-0",
-                          "bg-white shadow-lg",
-                        )}
-                      >
-                        <div className="size-2 rounded-full bg-orange-1" />
-                      </div>
+                      
+                      {imagePrompt === prompt && (
+                        <div className="flex-shrink-0 ml-2 flex items-center justify-center w-5 h-5 rounded-full 
+                          bg-white shadow-lg">
+                          <div className="w-2.5 h-2.5 rounded-full bg-orange-1" />
+                        </div>
+                      )}
                     </div>
                   </Button>
                 ))}
@@ -343,15 +341,22 @@ const GenerateThumbnail = ({
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label className="text-16 font-bold text-white-1">
+          <div className="space-y-3 mt-6">
+            <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+              <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
               {thumbnailPrompts.length > 0 ? "Customize Prompt" : "Enter Prompt"}
             </Label>
             <Textarea
-              className="input-class font-light focus-visible:ring-offset-orange-1 min-h-[120px] 
-                bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200
-                disabled:opacity-50 disabled:cursor-not-allowed
-                border border-black-6 rounded-lg p-3"
+              className={cn(
+                "input-class font-light min-h-[120px] w-full",
+                "bg-black-1/50 hover:bg-black-1/70",
+                "transition-all duration-200",
+                "disabled:opacity-50 disabled:cursor-not-allowed",
+                "border border-black-6 rounded-xl",
+                "p-4",
+                "focus-visible:ring-offset-orange-1",
+                "placeholder:text-gray-1/70"
+              )}
               placeholder={
                 thumbnailPrompts.length > 0
                   ? "Customize the selected prompt or write your own..."
