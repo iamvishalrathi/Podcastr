@@ -16,18 +16,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <ConvexClerkProvider>
-      <html lang="en">
-        <AudioProvider>
-          <body className={`${manrope.className}`}>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className="min-h-screen bg-background antialiased"
+        suppressHydrationWarning
+      >
+        <ConvexClerkProvider>
+          <AudioProvider>
             {children}
-          </body>
-        </AudioProvider>
-      </html>
-    </ConvexClerkProvider>
-  );
+          </AudioProvider>
+        </ConvexClerkProvider>
+      </body>
+    </html>
+  )
 }

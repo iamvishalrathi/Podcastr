@@ -38,6 +38,7 @@ const ImageDialogContent = React.forwardRef<
   }
 >(({ className, children, image, ...props }, ref) => {
   const [isLoading, setIsLoading] = React.useState(true);
+  const isAnimated = image.endsWith('.gif') || image.includes('convex.cloud');
 
   return (
     <DialogPortal>
@@ -59,6 +60,11 @@ const ImageDialogContent = React.forwardRef<
         onClick={(e) => e.stopPropagation()}
         {...props}
       >
+        <DialogTitle className="sr-only">Image Preview</DialogTitle>
+        <DialogDescription className="sr-only">
+          Full size preview of the selected image
+        </DialogDescription>
+
         <div className="relative group">
           <Image
             src={image}
@@ -72,7 +78,7 @@ const ImageDialogContent = React.forwardRef<
             )}
             alt="Preview"
             priority
-            unoptimized={image.endsWith('.gif')}
+            unoptimized={isAnimated}
             onLoadingComplete={() => setIsLoading(false)}
             onClick={(e) => e.stopPropagation()}
           />
