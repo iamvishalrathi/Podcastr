@@ -18,6 +18,7 @@ import { Progress } from './ui/progress';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 import ImagePreview from './ImagePreview';
 import { LoadingSkeleton } from './ImagePreview';
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 interface GenerateThumbnailProps {
   setImage: (url: string) => void;
@@ -382,15 +383,12 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             onCloseAutoFocus={(e) => e.preventDefault()}
             onClick={(e) => e.stopPropagation()}
           >
-            <DialogTitle className="sr-only">
-              Thumbnail Preview
-            </DialogTitle>
+            <DialogPrimitive.Close className="hidden" />
             
-            <DialogDescription className="sr-only">
-              Preview your podcast thumbnail image in full size. You can download or close the preview using the buttons in the top right corner.
-            </DialogDescription>
-            
-            <div className="relative group">
+            <div 
+              className="relative group w-full h-full" 
+              onClick={(e) => e.stopPropagation()}
+            >
               {isFullPreviewLoading && <LoadingSkeleton />}
               <Image
                 src={image}
@@ -408,8 +406,9 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
               />
               
               {!isFullPreviewLoading && (
-                <div className="absolute top-4 right-4 flex items-center gap-2 
-                  opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                <div 
+                  className="absolute top-4 right-4 flex items-center gap-2 
+                    opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Button
@@ -421,6 +420,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                       shadow-[0_4px_10px_rgba(0,0,0,0.5)]
                       transition-all duration-300 hover:scale-110"
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       handleDownload(e);
                     }}
@@ -438,6 +438,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                       shadow-[0_4px_10px_rgba(0,0,0,0.5)]
                       transition-all duration-300 hover:scale-110"
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       setIsPreviewOpen(false);
                     }}
