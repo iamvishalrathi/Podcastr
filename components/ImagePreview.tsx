@@ -115,7 +115,6 @@ const PreviewControls = ({
       <PreviewActionButton
         icon={Trash2}
         onClick={handleDelete}
-        className="text-red-400 hover:text-red-300"
         aria-label="Delete image"
       />
     </div>
