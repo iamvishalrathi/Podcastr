@@ -196,7 +196,10 @@ const useGeneratePodcast = ({
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     try {
       if (audioStorageId) {
         await deleteFile({ storageId: audioStorageId });
@@ -306,12 +309,15 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
           </Label>
           {props.audio && (
             <Button
-              onClick={handleDelete}
+              onClick={(e) => handleDelete(e)}
               variant="destructive"
               size="sm"
-              className="gap-2 hover:scale-105 transition-all duration-300 
-                bg-red-500/90 hover:bg-red-500 rounded-full px-4
-                shadow-lg hover:shadow-red-500/20"
+              className={cn(
+                "gap-2 self-end",
+                "hover:scale-105 transition-all duration-300",
+                "bg-red-500/90 hover:bg-red-500 rounded-full px-4",
+                "shadow-lg hover:shadow-red-500/20"
+              )}
             >
               <Trash2 size={16} className="text-white" />
               <span className="text-white">Delete Audio</span>
@@ -352,10 +358,19 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
                 }
               </Button>
               <div className="flex-1 space-y-2">
-                <Progress
-                  value={(currentTime / duration) * 100}
-                  className="h-2 bg-black-1/50"
-                />
+                <div className="relative h-2 bg-black-1/50 rounded-full overflow-hidden">
+                  <div className="absolute inset-0 bg-black-1/50" />
+                  
+                  <div 
+                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-orange-1 to-orange-400 
+                      transition-all duration-150 ease-out rounded-full"
+                    style={{ 
+                      width: `${(currentTime / duration) * 100}%`,
+                      transform: 'translateZ(0)'
+                    }} 
+                  />
+                </div>
+
                 {isMounted && (
                   <div className="flex justify-between text-sm text-gray-1">
                     <span>{formatTime(currentTime)}</span>
@@ -364,6 +379,21 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
                 )}
               </div>
             </div>
+
+            <Button
+              onClick={(e) => handleDelete(e)}
+              variant="destructive"
+              size="sm"
+              className={cn(
+                "gap-2 self-end",
+                "hover:scale-105 transition-all duration-300",
+                "bg-red-500/90 hover:bg-red-500 rounded-full px-4",
+                "shadow-lg hover:shadow-red-500/20"
+              )}
+            >
+              <Trash2 size={16} className="text-white" />
+              <span className="text-white">Delete Audio</span>
+            </Button>
 
             <audio
               ref={audioRef}
