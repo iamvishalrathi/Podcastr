@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toneOptions, targetAudienceOptions, styleOptions } from "@/constants/AIContent";
 import { Textarea } from "@/components/ui/textarea";
 import { languageOptions } from "@/constants/Language_Options";
+import { ToggleButton } from "@/components/ui/toggle-button";
+import { ToggleButtonGroup } from "@/components/ui/toggle-button-group";
 
 interface GenerateAIContentProps {
     title: string;
@@ -48,55 +50,23 @@ const GenerateAIContent = ({
 
     return (
         <div className="flex flex-col gap-6 w-full">
-            {/* Toggle Buttons with better spacing */}
-            <div className="generate_thumbnail flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-[600px] mx-auto">
-                <Button
-                    type="button"
-                    variant={isAiContent ? "default" : "outline"}
+            <ToggleButtonGroup>
+                <ToggleButton
+                    isActive={isAiContent}
                     onClick={() => setIsAiContent(true)}
-                    className={cn(
-                        'w-full sm:w-auto text-sm sm:text-base font-medium',
-                        'transition-all duration-300 hover:scale-[1.02]',
-                        'rounded-xl h-12 px-6',
-                        isAiContent ? 
-                            'bg-gradient-to-r from-orange-1 to-orange-400 text-white shadow-lg hover:shadow-orange-1/20' : 
-                            'text-orange-1 border-orange-1/20 hover:bg-orange-1/10'
-                    )}
+                    activeColor="orange"
                 >
-                    <div className="flex items-center justify-center gap-2">
-                        <div className={cn(
-                            "size-2 rounded-full",
-                            isAiContent ? "bg-white" : "bg-orange-1",
-                            "transition-all duration-300",
-                            isAiContent && "animate-pulse"
-                        )} />
-                        Use AI to generate content
-                    </div>
-                </Button>
-                <Button
-                    type="button"
-                    variant={!isAiContent ? "default" : "outline"}
+                    Use AI to generate content
+                </ToggleButton>
+
+                <ToggleButton
+                    isActive={!isAiContent}
                     onClick={() => setIsAiContent(false)}
-                    className={cn(
-                        'w-full sm:w-auto text-sm sm:text-base font-medium',
-                        'transition-all duration-300 hover:scale-[1.02]',
-                        'rounded-xl h-12',
-                        !isAiContent ? 
-                            'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-blue-500/20' : 
-                            'text-blue-500 border-blue-500/20 hover:bg-blue-500/10'
-                    )}
+                    activeColor="blue"
                 >
-                    <div className="flex items-center gap-2">
-                        <div className={cn(
-                            "size-2 rounded-full",
-                            !isAiContent ? "bg-white" : "bg-blue-500",
-                            "transition-all duration-300",
-                            !isAiContent && "animate-pulse"
-                        )} />
-                        Write custom content
-                    </div>
-                </Button>
-            </div>
+                    Write custom content
+                </ToggleButton>
+            </ToggleButtonGroup>
 
             {/* Main Content Area */}
             <div className="space-y-8">

@@ -14,6 +14,8 @@ import type { Id } from "@/convex/_generated/dataModel"
 import { Dialog } from "./ui/dialog"
 import ImagePreview from "./ImagePreview"
 import { ImageDialogContent } from "./ui/dialog"
+import { ToggleButton } from "@/components/ui/toggle-button"
+import { ToggleButtonGroup } from "@/components/ui/toggle-button-group"
 
 interface GenerateThumbnailProps {
   setImage: (url: string) => void
@@ -246,32 +248,23 @@ const GenerateThumbnail = ({
 
   return (
     <div className="space-y-6 animate-in fade-in-50 w-full max-w-[800px] mx-auto px-4 sm:px-6">
-      <div className="generate_thumbnail flex flex-col sm:flex-row gap-2 sm:gap-4">
-        <Button
-          type="button"
-          variant="plain"
+      <ToggleButtonGroup>
+        <ToggleButton
+          isActive={isAiThumbnail}
           onClick={() => setIsAiThumbnail(true)}
-          className={cn("w-full sm:w-auto text-sm sm:text-base px-4 py-2 rounded-full transition-all duration-300", {
-            "bg-orange-1 text-white": isAiThumbnail,
-            "bg-black-6 text-gray-300": !isAiThumbnail,
-          })}
-          disabled={isImageLoading}
+          activeColor="orange"
         >
           Use AI to generate thumbnail
-        </Button>
-        <Button
-          type="button"
-          variant="plain"
+        </ToggleButton>
+
+        <ToggleButton
+          isActive={!isAiThumbnail}
           onClick={() => setIsAiThumbnail(false)}
-          className={cn("w-full sm:w-auto text-sm sm:text-base px-4 py-2 rounded-full transition-all duration-300", {
-            "bg-orange-1 text-white": !isAiThumbnail,
-            "bg-black-6 text-gray-300": isAiThumbnail,
-          })}
-          disabled={isImageLoading}
+          activeColor="blue"
         >
-          Upload custom image
-        </Button>
-      </div>
+          Upload custom thumbnail
+        </ToggleButton>
+      </ToggleButtonGroup>
 
       {isAiThumbnail ? (
         <div className="flex flex-col gap-5 animate-in fade-in-50">
