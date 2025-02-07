@@ -96,21 +96,24 @@ const GenerateAIContent = ({
 
             {isAiContent && (
                 <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-2.5">
-                            <Label className="text-16 font-bold text-white-1">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Content Tone */}
+                        <div className="flex flex-col gap-3">
+                            <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                 Content Tone
                             </Label>
                             <Select onValueChange={setTone} defaultValue={tone}>
-                                <SelectTrigger className="bg-black-1 border-none text-gray-1">
+                                <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+                                    transition-all duration-200 h-12 rounded-xl text-gray-1">
                                     <SelectValue placeholder="Select tone" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-black-1 text-white-1">
+                                <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
                                     {toneOptions.map((option) => (
                                         <SelectItem
                                             key={option.value}
                                             value={option.value}
-                                            className="focus:bg-orange-1"
+                                            className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
                                         >
                                             {option.label}
                                         </SelectItem>
@@ -119,20 +122,23 @@ const GenerateAIContent = ({
                             </Select>
                         </div>
 
-                        <div className="flex flex-col gap-2.5">
-                            <Label className="text-16 font-bold text-white-1">
+                        {/* Target Audience */}
+                        <div className="flex flex-col gap-3">
+                            <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                 Target Audience
                             </Label>
                             <Select onValueChange={setTargetAudience} defaultValue={targetAudience}>
-                                <SelectTrigger className="bg-black-1 border-none text-gray-1">
+                                <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+                                    transition-all duration-200 h-12 rounded-xl text-gray-1">
                                     <SelectValue placeholder="Select audience" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-black-1 text-white-1">
+                                <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
                                     {targetAudienceOptions.map((option) => (
                                         <SelectItem
                                             key={option.value}
                                             value={option.value}
-                                            className="focus:bg-orange-1"
+                                            className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
                                         >
                                             {option.label}
                                         </SelectItem>
@@ -141,20 +147,23 @@ const GenerateAIContent = ({
                             </Select>
                         </div>
 
-                        <div className="flex flex-col gap-2.5">
-                            <Label className="text-16 font-bold text-white-1">
+                        {/* Content Style */}
+                        <div className="flex flex-col gap-3">
+                            <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                 Content Style
                             </Label>
                             <Select onValueChange={setStyle} defaultValue={style}>
-                                <SelectTrigger className="bg-black-1 border-none text-gray-1">
+                                <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+                                    transition-all duration-200 h-12 rounded-xl text-gray-1">
                                     <SelectValue placeholder="Select style" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-black-1 text-white-1">
+                                <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
                                     {styleOptions.map((option) => (
                                         <SelectItem
                                             key={option.value}
                                             value={option.value}
-                                            className="focus:bg-orange-1"
+                                            className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
                                         >
                                             {option.label}
                                         </SelectItem>
@@ -163,16 +172,19 @@ const GenerateAIContent = ({
                             </Select>
                         </div>
 
+                        {/* Script Duration */}
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center justify-between">
-                                <Label className="text-16 font-bold text-white-1">
+                                <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                    <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                     Script Duration
                                 </Label>
-                                <span className="px-3 py-1 rounded-full bg-black-1 text-orange-1 font-bold text-sm">
+                                <span className="px-4 py-1.5 rounded-full bg-black-1/40 text-orange-1 
+                                    font-medium text-sm border border-orange-1/20">
                                     {duration[0]} {duration[0] === 1 ? 'minute' : 'minutes'}
                                 </span>
                             </div>
-                            <div className="px-1">
+                            <div className="px-2 py-4">
                                 <Slider
                                     value={duration}
                                     onValueChange={setDuration}
@@ -182,7 +194,7 @@ const GenerateAIContent = ({
                                     className="w-full"
                                     aria-label="Script Duration"
                                 />
-                                <div className="flex justify-between mt-2 text-xs text-gray-1">
+                                <div className="flex justify-between mt-3 text-sm text-gray-1">
                                     <span>1 min</span>
                                     <span>5 min</span>
                                     <span>10 min</span>
@@ -190,13 +202,22 @@ const GenerateAIContent = ({
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-2.5 md:col-span-2">
-                            <Label className="text-16 font-bold text-white-1">
+                        {/* Additional Notes */}
+                        <div className="md:col-span-2 space-y-3">
+                            <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                 Additional Notes (Optional)
                             </Label>
                             <Textarea
-                                className="input-class font-light focus-visible:ring-offset-orange-1 min-h-[100px] 
-                                    bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200"
+                                className={cn(
+                                    "min-h-[120px] w-full rounded-xl",
+                                    "bg-black-1/50 hover:bg-black-1/70",
+                                    "transition-all duration-200",
+                                    "border border-orange-1/10 hover:border-orange-1/30",
+                                    "focus:border-orange-1/50 focus:ring-1 focus:ring-orange-1/50",
+                                    "p-4",
+                                    "placeholder:text-gray-1/70"
+                                )}
                                 placeholder="Add any specific requirements or points you want to include in the content..."
                                 value={note}
                                 onChange={(e) => setNote(e.target.value)}
@@ -208,13 +229,20 @@ const GenerateAIContent = ({
                         type="button"
                         onClick={generateAIContent}
                         disabled={isGeneratingContent || !title}
-                        className="bg-orange-1 text-white-1 hover:bg-orange-2 w-full mt-2"
+                        className={cn(
+                            "w-full mt-6 rounded-xl",
+                            "bg-gradient-to-r from-orange-1 to-orange-400",
+                            "text-white font-semibold text-lg py-6",
+                            "transition-all duration-300 hover:scale-[1.02]",
+                            "shadow-lg hover:shadow-orange-1/20",
+                            "disabled:opacity-50 disabled:hover:scale-100"
+                        )}
                     >
                         {isGeneratingContent ? (
-                            <>
-                                Generating
-                                <Loader size={16} className="animate-spin ml-2" />
-                            </>
+                            <div className="flex items-center gap-3">
+                                <Loader size={20} className="animate-spin" />
+                                <span>Generating Content...</span>
+                            </div>
                         ) : (
                             "Generate AI Content"
                         )}

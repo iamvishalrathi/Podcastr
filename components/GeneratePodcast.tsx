@@ -280,9 +280,10 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
         />
       </div>
 
-      <div className={`flex flex-col gap-4 ${SLIDE_IN_ANIMATION}`}>
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Label className="text-lg font-bold text-white-1 tracking-tight">
+          <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+            <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
             Audio Preview
           </Label>
           {props.audio && (
@@ -290,7 +291,9 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
               onClick={handleDelete}
               variant="destructive"
               size="sm"
-              className="gap-2 hover:scale-105 transition-all duration-200 bg-red-500/90 hover:bg-red-500"
+              className="gap-2 hover:scale-105 transition-all duration-300 
+                bg-red-500/90 hover:bg-red-500 rounded-full px-4
+                shadow-lg hover:shadow-red-500/20"
             >
               <Trash2 size={16} className="text-white" />
               <span className="text-white">Delete Audio</span>
@@ -299,36 +302,41 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
         </div>
 
         {isGenerating && !props.audio && (
-          <div className={`flex flex-col gap-3 bg-black-1/50 p-5 rounded-xl ${FADE_IN_ANIMATION}`}>
-            <Progress
-              value={progress}
-              className="h-2.5 bg-black-1/50"
-            />
-            <div className="flex items-center gap-2 text-sm text-gray-1">
-              <Loader size={14} className="animate-spin" />
+          <div className="flex flex-col gap-3 bg-black-1/50 p-6 rounded-xl border border-white/5 
+            backdrop-blur-sm shadow-lg">
+            <Progress value={progress} className="h-3 bg-black-1/50" />
+            <div className="flex items-center gap-2.5 text-sm text-gray-1">
+              <Loader size={16} className="animate-spin text-orange-1" />
               <p>Generating audio... {progress}%</p>
             </div>
           </div>
         )}
 
         {props.audio && isMounted && (
-          <div className={`flex flex-col gap-4 bg-black-1/80 p-5 rounded-xl backdrop-blur-sm ${FADE_IN_ANIMATION}`}>
+          <div className="flex flex-col gap-4 bg-black-1/80 p-6 rounded-xl backdrop-blur-sm 
+            border border-white/10 shadow-lg">
             <div className="flex items-center gap-4">
               <Button
                 onClick={(e) => togglePlayPause(e)}
                 size="icon"
                 variant="ghost"
                 className={cn(
-                  "h-12 w-12 rounded-full bg-orange-1 hover:bg-orange-2 hover:scale-105 transition-all duration-300 shadow-lg",
+                  "h-14 w-14 rounded-full",
+                  "bg-gradient-to-r from-orange-1 to-orange-400",
+                  "hover:scale-110 transition-all duration-300",
+                  "shadow-lg hover:shadow-orange-1/20",
                   isPlaying && "animate-pulse ring-2 ring-orange-1/50 ring-offset-2 ring-offset-black"
                 )}
               >
-                {isPlaying ? <Square size={20} /> : <Play size={20} className="ml-1" />}
+                {isPlaying ? 
+                  <Square size={24} className="text-white" /> : 
+                  <Play size={24} className="ml-1 text-white" />
+                }
               </Button>
               <div className="flex-1 space-y-2">
                 <Progress
                   value={(currentTime / duration) * 100}
-                  className="h-1.5 bg-black-1/50"
+                  className="h-2 bg-black-1/50"
                 />
                 {isMounted && (
                   <div className="flex justify-between text-sm text-gray-1">
@@ -338,17 +346,10 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
                 )}
               </div>
             </div>
-            <audio
-              ref={audioRef}
-              src={props.audio}
-              className="hidden"
-              onLoadedMetadata={(e) => props.setAudioDuration(e.currentTarget.duration)}
-              onEnded={handleAudioEnded}
-            />
           </div>
         )}
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 mt-6">
           <Button
             onClick={generatePodcast}
             disabled={
@@ -359,26 +360,30 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
               estimatedCredits > 50
             }
             className={cn(
-              "bg-orange-1 text-white-1 hover:bg-orange-2 gap-2 py-6 text-lg font-medium",
-              "transition-all duration-200 hover:scale-[1.02] shadow-xl",
+              "bg-gradient-to-r from-orange-1 to-orange-400",
+              "text-white font-semibold gap-3 py-6 text-lg",
+              "transition-all duration-300 hover:scale-[1.02]",
+              "shadow-lg hover:shadow-orange-1/20",
+              "rounded-xl",
               "disabled:opacity-50 disabled:hover:scale-100"
             )}
           >
             {isGenerating ? (
               <>
                 Generating Audio
-                <Loader size={18} className="animate-spin" />
+                <Loader size={20} className="animate-spin" />
               </>
             ) : (
               <>
                 Generate Audio
-                <Mic size={18} className="animate-bounce" />
+                <Mic size={20} className="animate-bounce" />
               </>
             )}
           </Button>
 
           {estimatedCredits > 50 && (
-            <p className="text-sm text-red-500 bg-red-500/10 p-3 rounded-lg border border-red-500/20 animate-pulse">
+            <p className="text-sm text-red-500 bg-red-500/10 p-4 rounded-xl 
+              border border-red-500/20 animate-pulse shadow-lg">
               Text is too long and would require too many credits. Please reduce the length.
             </p>
           )}
