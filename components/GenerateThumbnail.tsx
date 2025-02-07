@@ -67,7 +67,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   };
 
   //Image Handler Func
-  const handleImage = async (blob: Blob, fileName: string, isAiGenerated: boolean = false) => {
+  const handleImage = async (blob: Blob, fileName: string, isAI: boolean = false) => {
     try {
       setIsImageLoading(true);
       setProgress(20);
@@ -90,9 +90,12 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       const imageUrl = await getImageUrl({ storageId });
       setImage(imageUrl!);
       
+      // Set the isAiGenerated state based on the parameter
+      setIsAiGenerated(isAI);
+      
       setProgress(100);
       
-      if (isAiGenerated) {
+      if (isAI) {
         toast({
           title: "Thumbnail generated successfully",
         });
@@ -124,7 +127,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       return;
     }
 
-    await handleImage(file, file.name, false);
+    await handleImage(file, file.name, false); // Explicitly set isAiGenerated to false
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -177,7 +180,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
       setProgress(60);
       const blob = await imgResponse.blob();
-      await handleImage(blob, `thumbnail-${uuidv4()}.png`, true);
+      await handleImage(blob, `thumbnail-${uuidv4()}.png`, true); // Set isAiGenerated to true
 
     } catch (error) {
       console.error("Error generating thumbnail:", error);
@@ -200,6 +203,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       }
       setImage("");
       setImageStorageId(null);
+      setIsAiGenerated(false); // Reset the AI generated state
       toast({
         title: "Thumbnail deleted successfully",
       });
