@@ -198,6 +198,7 @@ const CreatePodcast = () => {
             const result = await chatSession.sendMessage(Final_Gemini_Prompt);
             const response = await result.response;
             const text = response.text();
+            console.log(text);
 
             try {
                 const content = JSON.parse(text);
