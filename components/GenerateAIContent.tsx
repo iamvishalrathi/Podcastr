@@ -47,7 +47,7 @@ const GenerateAIContent = ({
     const [isAiContent, setIsAiContent] = useState(false);
 
     return (
-        <div className="flex flex-col gap-6 w-full max-w-[1200px] mx-auto px-4 sm:px-6 py-6">
+        <div className="flex flex-col gap-6 w-full">
             {/* Toggle Buttons with better spacing */}
             <div className="generate_thumbnail flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-[600px] mx-auto">
                 <Button
@@ -101,7 +101,7 @@ const GenerateAIContent = ({
             {/* Main Content Area */}
             <div className="space-y-8">
                 {/* Language Selection with consistent spacing */}
-                <div className="flex flex-col gap-3 w-full max-w-[600px] mx-auto">
+                <div className="flex flex-col gap-3">
                     <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
                         <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                         Content Language
@@ -109,7 +109,7 @@ const GenerateAIContent = ({
                     <Select onValueChange={setSelectedLanguage} defaultValue={selectedLanguage}>
                         <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
                             transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
-                            <SelectValue placeholder="Select language" />
+                            <SelectValue placeholder="Select language" className="text-left" />
                         </SelectTrigger>
                         <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
                             {languageOptions.map((option) => (
@@ -138,7 +138,7 @@ const GenerateAIContent = ({
                                 <Select onValueChange={setTone} defaultValue={tone}>
                                     <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
                                         transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
-                                        <SelectValue placeholder="Select tone" className="text-center" />
+                                        <SelectValue placeholder="Select tone" className="text-left" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
                                         {toneOptions.map((option) => (
@@ -162,8 +162,8 @@ const GenerateAIContent = ({
                                 </Label>
                                 <Select onValueChange={setTargetAudience} defaultValue={targetAudience}>
                                     <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
-                                        transition-all duration-200 h-12 rounded-xl text-gray-1">
-                                        <SelectValue placeholder="Select audience" />
+                                        transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
+                                        <SelectValue placeholder="Select audience" className="text-left" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
                                         {targetAudienceOptions.map((option) => (
@@ -187,8 +187,8 @@ const GenerateAIContent = ({
                                 </Label>
                                 <Select onValueChange={setStyle} defaultValue={style}>
                                     <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
-                                        transition-all duration-200 h-12 rounded-xl text-gray-1">
-                                        <SelectValue placeholder="Select style" />
+                                        transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
+                                        <SelectValue placeholder="Select style" className="text-left" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
                                         {styleOptions.map((option) => (
@@ -248,7 +248,8 @@ const GenerateAIContent = ({
                                         "border border-orange-1/10 hover:border-orange-1/30",
                                         "focus:border-orange-1/50 focus:ring-1 focus:ring-orange-1/50",
                                         "p-4",
-                                        "placeholder:text-gray-1/70"
+                                        "placeholder:text-gray-1/70",
+                                        "text-left"
                                     )}
                                     placeholder="Add any specific requirements or points you want to include in the content..."
                                     value={note}
