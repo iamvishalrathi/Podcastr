@@ -143,9 +143,10 @@ const ImagePreview = ({
                         variant="secondary"
                         size="icon"
                         className="h-9 w-9 rounded-full 
-                          bg-white/10 hover:bg-white/20
-                          backdrop-blur-lg border border-white/10 
-                          transition-all duration-300 hover:scale-110"
+                          bg-black/20 hover:bg-black/40
+                          backdrop-blur-md border border-white/10 
+                          transition-all duration-300 hover:scale-110
+                          shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -159,9 +160,10 @@ const ImagePreview = ({
                         variant="secondary"
                         size="icon"
                         className="h-9 w-9 rounded-full 
-                          bg-white/10 hover:bg-white/20
-                          backdrop-blur-lg border border-white/10 
-                          transition-all duration-300 hover:scale-110"
+                          bg-black/20 hover:bg-black/40
+                          backdrop-blur-md border border-white/10 
+                          transition-all duration-300 hover:scale-110
+                          shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -175,9 +177,10 @@ const ImagePreview = ({
                         variant="secondary"
                         size="icon"
                         className="h-9 w-9 rounded-full 
-                          bg-white/10 hover:bg-white/20
-                          backdrop-blur-lg border border-white/10 
-                          transition-all duration-300 hover:scale-110"
+                          bg-black/20 hover:bg-black/40
+                          backdrop-blur-md border border-white/10 
+                          transition-all duration-300 hover:scale-110
+                          shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();

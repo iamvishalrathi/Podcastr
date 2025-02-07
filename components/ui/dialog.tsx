@@ -76,18 +76,18 @@ const ImageDialogContent = React.forwardRef<
           
           {!isLoading && (
             <div 
-              className="absolute top-4 right-4 flex items-center gap-2 
-                opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              className="absolute top-4 right-4 flex items-center gap-2"
               onClick={(e) => e.stopPropagation()}
             >
               {onDownload && (
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20
-                    backdrop-blur-lg border border-white/10 
-                    shadow-[0_4px_10px_rgba(0,0,0,0.5)]
-                    transition-all duration-300 hover:scale-110"
+                  className="h-10 w-10 rounded-full 
+                    bg-black/20 hover:bg-black/40
+                    backdrop-blur-md border border-white/10 
+                    transition-all duration-300 hover:scale-110
+                    shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -103,10 +103,11 @@ const ImageDialogContent = React.forwardRef<
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20
-                    backdrop-blur-lg border border-white/10 
-                    shadow-[0_4px_10px_rgba(0,0,0,0.5)]
-                    transition-all duration-300 hover:scale-110"
+                  className="h-10 w-10 rounded-full 
+                    bg-black/20 hover:bg-black/40
+                    backdrop-blur-md border border-white/10 
+                    transition-all duration-300 hover:scale-110
+                    shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                   aria-label="Close"
                 >
                   <X className="h-5 w-5" />
