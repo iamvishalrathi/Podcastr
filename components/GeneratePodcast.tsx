@@ -380,21 +380,6 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
               </div>
             </div>
 
-            <Button
-              onClick={(e) => handleDelete(e)}
-              variant="destructive"
-              size="sm"
-              className={cn(
-                "gap-2 self-end",
-                "hover:scale-105 transition-all duration-300",
-                "bg-red-500/90 hover:bg-red-500 rounded-full px-4",
-                "shadow-lg hover:shadow-red-500/20"
-              )}
-            >
-              <Trash2 size={16} className="text-white" />
-              <span className="text-white">Delete Audio</span>
-            </Button>
-
             <audio
               ref={audioRef}
               src={props.audio}
