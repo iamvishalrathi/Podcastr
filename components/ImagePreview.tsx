@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Button } from './ui/button';
 import { Download, Expand, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 interface ImagePreviewProps {
   image: string;
@@ -41,6 +42,106 @@ export const LoadingSkeleton = () => (
     <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),
       linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]
       bg-[size:20px_20px] opacity-10" />
+  </div>
+);
+
+// Extract the action button component
+const PreviewActionButton = ({
+  onClick,
+  icon: Icon,
+  className = "",
+  "aria-label": ariaLabel,
+}: {
+  onClick: (e: React.MouseEvent) => void;
+  icon: React.ElementType;
+  className?: string;
+  "aria-label": string;
+}) => (
+  <Button
+    variant="secondary"
+    size="icon"
+    className={cn(
+      "h-10 w-10 rounded-full",
+      "bg-black/30 hover:bg-black/50",
+      "backdrop-blur-xl border border-white/20",
+      "transition-all duration-300 hover:scale-105",
+      "shadow-[0_4px_12px_rgba(0,0,0,0.5)]",
+      "hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]",
+      "hover:border-white/30",
+      className
+    )}
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onClick(e);
+    }}
+    aria-label={ariaLabel}
+  >
+    <Icon className={cn(
+      "h-4 w-4",
+      className.includes("text-") ? "" : "text-white/90"
+    )} />
+  </Button>
+);
+
+// Extract the preview overlay controls
+const PreviewControls = ({
+  setIsPreviewOpen,
+  handleDownload,
+  handleDelete,
+}: Pick<ImagePreviewProps, "setIsPreviewOpen" | "handleDownload" | "handleDelete">) => (
+  <div 
+    className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent 
+      opacity-0 group-hover/image:opacity-100 transition-all duration-300
+      transform-gpu"
+    onClick={(e) => e.stopPropagation()}
+  >
+    <div 
+      className="absolute top-3 right-3 flex items-center gap-2.5"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <PreviewActionButton
+        icon={Expand}
+        onClick={() => setIsPreviewOpen(true)}
+        aria-label="Full preview"
+      />
+
+      <PreviewActionButton
+        icon={Download}
+        onClick={handleDownload}
+        aria-label="Download image"
+      />
+
+      <PreviewActionButton
+        icon={Trash2}
+        onClick={handleDelete}
+        className="text-red-400 hover:text-red-300"
+        aria-label="Delete image"
+      />
+    </div>
+  </div>
+);
+
+// Extract the type badge component
+const TypeBadge = ({ isAiGenerated }: { isAiGenerated: boolean }) => (
+  <div className="absolute top-3 left-3">
+    {isAiGenerated ? (
+      <div className="flex items-center gap-2 px-3 py-1.5 
+        bg-gradient-to-r from-orange-1 to-orange-400 
+        backdrop-blur-md rounded-full border border-orange-1/50 
+        shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+        <span className="text-xs font-semibold text-white">AI Generated</span>
+      </div>
+    ) : (
+      <div className="flex items-center gap-2 px-3 py-1.5
+        bg-gradient-to-r from-blue-400 to-blue-500
+        backdrop-blur-md rounded-full border border-blue-400/50
+        shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+        <span className="text-xs font-semibold text-white">Custom Upload</span>
+      </div>
+    )}
   </div>
 );
 
@@ -129,95 +230,12 @@ const ImagePreview = ({
               {/* Only show overlay when preview is loaded */}
               {!isPreviewLoading && (
                 <>
-                  {/* Overlay on hover - remove rotation from overlay since image handles it */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent 
-                    opacity-0 group-hover/image:opacity-100 transition-all duration-300
-                    transform-gpu"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {/* Move buttons to top right */}
-                    <div className="absolute top-3 right-3 flex items-center gap-2.5"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        className="h-10 w-10 rounded-full 
-                          bg-black/30 hover:bg-black/50
-                          backdrop-blur-xl border border-white/20 
-                          transition-all duration-300 hover:scale-105
-                          shadow-[0_4px_12px_rgba(0,0,0,0.5)]
-                          hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
-                          hover:border-white/30"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setIsPreviewOpen(true);
-                        }}
-                      >
-                        <Expand className="h-4 w-4 text-white/90" />
-                      </Button>
-
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        className="h-10 w-10 rounded-full 
-                          bg-black/30 hover:bg-black/50
-                          backdrop-blur-xl border border-white/20 
-                          transition-all duration-300 hover:scale-105
-                          shadow-[0_4px_12px_rgba(0,0,0,0.5)]
-                          hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
-                          hover:border-white/30"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleDownload(e);
-                        }}
-                      >
-                        <Download className="h-4 w-4 text-white/90" />
-                      </Button>
-
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        className="h-10 w-10 rounded-full 
-                          bg-black/30 hover:bg-black/50
-                          backdrop-blur-xl border border-white/20 
-                          transition-all duration-300 hover:scale-105
-                          shadow-[0_4px_12px_rgba(0,0,0,0.5)]
-                          hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
-                          hover:border-white/30"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleDelete(e);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-400 hover:text-red-300" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Badge */}
-                  <div className="absolute top-3 left-3">
-                    {isAiGenerated ? (
-                      <div className="flex items-center gap-2 px-3 py-1.5 
-                        bg-gradient-to-r from-orange-1 to-orange-400 
-                        backdrop-blur-md rounded-full border border-orange-1/50 
-                        shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
-                        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                        <span className="text-xs font-semibold text-white">AI Generated</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 px-3 py-1.5
-                        bg-gradient-to-r from-blue-400 to-blue-500
-                        backdrop-blur-md rounded-full border border-blue-400/50
-                        shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
-                        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                        <span className="text-xs font-semibold text-white">Custom Upload</span>
-                      </div>
-                    )}
-                  </div>
+                  <PreviewControls
+                    setIsPreviewOpen={setIsPreviewOpen}
+                    handleDownload={handleDownload}
+                    handleDelete={handleDelete}
+                  />
+                  <TypeBadge isAiGenerated={isAiGenerated} />
                 </>
               )}
             </>

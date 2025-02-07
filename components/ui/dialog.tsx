@@ -35,9 +35,8 @@ const ImageDialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
     image: string;
-    onDownload?: (e: React.MouseEvent) => void;
   }
->(({ className, children, image, onDownload, ...props }, ref) => {
+>(({ className, children, image, ...props }, ref) => {
   const [isLoading, setIsLoading] = React.useState(true);
 
   return (
@@ -83,28 +82,6 @@ const ImageDialogContent = React.forwardRef<
               className="absolute top-4 right-4 flex items-center gap-2.5"
               onClick={(e) => e.stopPropagation()}
             >
-              {onDownload && (
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="h-11 w-11 rounded-full 
-                    bg-black/30 hover:bg-black/50
-                    backdrop-blur-xl border border-white/20 
-                    transition-all duration-300 hover:scale-105
-                    shadow-[0_4px_12px_rgba(0,0,0,0.5)]
-                    hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
-                    hover:border-white/30"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onDownload(e);
-                  }}
-                  aria-label="Download"
-                >
-                  <Download className="h-5 w-5 text-white/90" />
-                </Button>
-              )}
-
               <DialogPrimitive.Close asChild>
                 <Button
                   variant="secondary"
