@@ -134,56 +134,57 @@ const ImagePreview = ({
                     group-hover/image:rotate-1 transform-gpu"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="flex items-center gap-3">
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          className="h-9 w-9 rounded-full 
-                            bg-white/10 hover:bg-white/20
-                            backdrop-blur-lg border border-white/10 
-                            transition-all duration-300 hover:scale-110"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setIsPreviewOpen(true);
-                          }}
-                        >
-                          <Expand className="h-4 w-4" />
-                        </Button>
+                    {/* Move buttons to top right */}
+                    <div className="absolute top-3 right-3 flex items-center gap-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        className="h-9 w-9 rounded-full 
+                          bg-white/10 hover:bg-white/20
+                          backdrop-blur-lg border border-white/10 
+                          transition-all duration-300 hover:scale-110"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setIsPreviewOpen(true);
+                        }}
+                      >
+                        <Expand className="h-4 w-4" />
+                      </Button>
 
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          className="h-9 w-9 rounded-full 
-                            bg-white/10 hover:bg-white/20
-                            backdrop-blur-lg border border-white/10 
-                            transition-all duration-300 hover:scale-110"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleDownload(e);
-                          }}
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
+                      <Button
+                        variant="secondary"
+                        size="icon"
+                        className="h-9 w-9 rounded-full 
+                          bg-white/10 hover:bg-white/20
+                          backdrop-blur-lg border border-white/10 
+                          transition-all duration-300 hover:scale-110"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDownload(e);
+                        }}
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
 
-                        <Button
-                          variant="destructive"
-                          size="icon"
-                          className="h-9 w-9 rounded-full 
-                            bg-red-500/80 hover:bg-red-500
-                            backdrop-blur-lg border border-red-400/30 
-                            transition-all duration-300 hover:scale-110"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleDelete(e);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="h-9 w-9 rounded-full 
+                          bg-red-500/80 hover:bg-red-500
+                          backdrop-blur-lg border border-red-400/30 
+                          transition-all duration-300 hover:scale-110"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDelete(e);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
 
