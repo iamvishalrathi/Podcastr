@@ -389,6 +389,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                 className="w-full h-full object-contain"
                 alt="thumbnail preview"
                 priority
+                unoptimized={image.endsWith('.gif')}
                 onClick={(e) => e.stopPropagation()}
               />
               

@@ -1,8 +1,6 @@
-import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Button } from './ui/button';
 import { Download, Expand, Trash2 } from 'lucide-react';
-import { Id } from '@/convex/_generated/dataModel';
 import { useState } from 'react';
 
 interface ImagePreviewProps {
@@ -115,18 +113,11 @@ const ImagePreview = ({
               {isPreviewLoading && <LoadingSkeleton />}
               <Image
                 src={image}
-                width={500}
-                height={300}
-                className={cn(
-                  "relative w-full h-full object-cover transition-all duration-500",
-                  "group-hover/image:scale-105",
-                  "group-hover/image:rotate-1",
-                  "transform-gpu",
-                  isPreviewLoading ? "opacity-0" : "opacity-100"
-                )}
-                alt="thumbnail"
-                priority
-                onLoad={() => setIsPreviewLoading(false)}
+                alt="Podcast thumbnail"
+                fill
+                className="object-cover rounded-xl transition-all duration-300"
+                onLoadingComplete={() => setIsPreviewLoading(false)}
+                unoptimized={image.endsWith('.gif')}
               />
 
               {/* Only show overlay when preview is loaded */}
