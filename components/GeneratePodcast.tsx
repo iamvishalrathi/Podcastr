@@ -94,17 +94,31 @@ const useGeneratePodcast = ({
   }, []);
 
   const togglePlayPause = (e: React.MouseEvent) => {
-    // Stop event from bubbling up to the form
     e.preventDefault();
     e.stopPropagation();
     
     if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
+      try {
+        if (isPlaying) {
+          audioRef.current.pause();
+        } else {
+          const playPromise = audioRef.current.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => {
+                // Playback started successfully
+              })
+              .catch(error => {
+                console.error("Error playing audio:", error);
+                setIsPlaying(false);
+              });
+          }
+        }
+        setIsPlaying(!isPlaying);
+      } catch (error) {
+        console.error("Error toggling audio:", error);
+        setIsPlaying(false);
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -217,6 +231,8 @@ const useGeneratePodcast = ({
     formatTime,
     handleAudioEnded,
     handleDelete,
+    setDuration,
+    setCurrentTime
   }
 }
 
@@ -236,6 +252,8 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     formatTime,
     handleAudioEnded,
     handleDelete,
+    setDuration,
+    setCurrentTime
   } = useGeneratePodcast(props);
 
   // Add client-side only rendering for the audio player
@@ -346,6 +364,26 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
                 )}
               </div>
             </div>
+
+            <audio
+              ref={audioRef}
+              src={props.audio}
+              className="hidden"
+              onLoadedMetadata={(e) => {
+                props.setAudioDuration(e.currentTarget.duration);
+                setDuration(e.currentTarget.duration);
+              }}
+              onTimeUpdate={() => {
+                if (audioRef.current) {
+                  setCurrentTime(audioRef.current.currentTime);
+                }
+              }}
+              onEnded={handleAudioEnded}
+              onError={(e) => {
+                console.error("Audio playback error:", e);
+                setIsPlaying(false);
+              }}
+            />
           </div>
         )}
 
