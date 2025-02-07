@@ -76,18 +76,20 @@ const ImageDialogContent = React.forwardRef<
           
           {!isLoading && (
             <div 
-              className="absolute top-4 right-4 flex items-center gap-2"
+              className="absolute top-4 right-4 flex items-center gap-2.5"
               onClick={(e) => e.stopPropagation()}
             >
               {onDownload && (
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="h-10 w-10 rounded-full 
-                    bg-black/20 hover:bg-black/40
-                    backdrop-blur-md border border-white/10 
-                    transition-all duration-300 hover:scale-110
-                    shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                  className="h-11 w-11 rounded-full 
+                    bg-black/30 hover:bg-black/50
+                    backdrop-blur-xl border border-white/20 
+                    transition-all duration-300 hover:scale-105
+                    shadow-[0_4px_12px_rgba(0,0,0,0.5)]
+                    hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
+                    hover:border-white/30"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -95,7 +97,7 @@ const ImageDialogContent = React.forwardRef<
                   }}
                   aria-label="Download"
                 >
-                  <Download className="h-5 w-5" />
+                  <Download className="h-5 w-5 text-white/90" />
                 </Button>
               )}
               
@@ -103,14 +105,16 @@ const ImageDialogContent = React.forwardRef<
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="h-10 w-10 rounded-full 
-                    bg-black/20 hover:bg-black/40
-                    backdrop-blur-md border border-white/10 
-                    transition-all duration-300 hover:scale-110
-                    shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                  className="h-11 w-11 rounded-full 
+                    bg-black/30 hover:bg-black/50
+                    backdrop-blur-xl border border-white/20 
+                    transition-all duration-300 hover:scale-105
+                    shadow-[0_4px_12px_rgba(0,0,0,0.5)]
+                    hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
+                    hover:border-white/30"
                   aria-label="Close"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-5 w-5 text-white/90" />
                 </Button>
               </DialogPrimitive.Close>
             </div>

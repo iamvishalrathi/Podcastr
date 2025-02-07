@@ -136,58 +136,64 @@ const ImagePreview = ({
                     onClick={(e) => e.stopPropagation()}
                   >
                     {/* Move buttons to top right */}
-                    <div className="absolute top-3 right-3 flex items-center gap-2"
+                    <div className="absolute top-3 right-3 flex items-center gap-2.5"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Button
                         variant="secondary"
                         size="icon"
-                        className="h-9 w-9 rounded-full 
-                          bg-black/20 hover:bg-black/40
-                          backdrop-blur-md border border-white/10 
-                          transition-all duration-300 hover:scale-110
-                          shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                        className="h-10 w-10 rounded-full 
+                          bg-black/30 hover:bg-black/50
+                          backdrop-blur-xl border border-white/20 
+                          transition-all duration-300 hover:scale-105
+                          shadow-[0_4px_12px_rgba(0,0,0,0.5)]
+                          hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
+                          hover:border-white/30"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           setIsPreviewOpen(true);
                         }}
                       >
-                        <Expand className="h-4 w-4" />
+                        <Expand className="h-4 w-4 text-white/90" />
                       </Button>
 
                       <Button
                         variant="secondary"
                         size="icon"
-                        className="h-9 w-9 rounded-full 
-                          bg-black/20 hover:bg-black/40
-                          backdrop-blur-md border border-white/10 
-                          transition-all duration-300 hover:scale-110
-                          shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                        className="h-10 w-10 rounded-full 
+                          bg-black/30 hover:bg-black/50
+                          backdrop-blur-xl border border-white/20 
+                          transition-all duration-300 hover:scale-105
+                          shadow-[0_4px_12px_rgba(0,0,0,0.5)]
+                          hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
+                          hover:border-white/30"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           handleDownload(e);
                         }}
                       >
-                        <Download className="h-4 w-4" />
+                        <Download className="h-4 w-4 text-white/90" />
                       </Button>
 
                       <Button
                         variant="secondary"
                         size="icon"
-                        className="h-9 w-9 rounded-full 
-                          bg-black/20 hover:bg-black/40
-                          backdrop-blur-md border border-white/10 
-                          transition-all duration-300 hover:scale-110
-                          shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                        className="h-10 w-10 rounded-full 
+                          bg-black/30 hover:bg-black/50
+                          backdrop-blur-xl border border-white/20 
+                          transition-all duration-300 hover:scale-105
+                          shadow-[0_4px_12px_rgba(0,0,0,0.5)]
+                          hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
+                          hover:border-white/30"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           handleDelete(e);
                         }}
                       >
-                        <Trash2 className="h-4 w-4 text-red-500" />
+                        <Trash2 className="h-4 w-4 text-red-400 hover:text-red-300" />
                       </Button>
                     </div>
                   </div>
