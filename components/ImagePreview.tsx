@@ -220,6 +220,8 @@ const ImagePreview = ({
                 src={image}
                 alt="Podcast thumbnail"
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority={true}
                 className="object-cover rounded-xl transition-all duration-300
                   group-hover/image:rotate-1 group-hover/image:scale-105 transform-gpu"
                 onLoadingComplete={() => setIsPreviewLoading(false)}

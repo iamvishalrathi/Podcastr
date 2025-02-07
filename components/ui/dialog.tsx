@@ -70,6 +70,8 @@ const ImageDialogContent = React.forwardRef<
             src={image}
             width={1920}
             height={1080}
+            sizes="(max-width: 768px) 100vw, 90vw"
+            priority={true}
             className={cn(
               "w-auto h-auto max-w-[90vw] max-h-[90vh]",
               "object-contain",
@@ -77,7 +79,6 @@ const ImageDialogContent = React.forwardRef<
               "transition-all duration-500"
             )}
             alt="Preview"
-            priority
             unoptimized={isAnimated}
             onLoadingComplete={() => setIsLoading(false)}
             onClick={(e) => e.stopPropagation()}
