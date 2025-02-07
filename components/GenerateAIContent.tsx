@@ -48,44 +48,72 @@ const GenerateAIContent = ({
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="generate_content">
+            <div className="generate_thumbnail flex flex-col sm:flex-row gap-2 sm:gap-4">
                 <Button
                     type="button"
-                    variant="plain"
+                    variant={isAiContent ? "default" : "outline"}
                     onClick={() => setIsAiContent(true)}
-                    className={cn('', {
-                        'bg-black-6': isAiContent
-                    })}
+                    className={cn(
+                        'w-full sm:w-auto text-sm sm:text-base font-medium',
+                        'transition-all duration-300 hover:scale-[1.02]',
+                        'rounded-xl h-12',
+                        isAiContent ? 
+                            'bg-gradient-to-r from-orange-1 to-orange-400 text-white shadow-lg hover:shadow-orange-1/20' : 
+                            'text-orange-1 border-orange-1/20 hover:bg-orange-1/10'
+                    )}
                 >
-                    Use AI to generate content
+                    <div className="flex items-center gap-2">
+                        <div className={cn(
+                            "size-2 rounded-full",
+                            isAiContent ? "bg-white" : "bg-orange-1",
+                            "transition-all duration-300",
+                            isAiContent && "animate-pulse"
+                        )} />
+                        Use AI to generate content
+                    </div>
                 </Button>
                 <Button
                     type="button"
-                    variant="plain"
+                    variant={!isAiContent ? "default" : "outline"}
                     onClick={() => setIsAiContent(false)}
-                    className={cn('', {
-                        'bg-black-6': !isAiContent
-                    })}
+                    className={cn(
+                        'w-full sm:w-auto text-sm sm:text-base font-medium',
+                        'transition-all duration-300 hover:scale-[1.02]',
+                        'rounded-xl h-12',
+                        !isAiContent ? 
+                            'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-blue-500/20' : 
+                            'text-blue-500 border-blue-500/20 hover:bg-blue-500/10'
+                    )}
                 >
-                    Write custom content
+                    <div className="flex items-center gap-2">
+                        <div className={cn(
+                            "size-2 rounded-full",
+                            !isAiContent ? "bg-white" : "bg-blue-500",
+                            "transition-all duration-300",
+                            !isAiContent && "animate-pulse"
+                        )} />
+                        Write custom content
+                    </div>
                 </Button>
             </div>
 
             {/* Language Selection - Always visible */}
-            <div className="flex flex-col gap-2.5">
-                <Label className="text-16 font-bold text-white-1">
+            <div className="flex flex-col gap-3">
+                <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                    <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                     Content Language
                 </Label>
                 <Select onValueChange={setSelectedLanguage} defaultValue={selectedLanguage}>
-                    <SelectTrigger className="bg-black-1 border-none text-gray-1">
+                    <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+                        transition-all duration-200 h-12 rounded-xl text-gray-1">
                         <SelectValue placeholder="Select language" />
                     </SelectTrigger>
-                    <SelectContent className="bg-black-1 text-white-1">
+                    <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
                         {languageOptions.map((option) => (
                             <SelectItem
                                 key={option.value}
                                 value={option.value}
-                                className="focus:bg-orange-1"
+                                className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
                             >
                                 {option.label}
                             </SelectItem>
