@@ -2,8 +2,10 @@
 
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
-
 import { cn } from "@/lib/utils"
+import Image from 'next/image'
+import { Button } from './button'
+import { Download, X } from 'lucide-react'
 
 const Dialog = DialogPrimitive.Root
 
@@ -28,6 +30,96 @@ const DialogOverlay = React.forwardRef<
   />
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
+
+const ImageDialogContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+    image: string;
+    onDownload?: (e: React.MouseEvent) => void;
+  }
+>(({ className, children, image, onDownload, ...props }, ref) => {
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  return (
+    <DialogPortal>
+      <DialogOverlay />
+      <DialogPrimitive.Content
+        ref={ref}
+        className={cn(
+          "fixed left-[50%] top-[50%] z-50 w-full max-w-[90vw] max-h-[90vh] translate-x-[-50%] translate-y-[-50%] p-0 shadow-lg duration-200",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
+          "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+          "overflow-hidden bg-black-1/95 border-white/5 rounded-lg",
+          className
+        )}
+        onClick={(e) => e.stopPropagation()}
+        {...props}
+      >
+        <div className="relative group w-full h-full">
+          <Image
+            src={image}
+            width={1920}
+            height={1080}
+            className={cn(
+              "w-full h-full object-contain transition-all duration-500",
+              isLoading ? "opacity-0" : "opacity-100"
+            )}
+            alt="Preview"
+            priority
+            unoptimized={image.endsWith('.gif')}
+            onLoadingComplete={() => setIsLoading(false)}
+            onClick={(e) => e.stopPropagation()}
+          />
+          
+          {!isLoading && (
+            <div 
+              className="absolute top-4 right-4 flex items-center gap-2 
+                opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {onDownload && (
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20
+                    backdrop-blur-lg border border-white/10 
+                    shadow-[0_4px_10px_rgba(0,0,0,0.5)]
+                    transition-all duration-300 hover:scale-110"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onDownload(e);
+                  }}
+                  aria-label="Download"
+                >
+                  <Download className="h-5 w-5" />
+                </Button>
+              )}
+              
+              <DialogPrimitive.Close asChild>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20
+                    backdrop-blur-lg border border-white/10 
+                    shadow-[0_4px_10px_rgba(0,0,0,0.5)]
+                    transition-all duration-300 hover:scale-110"
+                  aria-label="Close"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </DialogPrimitive.Close>
+            </div>
+          )}
+        </div>
+      </DialogPrimitive.Content>
+    </DialogPortal>
+  )
+})
+ImageDialogContent.displayName = "ImageDialogContent"
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
@@ -119,4 +211,5 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  ImageDialogContent,
 } 

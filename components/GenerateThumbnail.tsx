@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dial
 import ImagePreview from './ImagePreview';
 import { LoadingSkeleton } from './ImagePreview';
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { ImageDialogContent } from './ui/dialog';
 
 interface GenerateThumbnailProps {
   setImage: (url: string) => void;
@@ -377,79 +378,10 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
       {image && (
         <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-          <DialogContent 
-            className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black-1/95 border-white/5"
-            onOpenAutoFocus={(e) => e.preventDefault()}
-            onCloseAutoFocus={(e) => e.preventDefault()}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <DialogPrimitive.Close className="hidden" />
-            
-            <div 
-              className="relative group w-full h-full" 
-              onClick={(e) => e.stopPropagation()}
-            >
-              {isFullPreviewLoading && <LoadingSkeleton />}
-              <Image
-                src={image}
-                width={1920}
-                height={1080}
-                className={cn(
-                  "w-full h-full object-contain transition-all duration-500",
-                  isFullPreviewLoading ? "opacity-0" : "opacity-100"
-                )}
-                alt="thumbnail preview"
-                priority
-                unoptimized={image.endsWith('.gif')}
-                onLoadingComplete={() => setIsFullPreviewLoading(false)}
-                onClick={(e) => e.stopPropagation()}
-              />
-              
-              {!isFullPreviewLoading && (
-                <div 
-                  className="absolute top-4 right-4 flex items-center gap-2 
-                    opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="h-10 w-10 rounded-full 
-                      bg-white/10 hover:bg-white/20
-                      backdrop-blur-lg border border-white/10 
-                      shadow-[0_4px_10px_rgba(0,0,0,0.5)]
-                      transition-all duration-300 hover:scale-110"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleDownload(e);
-                    }}
-                    aria-label="Download thumbnail"
-                  >
-                    <Download className="h-5 w-5" />
-                  </Button>
-                  
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="h-10 w-10 rounded-full 
-                      bg-white/10 hover:bg-white/20
-                      backdrop-blur-lg border border-white/10 
-                      shadow-[0_4px_10px_rgba(0,0,0,0.5)]
-                      transition-all duration-300 hover:scale-110"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsPreviewOpen(false);
-                    }}
-                    aria-label="Close preview"
-                  >
-                    <X className="h-5 w-5" />
-                  </Button>
-                </div>
-              )}
-            </div>
-          </DialogContent>
+          <ImageDialogContent 
+            image={image}
+            onDownload={handleDownload}
+          />
         </Dialog>
       )}
 
