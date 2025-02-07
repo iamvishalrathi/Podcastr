@@ -46,7 +46,9 @@ const ImageDialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "fixed left-[50%] top-[50%] z-50 w-full max-w-[90vw] max-h-[90vh] translate-x-[-50%] translate-y-[-50%] p-0 shadow-lg duration-200",
+          "fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%]",
+          "max-w-[90vw] max-h-[90vh] w-auto h-auto",
+          "p-0 shadow-lg duration-200",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -58,14 +60,16 @@ const ImageDialogContent = React.forwardRef<
         onClick={(e) => e.stopPropagation()}
         {...props}
       >
-        <div className="relative group w-full h-full">
+        <div className="relative group">
           <Image
             src={image}
             width={1920}
             height={1080}
             className={cn(
-              "w-full h-full object-contain transition-all duration-500",
-              isLoading ? "opacity-0" : "opacity-100"
+              "w-auto h-auto max-w-[90vw] max-h-[90vh]",
+              "object-contain",
+              isLoading ? "opacity-0" : "opacity-100",
+              "transition-all duration-500"
             )}
             alt="Preview"
             priority
@@ -73,9 +77,9 @@ const ImageDialogContent = React.forwardRef<
             onLoadingComplete={() => setIsLoading(false)}
             onClick={(e) => e.stopPropagation()}
           />
-          
+
           {!isLoading && (
-            <div 
+            <div
               className="absolute top-4 right-4 flex items-center gap-2.5"
               onClick={(e) => e.stopPropagation()}
             >
@@ -100,7 +104,7 @@ const ImageDialogContent = React.forwardRef<
                   <Download className="h-5 w-5 text-white/90" />
                 </Button>
               )}
-              
+
               <DialogPrimitive.Close asChild>
                 <Button
                   variant="secondary"

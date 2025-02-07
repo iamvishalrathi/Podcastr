@@ -98,7 +98,7 @@ const CreatePodcast = () => {
     async function onSubmit(data: z.infer<typeof formSchema>) {
         try {
             setIsSubmitting(true);
-            
+
             // Check all required fields with specific messages
             if (!data.podcastTitle.trim()) {
                 toast({
@@ -203,7 +203,7 @@ const CreatePodcast = () => {
                 const content = JSON.parse(text);
                 form.setValue("podcastDescription", content.description);
                 setVoicePrompt(content.script);
-                
+
                 // Set multiple thumbnail prompts
                 if (Array.isArray(content.thumbnailPrompts)) {
                     setThumbnailPrompts(content.thumbnailPrompts);
@@ -308,7 +308,7 @@ const CreatePodcast = () => {
                                     <div className="h-4 w-1 bg-orange-1 rounded-full" />
                                     <h2 className="text-lg font-semibold text-white-1">Basic Information</h2>
                                 </div>
-                                
+
                                 <FormField
                                     control={form.control}
                                     name="podcastTitle"

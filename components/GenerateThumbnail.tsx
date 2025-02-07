@@ -123,16 +123,16 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       setProgress(40);
       const blob = await file.arrayBuffer()
         .then((ab) => new Blob([ab]));
-      
+
       setProgress(60);
       await handleImage(blob, file.name, false);
       setProgress(100);
     } catch (error) {
       console.error(error);
-      toast({ 
-        title: 'Error uploading image', 
+      toast({
+        title: 'Error uploading image',
         description: "Please try again",
-        variant: 'destructive' 
+        variant: 'destructive'
       });
       setIsImageLoading(false);
     } finally {
@@ -160,7 +160,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       if (!imageUrl) {
         throw new Error("No image URL received");
       }
-      
+
       setProgress(40);
       const imgResponse = await fetch(imageUrl);
       if (!imgResponse.ok) {
@@ -219,7 +219,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
+
       toast({
         title: "Image downloaded successfully",
       });
@@ -297,8 +297,8 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                 bg-black-1/50 hover:bg-black-1/70 transition-colors duration-200
                 disabled:opacity-50 disabled:cursor-not-allowed
                 border border-black-6"
-              placeholder={thumbnailPrompts.length > 0 
-                ? "Customize the selected prompt or write your own..." 
+              placeholder={thumbnailPrompts.length > 0
+                ? "Customize the selected prompt or write your own..."
                 : "Write a prompt for your thumbnail..."}
               value={imagePrompt}
               onChange={(e) => setImagePrompt(e.target.value)}
@@ -347,7 +347,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
               accept="image/*"
               disabled={isImageLoading}
             />
-            
+
             <div className="flex flex-col items-center gap-1">
               <h2 className={cn(
                 "text-12 font-bold text-orange-1 group-hover:text-orange-400",
@@ -378,7 +378,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
       {image && (
         <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-          <ImageDialogContent 
+          <ImageDialogContent
             image={image}
             onDownload={handleDownload}
           />
@@ -386,11 +386,11 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       )}
 
       {/* Add a hidden input for form validation */}
-      <input 
-        type="hidden" 
-        name="thumbnail" 
-        value={image} 
-        required 
+      <input
+        type="hidden"
+        name="thumbnail"
+        value={image}
+        required
         aria-hidden="true"
       />
     </div>
