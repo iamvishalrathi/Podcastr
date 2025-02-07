@@ -48,7 +48,7 @@ const ImageDialogContent = React.forwardRef<
         ref={ref}
         className={cn(
           "fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%]",
-          "w-[95vw] h-auto max-h-[90vh] md:w-auto",
+          "w-[95vw] md:w-auto h-auto max-h-[90vh]",
           "p-0 shadow-lg duration-200",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -70,23 +70,25 @@ const ImageDialogContent = React.forwardRef<
         </DialogPrimitive.Description>
 
         <div className="relative group">
-          <Image
-            src={image}
-            width={1920}
-            height={1080}
-            sizes="(max-width: 768px) 95vw, (max-width: 1200px) 90vw, 1200px"
-            priority={true}
-            className={cn(
-              "w-auto h-auto max-w-[95vw] md:max-w-[90vw] max-h-[80vh]",
-              "object-contain",
-              isLoading ? "opacity-0" : "opacity-100",
-              "transition-all duration-500"
-            )}
-            alt="Preview"
-            unoptimized={isAnimated}
-            onLoadingComplete={() => setIsLoading(false)}
-            onClick={(e) => e.stopPropagation()}
-          />
+          <div className="min-h-[200px] flex items-center justify-center">
+            <Image
+              src={image}
+              width={1920}
+              height={1080}
+              sizes="(max-width: 768px) 95vw, (max-width: 1200px) 90vw, 1200px"
+              priority={true}
+              className={cn(
+                "w-auto h-auto max-w-[95vw] md:max-w-[90vw] max-h-[80vh]",
+                "object-contain",
+                isLoading ? "opacity-0" : "opacity-100",
+                "transition-all duration-500"
+              )}
+              alt="Preview"
+              unoptimized={isAnimated}
+              onLoad={() => setIsLoading(false)}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
 
           {!isLoading && (
             <div

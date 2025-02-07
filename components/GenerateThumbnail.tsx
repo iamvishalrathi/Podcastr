@@ -67,32 +67,50 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   };
 
   //Image Handler Func
-  const handleImage = async (file: Blob, name: string, isAiGenerated: boolean = false) => {
+  const handleImage = async (blob: Blob, fileName: string, isAiGenerated: boolean = false) => {
     try {
-      const response = await uploadImage(file, name);
+      setIsImageLoading(true);
+      setProgress(20);
       
-      if (!response || !response.response) {
-        throw new Error('Upload failed - no response received');
+      // Create a File from Blob
+      const file = new File([blob], fileName, { type: 'image/png' });
+      
+      setProgress(40);
+      await deletePreviousImage();
+      
+      setProgress(60);
+      const uploaded = await startUpload([file]);
+      if (!uploaded?.[0]?.response?.storageId) {
+        throw new Error('Upload failed - no storage ID received');
       }
 
-      const storageId = response.response.storageId;
+      const storageId = uploaded[0].response.storageId as Id<"_storage">;
       setImageStorageId(storageId);
       
-      // Get URL for the uploaded image
-      const url = await getImageUrl(storageId);
-      setImage(url);
+      const imageUrl = await getImageUrl({ storageId });
+      setImage(imageUrl!);
+      
+      setProgress(100);
       
       if (isAiGenerated) {
-        setIsImageLoading(false);
+        toast({
+          title: "Thumbnail generated successfully",
+        });
+      } else {
+        toast({
+          title: "Image uploaded successfully",
+        });
       }
     } catch (error) {
       console.error('Error handling image:', error);
       toast({
-        title: 'Error uploading image',
-        description: 'Failed to upload image. Please try again.',
+        title: 'Error with image',
+        description: error instanceof Error ? error.message : 'Failed to process image',
         variant: 'destructive',
       });
+    } finally {
       setIsImageLoading(false);
+      setProgress(0);
     }
   };
 
@@ -106,45 +124,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       return;
     }
 
-    try {
-      setIsImageLoading(true);
-      setProgress(20);
-
-      // Create a new blob from the file
-      const blob = await file.arrayBuffer()
-        .then((ab) => new Blob([ab]));
-
-      setProgress(40);
-      
-      // Use the existing upload mechanism
-      await deletePreviousImage();
-      
-      const uploaded = await startUpload([file]);
-      if (!uploaded?.[0]?.response?.storageId) {
-        throw new Error('Upload failed - no storage ID received');
-      }
-
-      const storageId = uploaded[0].response.storageId as Id<"_storage">;
-      setImageStorageId(storageId);
-      
-      const imageUrl = await getImageUrl({ storageId });
-      setImage(imageUrl!);
-      
-      setProgress(100);
-      toast({
-        title: "Image uploaded successfully",
-      });
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast({
-        title: 'Error uploading image',
-        description: error instanceof Error ? error.message : 'Failed to upload image',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsImageLoading(false);
-      setProgress(0);
-    }
+    await handleImage(file, file.name, false);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,8 +177,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
       setProgress(60);
       const blob = await imgResponse.blob();
-      await handleImage(blob, `thumbnail-${uuidv4()}`, true);
-      setProgress(100);
+      await handleImage(blob, `thumbnail-${uuidv4()}.png`, true);
 
     } catch (error) {
       console.error("Error generating thumbnail:", error);
