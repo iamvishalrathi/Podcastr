@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { Button } from './ui/button';
 import { Download, Expand, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ImagePreviewProps {
   image: string;
@@ -14,7 +14,7 @@ interface ImagePreviewProps {
   handleDelete: (e: React.MouseEvent) => Promise<void>;
 }
 
-const LoadingSkeleton = () => (
+export const LoadingSkeleton = () => (
   <div className="absolute inset-0 overflow-hidden">
     {/* Background with shimmer effect */}
     <div className="absolute inset-0 bg-gradient-to-br from-black-1/20 to-black-1/10">
@@ -56,6 +56,11 @@ const ImagePreview = ({
 }: ImagePreviewProps) => {
   // Add a loading state for image preview
   const [isPreviewLoading, setIsPreviewLoading] = useState(true);
+
+  // Reset loading state whenever image changes
+  useEffect(() => {
+    setIsPreviewLoading(true);
+  }, [image]);
 
   return (
     <div className="flex-center w-full group animate-in fade-in-50 duration-300 mt-8">

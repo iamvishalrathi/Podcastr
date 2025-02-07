@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Loader } from 'lucide-react';
@@ -17,6 +17,7 @@ import { Id } from '@/convex/_generated/dataModel';
 import { Progress } from './ui/progress';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 import ImagePreview from './ImagePreview';
+import { LoadingSkeleton } from './ImagePreview';
 
 interface GenerateThumbnailProps {
   setImage: (url: string) => void;
@@ -37,12 +38,20 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   const [isAiGenerated, setIsAiGenerated] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isFullPreviewLoading, setIsFullPreviewLoading] = useState(true);
 
   //To upload Image & fetch uploaded url
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const { startUpload } = useUploadFiles(generateUploadUrl)
   const getImageUrl = useMutation(api.podcasts.getUrl);
   const deleteFile = useMutation(api.files.deleteFile);
+
+  // Reset full preview loading state when image or preview dialog changes
+  useEffect(() => {
+    if (isPreviewOpen) {
+      setIsFullPreviewLoading(true);
+    }
+  }, [isPreviewOpen, image]);
 
   // Helper function to delete previous image
   const deletePreviousImage = async () => {
@@ -382,55 +391,62 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
             </DialogDescription>
             
             <div className="relative group">
+              {isFullPreviewLoading && <LoadingSkeleton />}
               <Image
                 src={image}
                 width={1920}
                 height={1080}
-                className="w-full h-full object-contain"
+                className={cn(
+                  "w-full h-full object-contain transition-all duration-500",
+                  isFullPreviewLoading ? "opacity-0" : "opacity-100"
+                )}
                 alt="thumbnail preview"
                 priority
                 unoptimized={image.endsWith('.gif')}
+                onLoadingComplete={() => setIsFullPreviewLoading(false)}
                 onClick={(e) => e.stopPropagation()}
               />
               
-              <div className="absolute top-4 right-4 flex items-center gap-2 
-                opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="h-10 w-10 rounded-full 
-                    bg-white/10 hover:bg-white/20
-                    backdrop-blur-lg border border-white/10 
-                    shadow-[0_4px_10px_rgba(0,0,0,0.5)]
-                    transition-all duration-300 hover:scale-110"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDownload(e);
-                  }}
-                  aria-label="Download thumbnail"
+              {!isFullPreviewLoading && (
+                <div className="absolute top-4 right-4 flex items-center gap-2 
+                  opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <Download className="h-5 w-5" />
-                </Button>
-                
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="h-10 w-10 rounded-full 
-                    bg-white/10 hover:bg-white/20
-                    backdrop-blur-lg border border-white/10 
-                    shadow-[0_4px_10px_rgba(0,0,0,0.5)]
-                    transition-all duration-300 hover:scale-110"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsPreviewOpen(false);
-                  }}
-                  aria-label="Close preview"
-                >
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="h-10 w-10 rounded-full 
+                      bg-white/10 hover:bg-white/20
+                      backdrop-blur-lg border border-white/10 
+                      shadow-[0_4px_10px_rgba(0,0,0,0.5)]
+                      transition-all duration-300 hover:scale-110"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownload(e);
+                    }}
+                    aria-label="Download thumbnail"
+                  >
+                    <Download className="h-5 w-5" />
+                  </Button>
+                  
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="h-10 w-10 rounded-full 
+                      bg-white/10 hover:bg-white/20
+                      backdrop-blur-lg border border-white/10 
+                      shadow-[0_4px_10px_rgba(0,0,0,0.5)]
+                      transition-all duration-300 hover:scale-110"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsPreviewOpen(false);
+                    }}
+                    aria-label="Close preview"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+              )}
             </div>
           </DialogContent>
         </Dialog>
