@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import Image from 'next/image'
 import { Button } from './button'
 import { X, Download } from 'lucide-react'
+import { LoadingSkeleton } from '../ImagePreview'
 
 const Dialog = DialogPrimitive.Root
 
@@ -43,89 +44,81 @@ const ImageDialogContent = React.forwardRef<
 
   return (
     <DialogPortal>
-      <DialogOverlay className="bg-black/90" />
+      <DialogOverlay className="bg-black/95 backdrop-blur-sm" />
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
           "fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%]",
           "w-[95vw] md:w-auto h-auto max-h-[90vh]",
-          "p-0 shadow-lg duration-200",
+          "p-0 shadow-2xl duration-300",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
           "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
-          "overflow-hidden bg-black-1/95 border border-white/10 rounded-lg",
+          "overflow-hidden bg-black-1/95 border border-white/20 rounded-2xl",
+          "backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
           className
         )}
         onClick={(e) => e.stopPropagation()}
         {...props}
       >
-        <DialogPrimitive.Title className="sr-only">
-          Image Preview
-        </DialogPrimitive.Title>
-
-        <DialogPrimitive.Description className="sr-only">
-          Full size preview of the selected image
-        </DialogPrimitive.Description>
-
-        <div className="relative group">
-          <div className="min-h-[200px] flex items-center justify-center">
-            <Image
-              src={image}
-              width={1920}
-              height={1080}
-              sizes="(max-width: 768px) 95vw, (max-width: 1200px) 90vw, 1200px"
-              priority={true}
-              className={cn(
-                "w-auto h-auto max-w-[95vw] md:max-w-[90vw] max-h-[80vh]",
-                "object-contain",
-                isLoading ? "opacity-0" : "opacity-100",
-                "transition-all duration-500"
-              )}
-              alt="Preview"
-              unoptimized={isAnimated}
-              onLoad={() => setIsLoading(false)}
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
+        <div className="relative group min-h-[200px]">
+          {isLoading && <LoadingSkeleton />}
+          <Image
+            src={image}
+            width={1920}
+            height={1080}
+            sizes="(max-width: 768px) 95vw, (max-width: 1200px) 90vw, 1200px"
+            priority={true}
+            className={cn(
+              "w-auto h-auto max-w-[95vw] md:max-w-[90vw] max-h-[80vh]",
+              "object-contain",
+              isLoading ? "opacity-0" : "opacity-100",
+              "transition-all duration-500"
+            )}
+            alt="Preview"
+            unoptimized={isAnimated}
+            onLoad={() => setIsLoading(false)}
+            onClick={(e) => e.stopPropagation()}
+          />
 
           {!isLoading && (
             <div
-              className="absolute top-4 right-4 flex items-center gap-2.5"
+              className="absolute top-4 right-4 flex items-center gap-3"
               onClick={(e) => e.stopPropagation()}
             >
               {onDownload && (
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="h-11 w-11 rounded-full 
-                    bg-black/30 hover:bg-black/50
-                    backdrop-blur-xl border border-white/20 
-                    transition-all duration-300 hover:scale-105
-                    shadow-[0_4px_12px_rgba(0,0,0,0.5)]
-                    hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
-                    hover:border-white/30"
+                  className="h-12 w-12 rounded-full 
+                    bg-black/40 hover:bg-black/60
+                    backdrop-blur-xl border border-white/30 
+                    transition-all duration-300 hover:scale-110
+                    shadow-[0_4px_16px_rgba(0,0,0,0.5)]
+                    hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)]
+                    hover:border-white/40"
                   onClick={onDownload}
                   aria-label="Download"
                 >
-                  <Download className="h-5 w-5 text-white/90" />
+                  <Download className="h-6 w-6 text-white" />
                 </Button>
               )}
               <DialogPrimitive.Close asChild>
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="h-11 w-11 rounded-full 
-                    bg-black/30 hover:bg-black/50
-                    backdrop-blur-xl border border-white/20 
-                    transition-all duration-300 hover:scale-105
-                    shadow-[0_4px_12px_rgba(0,0,0,0.5)]
-                    hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]
-                    hover:border-white/30"
+                  className="h-12 w-12 rounded-full 
+                    bg-black/40 hover:bg-black/60
+                    backdrop-blur-xl border border-white/30 
+                    transition-all duration-300 hover:scale-110
+                    shadow-[0_4px_16px_rgba(0,0,0,0.5)]
+                    hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)]
+                    hover:border-white/40"
                   aria-label="Close"
                 >
-                  <X className="h-5 w-5 text-white/90" />
+                  <X className="h-6 w-6 text-white" />
                 </Button>
               </DialogPrimitive.Close>
             </div>

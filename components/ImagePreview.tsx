@@ -4,6 +4,47 @@ import { Download, Expand, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
+// Move LoadingSkeleton component directly into ImagePreview.tsx
+export const LoadingSkeleton = () => (
+  <div className="absolute inset-0 overflow-hidden backdrop-blur-sm">
+    {/* Enhanced gradient background */}
+    <div className="absolute inset-0 bg-gradient-to-br from-black-1/40 to-black-1/20">
+      <div className="h-full w-full animate-[shimmer_2s_infinite] bg-[length:200%_100%]
+        bg-gradient-to-r from-transparent via-orange-1/10 to-transparent" />
+    </div>
+
+    {/* Premium loading animation */}
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="relative w-32 h-32">
+        {/* Outer rotating ring */}
+        <div className="absolute inset-0 rounded-full border-2 border-orange-1/20 animate-[spin_3s_linear_infinite]" />
+        
+        {/* Inner pulsing circle */}
+        <div className="absolute inset-4 rounded-full bg-gradient-to-br from-orange-1/20 to-orange-400/20 
+          animate-pulse backdrop-blur-xl" />
+        
+        {/* Center icon */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <svg
+            className="w-12 h-12 text-orange-1/30"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    {/* Enhanced grid overlay */}
+    <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),
+      linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)]
+      bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_at_center,black_70%,transparent_100%)]" />
+  </div>
+);
+
 interface ImagePreviewProps {
   image: string;
   isImageLoading: boolean;
@@ -15,37 +56,8 @@ interface ImagePreviewProps {
   handleDelete: (e: React.MouseEvent) => Promise<void>;
 }
 
-export const LoadingSkeleton = () => (
-  <div className="absolute inset-0 overflow-hidden">
-    {/* Background with shimmer effect */}
-    <div className="absolute inset-0 bg-gradient-to-br from-black-1/20 to-black-1/10">
-      <div className="h-full w-full animate-[shimmer_2s_infinite] bg-[length:200%_100%]
-        bg-gradient-to-r from-transparent via-orange-1/5 to-transparent" />
-    </div>
 
-    {/* Placeholder content */}
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="w-32 h-32 rounded-lg bg-orange-1/5 animate-pulse">
-        <div className="h-full w-full flex items-center justify-center">
-          <svg
-            className="w-16 h-16 text-orange-1/20"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    {/* Grid overlay */}
-    <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),
-      linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]
-      bg-[size:20px_20px] opacity-10" />
-  </div>
-);
-
-// Extract the action button component
+// Update the PreviewActionButton for better visibility and interaction
 const PreviewActionButton = ({
   onClick,
   icon: Icon,
@@ -61,13 +73,15 @@ const PreviewActionButton = ({
     variant="secondary"
     size="icon"
     className={cn(
-      "h-10 w-10 rounded-full",
-      "bg-black/30 hover:bg-black/50",
-      "backdrop-blur-xl border border-white/20",
-      "transition-all duration-300 hover:scale-105",
-      "shadow-[0_4px_12px_rgba(0,0,0,0.5)]",
-      "hover:shadow-[0_8px_16px_rgba(0,0,0,0.5)]",
-      "hover:border-white/30",
+      "h-11 w-11 rounded-full",
+      "bg-black/40 hover:bg-black/60",
+      "backdrop-blur-xl border border-white/30",
+      "transition-all duration-300",
+      "hover:scale-110 hover:rotate-3",
+      "shadow-[0_4px_16px_rgba(0,0,0,0.5)]",
+      "hover:shadow-[0_8px_24px_rgba(0,0,0,0.6)]",
+      "hover:border-white/40",
+      "group/button",
       className
     )}
     onClick={(e) => {
@@ -78,67 +92,71 @@ const PreviewActionButton = ({
     aria-label={ariaLabel}
   >
     <Icon className={cn(
-      "h-4 w-4",
-      className.includes("text-") ? "" : "text-white/90"
+      "h-5 w-5 transition-transform duration-300",
+      "group-hover/button:scale-110",
+      className.includes("text-") ? "" : "text-white"
     )} />
   </Button>
 );
 
-// Extract the preview overlay controls
+// Update the PreviewControls for a more elegant overlay
 const PreviewControls = ({
   setIsPreviewOpen,
   handleDownload,
   handleDelete,
 }: Pick<ImagePreviewProps, "setIsPreviewOpen" | "handleDownload" | "handleDelete">) => (
   <div
-    className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent 
-      opacity-0 group-hover/image:opacity-100 transition-all duration-300
-      transform-gpu"
+    className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent 
+      opacity-0 group-hover/image:opacity-100 transition-all duration-500
+      transform-gpu backdrop-blur-[2px]"
     onClick={(e) => e.stopPropagation()}
   >
     <div
-      className="absolute top-3 right-3 flex items-center gap-2.5"
+      className="absolute top-4 right-4 flex items-center gap-3
+        [&>button]:translate-y-4 group-hover/image:[&>button]:translate-y-0
+        [&>button]:opacity-0 group-hover/image:[&>button]:opacity-100"
       onClick={(e) => e.stopPropagation()}
     >
-      <PreviewActionButton
-        icon={Expand}
-        onClick={() => setIsPreviewOpen(true)}
-        aria-label="Full preview"
-      />
-
-      <PreviewActionButton
-        icon={Download}
-        onClick={handleDownload}
-        aria-label="Download image"
-      />
-
-      <PreviewActionButton
-        icon={Trash2}
-        onClick={handleDelete}
-        aria-label="Delete image"
-      />
+      {[
+        { icon: Expand, onClick: () => setIsPreviewOpen(true), label: "Full preview", delay: "delay-[0ms]" },
+        { icon: Download, onClick: handleDownload, label: "Download image", delay: "delay-[50ms]" },
+        { icon: Trash2, onClick: handleDelete, label: "Delete image", delay: "delay-[100ms]" },
+      ].map((button, index) => (
+        <PreviewActionButton
+          key={button.label}
+          icon={button.icon}
+          onClick={button.onClick}
+          aria-label={button.label}
+          className={cn("transition-all duration-500", button.delay)}
+        />
+      ))}
     </div>
   </div>
 );
 
-// Extract the type badge component
+// Update the TypeBadge for a more premium look
 const TypeBadge = ({ isAiGenerated }: { isAiGenerated: boolean }) => (
-  <div className="absolute top-3 left-3">
+  <div className="absolute top-4 left-4 opacity-0 group-hover/image:opacity-100 
+    transition-all duration-500 translate-y-4 group-hover/image:translate-y-0">
     {isAiGenerated ? (
-      <div className="flex items-center gap-2 px-3 py-1.5 
-        bg-gradient-to-r from-orange-1 to-orange-400 
-        backdrop-blur-md rounded-full border border-orange-1/50 
-        shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+      <div className="flex items-center gap-2 px-4 py-2
+        bg-gradient-to-r from-orange-1/80 to-orange-400/80 
+        backdrop-blur-xl rounded-full border border-orange-1/50 
+        shadow-[0_4px_20px_rgba(0,0,0,0.4)]
+        hover:shadow-[0_8px_32px_rgba(0,0,0,0.5)]
+        transition-all duration-300 hover:scale-105">
         <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-        <span className="text-xs font-semibold text-white">AI Generated</span>
+        <span className="text-sm font-medium text-white">AI Generated</span>
       </div>
     ) : (
-      <div className="flex items-center gap-2 px-3 py-1.5
-        bg-gradient-to-r from-blue-400 to-blue-500
-        backdrop-blur-md rounded-full border border-blue-400/50
-        shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+      <div className="flex items-center gap-2 px-4 py-2
+        bg-gradient-to-r from-blue-400/80 to-blue-500/80
+        backdrop-blur-xl rounded-full border border-blue-400/50
+        shadow-[0_4px_20px_rgba(0,0,0,0.4)]
+        hover:shadow-[0_8px_32px_rgba(0,0,0,0.5)]
+        transition-all duration-300 hover:scale-105">
         <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-        <span className="text-xs font-semibold text-white">Custom Upload</span>
+        <span className="text-sm font-medium text-white">Custom Upload</span>
       </div>
     )}
   </div>

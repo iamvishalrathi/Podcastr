@@ -16,8 +16,7 @@ import { Trash2, Expand, Download, X } from 'lucide-react';
 import { Id } from '@/convex/_generated/dataModel';
 import { Progress } from './ui/progress';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
-import ImagePreview from './ImagePreview';
-import { LoadingSkeleton } from './ImagePreview';
+import ImagePreview, { LoadingSkeleton } from './ImagePreview';
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ImageDialogContent } from './ui/dialog';
 
