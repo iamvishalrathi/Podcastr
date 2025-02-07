@@ -38,8 +38,12 @@ import { chatSession } from "@/service/Gemini";
 import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
 
 const formSchema = z.object({
-    podcastTitle: z.string().min(2),
-    podcastDescription: z.string().min(2),
+    podcastTitle: z.string().min(2, {
+        message: "Podcast title must be at least 2 characters.",
+    }),
+    podcastDescription: z.string().min(2, {
+        message: "Podcast description must be at least 2 characters.",
+    }),
 });
 
 const voiceCategories = ['Drew', "Rachel", "Sarah"];
@@ -94,14 +98,54 @@ const CreatePodcast = () => {
     async function onSubmit(data: z.infer<typeof formSchema>) {
         try {
             setIsSubmitting(true);
-            if (!audioUrl || !imageUrl || !voiceType) {
+            
+            // Check all required fields with specific messages
+            if (!data.podcastTitle.trim()) {
                 toast({
-                    title: 'Please generate audio and image, and select a voice type',
+                    title: 'Podcast title is required',
                     variant: 'destructive'
-                })
+                });
                 setIsSubmitting(false);
-                throw new Error('Missing required fields')
+                return;
             }
+
+            if (!data.podcastDescription.trim()) {
+                toast({
+                    title: 'Podcast description is required',
+                    variant: 'destructive'
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (!voiceType) {
+                toast({
+                    title: 'Please select a voice type',
+                    variant: 'destructive'
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (!audioUrl) {
+                toast({
+                    title: 'Please generate audio content',
+                    variant: 'destructive'
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (!imageUrl) {
+                toast({
+                    title: 'Please upload or generate a thumbnail',
+                    variant: 'destructive'
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            // If all checks pass, proceed with submission
             await createPodcast({
                 podcastTitle: data.podcastTitle,
                 podcastDescription: data.podcastDescription,
@@ -114,16 +158,18 @@ const CreatePodcast = () => {
                 audioDuration,
                 audioStorageId: audioStorageId!,
                 imageStorageId: imageStorageId!,
-            })
-            toast({ title: 'Podcast created' })
+            });
+
+            toast({ title: 'Podcast created successfully' });
             setIsSubmitting(false);
-            router.push('/')
+            router.push('/');
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast({
-                title: 'Error',
+                title: 'Error creating podcast',
+                description: error instanceof Error ? error.message : 'Failed to create podcast',
                 variant: 'destructive',
-            })
+            });
             setIsSubmitting(false);
         }
     }

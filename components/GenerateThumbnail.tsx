@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Trash2, Expand, Download, X } from 'lucide-react';
 import { Id } from '@/convex/_generated/dataModel';
 import { Progress } from './ui/progress';
-import { Dialog, DialogContent } from './ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 import ImagePreview from './ImagePreview';
 
 interface GenerateThumbnailProps {
@@ -79,14 +79,34 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     }
   }
 
-  // Update upload function
+  // Add validation helper
+  const isImageRequired = () => {
+    if (!image && !isImageLoading) {
+      toast({
+        title: "Thumbnail is required",
+        description: "Please upload or generate a thumbnail image",
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  // Update upload function to handle validation
   const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     try {
       setIsImageLoading(true);
       setProgress(20);
       const files = e.target.files;
-      if (!files) return;
+      if (!files) {
+        toast({
+          title: "No file selected",
+          description: "Please select an image file",
+          variant: "destructive",
+        });
+        return;
+      }
 
       const file = files[0];
       setProgress(40);
@@ -98,16 +118,29 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       setProgress(100);
     } catch (error) {
       console.error(error);
-      toast({ title: 'Error uploading image', variant: 'destructive' });
+      toast({ 
+        title: 'Error uploading image', 
+        description: "Please try again",
+        variant: 'destructive' 
+      });
       setIsImageLoading(false);
     } finally {
       setProgress(0);
     }
   };
 
-  //AI Thumbnail
+  // Update generate function to handle validation
   const generateImage = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!imagePrompt.trim()) {
+      toast({
+        title: "Prompt is required",
+        description: "Please enter a prompt for the thumbnail",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsImageLoading(true);
       setProgress(20);
@@ -334,7 +367,20 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
 
       {image && (
         <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-          <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black-1/95 border-white/5">
+          <DialogContent 
+            className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden bg-black-1/95 border-white/5"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+            onCloseAutoFocus={(e) => e.preventDefault()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <DialogTitle className="sr-only">
+              Thumbnail Preview
+            </DialogTitle>
+            
+            <DialogDescription className="sr-only">
+              Preview your podcast thumbnail image in full size. You can download or close the preview using the buttons in the top right corner.
+            </DialogDescription>
+            
             <div className="relative group">
               <Image
                 src={image}
@@ -343,10 +389,13 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                 className="w-full h-full object-contain"
                 alt="thumbnail preview"
                 priority
+                onClick={(e) => e.stopPropagation()}
               />
               
               <div className="absolute top-4 right-4 flex items-center gap-2 
-                opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Button
                   variant="secondary"
                   size="icon"
@@ -355,7 +404,11 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                     backdrop-blur-lg border border-white/10 
                     shadow-[0_4px_10px_rgba(0,0,0,0.5)]
                     transition-all duration-300 hover:scale-110"
-                  onClick={handleDownload}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDownload(e);
+                  }}
+                  aria-label="Download thumbnail"
                 >
                   <Download className="h-5 w-5" />
                 </Button>
@@ -368,7 +421,11 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                     backdrop-blur-lg border border-white/10 
                     shadow-[0_4px_10px_rgba(0,0,0,0.5)]
                     transition-all duration-300 hover:scale-110"
-                  onClick={() => setIsPreviewOpen(false)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPreviewOpen(false);
+                  }}
+                  aria-label="Close preview"
                 >
                   <X className="h-5 w-5" />
                 </Button>
@@ -377,6 +434,15 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Add a hidden input for form validation */}
+      <input 
+        type="hidden" 
+        name="thumbnail" 
+        value={image} 
+        required 
+        aria-hidden="true"
+      />
     </div>
   )
 }
