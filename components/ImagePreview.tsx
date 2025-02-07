@@ -120,7 +120,8 @@ const ImagePreview = ({
                 src={image}
                 alt="Podcast thumbnail"
                 fill
-                className="object-cover rounded-xl transition-all duration-300"
+                className="object-cover rounded-xl transition-all duration-300
+                  group-hover/image:rotate-1 group-hover/image:scale-105 transform-gpu"
                 onLoadingComplete={() => setIsPreviewLoading(false)}
                 unoptimized={image.endsWith('.gif')}
               />
@@ -128,10 +129,10 @@ const ImagePreview = ({
               {/* Only show overlay when preview is loaded */}
               {!isPreviewLoading && (
                 <>
-                  {/* Overlay on hover */}
+                  {/* Overlay on hover - remove rotation from overlay since image handles it */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent 
                     opacity-0 group-hover/image:opacity-100 transition-all duration-300
-                    group-hover/image:rotate-1 transform-gpu"
+                    transform-gpu"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {/* Move buttons to top right */}
@@ -171,11 +172,11 @@ const ImagePreview = ({
                       </Button>
 
                       <Button
-                        variant="destructive"
+                        variant="secondary"
                         size="icon"
                         className="h-9 w-9 rounded-full 
-                          bg-red-500/80 hover:bg-red-500
-                          backdrop-blur-lg border border-red-400/30 
+                          bg-white/10 hover:bg-white/20
+                          backdrop-blur-lg border border-white/10 
                           transition-all duration-300 hover:scale-110"
                         onClick={(e) => {
                           e.preventDefault();
@@ -183,7 +184,7 @@ const ImagePreview = ({
                           handleDelete(e);
                         }}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4 text-red-500" />
                       </Button>
                     </div>
                   </div>
