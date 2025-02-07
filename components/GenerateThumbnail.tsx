@@ -277,7 +277,7 @@ const GenerateThumbnail = ({
         <div className="flex flex-col gap-5 animate-in fade-in-50">
           {thumbnailPrompts.length > 0 && (
             <div className="mt-8 flex flex-col gap-4">
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3 flex-1">
                   <div className="h-6 w-1.5 flex-shrink-0 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                   <Label className="text-16 sm:text-18 font-bold text-white-1 leading-tight">
@@ -290,14 +290,15 @@ const GenerateThumbnail = ({
                 </span>
               </div>
 
-              <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-3">
+              <div className="flex flex-col gap-3 overflow-y-auto custom-scrollbar pr-3
+                min-h-[120px] max-h-[320px] sm:max-h-[400px]">
                 {thumbnailPrompts.map((prompt, index) => (
                   <Button
                     key={index}
                     type="button"
                     variant={imagePrompt === prompt ? "default" : "outline"}
                     className={cn(
-                      "w-full text-center font-normal text-sm sm:text-base",
+                      "w-full text-left font-normal text-sm sm:text-base",
                       "transition-all duration-300 group/prompt",
                       "rounded-xl relative overflow-hidden",
                       "py-4 px-5",
@@ -311,9 +312,9 @@ const GenerateThumbnail = ({
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent 
                       translate-x-[-100%] group-hover/prompt:translate-x-[100%] transition-transform duration-1000" />
                     
-                    <div className="flex items-start gap-4 relative min-h-[24px]">
+                    <div className="flex items-start gap-4 relative">
                       <div className={cn(
-                        "flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full text-xs font-semibold",
+                        "flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full text-xs font-semibold mt-0.5",
                         "transition-all duration-300 group-hover/prompt:scale-110",
                         imagePrompt === prompt 
                           ? "bg-white/20 text-white" 
@@ -323,14 +324,14 @@ const GenerateThumbnail = ({
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm sm:text-base leading-relaxed break-words whitespace-pre-wrap text-center">
+                        <p className="text-sm sm:text-base leading-relaxed break-words">
                           {prompt}
                         </p>
                       </div>
                       
                       {imagePrompt === prompt && (
                         <div className="flex-shrink-0 ml-2 flex items-center justify-center w-5 h-5 rounded-full 
-                          bg-white shadow-lg">
+                          bg-white shadow-lg mt-0.5">
                           <div className="w-2.5 h-2.5 rounded-full bg-orange-1" />
                         </div>
                       )}
@@ -338,6 +339,24 @@ const GenerateThumbnail = ({
                   </Button>
                 ))}
               </div>
+
+              <style jsx global>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                  width: 8px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                  background: rgba(0, 0, 0, 0.2);
+                  border-radius: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                  background: rgba(249, 117, 53, 0.3);
+                  border-radius: 4px;
+                  transition: all 0.3s;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                  background: rgba(249, 117, 53, 0.5);
+                }
+              `}</style>
             </div>
           )}
 
