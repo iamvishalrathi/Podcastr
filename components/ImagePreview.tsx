@@ -206,7 +206,7 @@ const ImagePreview = ({
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-1">
-                  <p className="text-sm font-semibold text-white">
+                  <p className="text-sm font-semibold text-[white]">
                     {isAiThumbnail ? 'Generating Thumbnail...' : 'Uploading Image...'}
                   </p>
                   <span className="text-xs text-orange-1/80">Please wait a moment</span>
