@@ -58,11 +58,13 @@ const ImageDialogContent = React.forwardRef<
           className
         )}
         onClick={(e) => e.stopPropagation()}
-        aria-describedby="dialog-description"
         {...props}
       >
-        <DialogPrimitive.Title className="sr-only">Image Preview</DialogPrimitive.Title>
-        <DialogPrimitive.Description id="dialog-description" className="sr-only">
+        <DialogPrimitive.Title className="sr-only">
+          Image Preview
+        </DialogPrimitive.Title>
+
+        <DialogPrimitive.Description className="sr-only">
           Full size preview of the selected image
         </DialogPrimitive.Description>
 
