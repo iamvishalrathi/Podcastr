@@ -67,28 +67,92 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   };
 
   //Image Handler Func
-  const handleImage = async (blob: Blob, fileName: string, isAI: boolean) => {
-    setImage('');
-    setIsAiGenerated(isAI);
+  const handleImage = async (file: Blob, name: string, isAiGenerated: boolean = false) => {
+    try {
+      const response = await uploadImage(file, name);
+      
+      if (!response || !response.response) {
+        throw new Error('Upload failed - no response received');
+      }
+
+      const storageId = response.response.storageId;
+      setImageStorageId(storageId);
+      
+      // Get URL for the uploaded image
+      const url = await getImageUrl(storageId);
+      setImage(url);
+      
+      if (isAiGenerated) {
+        setIsImageLoading(false);
+      }
+    } catch (error) {
+      console.error('Error handling image:', error);
+      toast({
+        title: 'Error uploading image',
+        description: 'Failed to upload image. Please try again.',
+        variant: 'destructive',
+      });
+      setIsImageLoading(false);
+    }
+  };
+
+  const uploadImage = async (file: File | null) => {
+    if (!file) {
+      toast({
+        title: "No file selected",
+        description: "Please select an image file",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
+      setIsImageLoading(true);
+      setProgress(20);
+
+      // Create a new blob from the file
+      const blob = await file.arrayBuffer()
+        .then((ab) => new Blob([ab]));
+
+      setProgress(40);
+      
+      // Use the existing upload mechanism
       await deletePreviousImage();
-
-      const file = new File([blob], fileName, { type: 'image/png' });
+      
       const uploaded = await startUpload([file]);
-      const storageId = uploaded[0].response?.storageId as Id<"_storage">;
+      if (!uploaded?.[0]?.response?.storageId) {
+        throw new Error('Upload failed - no storage ID received');
+      }
 
+      const storageId = uploaded[0].response.storageId as Id<"_storage">;
       setImageStorageId(storageId);
+      
       const imageUrl = await getImageUrl({ storageId });
       setImage(imageUrl!);
+      
+      setProgress(100);
+      toast({
+        title: "Image uploaded successfully",
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: 'Error uploading image',
+        description: error instanceof Error ? error.message : 'Failed to upload image',
+        variant: 'destructive',
+      });
+    } finally {
       setIsImageLoading(false);
+      setProgress(0);
     }
-    catch (error) {
-      console.log(error)
-      toast({ title: 'Error generating thumbnail', variant: 'destructive' })
-      setIsImageLoading(false);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      uploadImage(files[0]);
     }
-  }
+  };
 
   // Add validation helper
   const isImageRequired = () => {
@@ -103,46 +167,10 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     return true;
   };
 
-  // Update upload function to handle validation
-  const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    try {
-      setIsImageLoading(true);
-      setProgress(20);
-      const files = e.target.files;
-      if (!files) {
-        toast({
-          title: "No file selected",
-          description: "Please select an image file",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const file = files[0];
-      setProgress(40);
-      const blob = await file.arrayBuffer()
-        .then((ab) => new Blob([ab]));
-
-      setProgress(60);
-      await handleImage(blob, file.name, false);
-      setProgress(100);
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error uploading image',
-        description: "Please try again",
-        variant: 'destructive'
-      });
-      setIsImageLoading(false);
-    } finally {
-      setProgress(0);
-    }
-  };
-
-  // Update generate function to handle validation
+  // Update generate function with better error handling
   const generateImage = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    
     if (!imagePrompt.trim()) {
       toast({
         title: "Prompt is required",
@@ -155,16 +183,16 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
     try {
       setIsImageLoading(true);
       setProgress(20);
+      
       const imageUrl = await handleGenerateThumbnail({ prompt: imagePrompt });
-
       if (!imageUrl) {
-        throw new Error("No image URL received");
+        throw new Error("No image URL received from generation");
       }
 
       setProgress(40);
       const imgResponse = await fetch(imageUrl);
       if (!imgResponse.ok) {
-        throw new Error(`Failed to fetch image: ${imgResponse.status}`);
+        throw new Error(`Failed to fetch generated image: ${imgResponse.status}`);
       }
 
       setProgress(60);
@@ -179,8 +207,8 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
         description: error instanceof Error ? error.message : 'Failed to generate thumbnail',
         variant: 'destructive'
       });
-      setIsImageLoading(false);
     } finally {
+      setIsImageLoading(false);
       setProgress(0);
     }
   };
@@ -233,13 +261,13 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in-50">
-      <div className="generate_thumbnail">
+    <div className="space-y-6 animate-in fade-in-50 w-full max-w-[800px] mx-auto px-4 sm:px-6">
+      <div className="generate_thumbnail flex flex-col sm:flex-row gap-2 sm:gap-4">
         <Button
           type="button"
           variant="plain"
           onClick={() => setIsAiThumbnail(true)}
-          className={cn('', {
+          className={cn('w-full sm:w-auto text-sm sm:text-base', {
             'bg-black-6': isAiThumbnail
           })}
           disabled={isImageLoading}
@@ -250,7 +278,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
           type="button"
           variant="plain"
           onClick={() => setIsAiThumbnail(false)}
-          className={cn('', {
+          className={cn('w-full sm:w-auto text-sm sm:text-base', {
             'bg-black-6': !isAiThumbnail
           })}
           disabled={isImageLoading}
@@ -263,7 +291,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
         <div className="flex flex-col gap-5 animate-in fade-in-50">
           {thumbnailPrompts.length > 0 && (
             <div className="mt-5 flex flex-col gap-2.5">
-              <Label className="text-16 font-bold text-white-1">
+              <Label className="text-14 sm:text-16 font-bold text-white-1">
                 Select a Thumbnail Prompt
               </Label>
               <div className="grid gap-2">
@@ -273,9 +301,9 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
                     type="button"
                     variant={imagePrompt === prompt ? "default" : "outline"}
                     className={cn(
-                      "w-full justify-start text-left font-normal",
+                      "w-full justify-start text-left font-normal text-sm sm:text-base",
                       "hover:bg-orange-1/10 transition-colors duration-200",
-                      "bg-black-1/50 hover:bg-black-1/70 border-black-6",
+                      "bg-black-1/50 hover:bg-black-1/70 border-black-6 p-3 sm:p-4",
                       imagePrompt === prompt && "bg-orange-1 hover:bg-orange-1/90 text-white border-none"
                     )}
                     onClick={() => setImagePrompt(prompt)}
@@ -336,6 +364,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
               "image_div hover:border-orange-1/50 hover:bg-black-1/30",
               "transition-all duration-200 group animate-in fade-in-50",
               "border-black-6 bg-black-1/50",
+              "p-4 sm:p-6 rounded-lg",
               isImageLoading && "opacity-50 cursor-not-allowed hover:border-gray-700 hover:bg-transparent"
             )}
           >
@@ -343,7 +372,7 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
               type="file"
               className="hidden"
               ref={imageRef}
-              onChange={(e) => uploadImage(e)}
+              onChange={handleFileChange}
               accept="image/*"
               disabled={isImageLoading}
             />
@@ -364,16 +393,18 @@ const GenerateThumbnail = ({ setImage, setImageStorageId, image, imagePrompt, se
       )}
 
       {(image || isImageLoading) && (
-        <ImagePreview
-          image={image}
-          isImageLoading={isImageLoading}
-          progress={progress}
-          isAiThumbnail={isAiThumbnail}
-          isAiGenerated={isAiGenerated}
-          setIsPreviewOpen={setIsPreviewOpen}
-          handleDownload={handleDownload}
-          handleDelete={handleDelete}
-        />
+        <div className="mt-6 sm:mt-8">
+          <ImagePreview
+            image={image}
+            isImageLoading={isImageLoading}
+            progress={progress}
+            isAiThumbnail={isAiThumbnail}
+            isAiGenerated={isAiGenerated}
+            setIsPreviewOpen={setIsPreviewOpen}
+            handleDownload={handleDownload}
+            handleDelete={handleDelete}
+          />
+        </div>
       )}
 
       {image && (
