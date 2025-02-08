@@ -190,10 +190,19 @@ const CreatePodcast = () => {
             return;
         }
 
+        if (!form.getValues("podcastType")) {
+            toast({
+                title: 'Please select a podcast type first',
+                variant: 'destructive'
+            });
+            return;
+        }
+
         try {
             setIsGeneratingContent(true);
             const Final_Gemini_Prompt = Gemini_Prompt
                 .replace('{title}', form.getValues("podcastTitle"))
+                .replace('{podcastType}', form.getValues("podcastType"))
                 .replace('{language}', selectedLanguage)
                 .replace('{duration}', duration[0].toString())
                 .replace('{tone}', tone)
@@ -201,11 +210,9 @@ const CreatePodcast = () => {
                 .replace('{style}', style)
                 .replace('{note}', note || 'No additional notes');
 
-            // console.log(Final_Gemini_Prompt);
             const result = await chatSession.sendMessage(Final_Gemini_Prompt);
             const response = await result.response;
             const text = response.text();
-            // console.log(text);
 
             try {
                 const content = JSON.parse(text);

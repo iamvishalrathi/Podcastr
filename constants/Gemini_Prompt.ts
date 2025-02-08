@@ -1,21 +1,25 @@
-export const Gemini_Prompt = `Generate a podcast script and description for a podcast titled "{title}" entirely in {language}. The script should be approximately {duration} minutes in length when spoken.
+export const Gemini_Prompt = `Generate a podcast script and description for a {podcastType} podcast titled "{title}". 
 
-Content Parameters:
-- Tone: {tone}
-- Target Audience: {targetAudience}
-- Style: {style}
-- Additional Notes: {note}
+The content should be in {language} language, approximately {duration} minutes long, with a {tone} tone, 
+targeted at {targetAudience} audience, in a {style} style.
+
+Additional notes to consider: {note}
 
 Return the response in the following JSON format:
+
 {
-    "description": "engaging podcast description here",
-    "script": "continuous monologue script here",
+    "description": "engaging podcast description here (2-3 sentences)",
+    "script": "detailed podcast script here (3-4 paragraphs)",
     "thumbnailPrompts": [
-        "First thumbnail prompt in English",
-        "Second thumbnail prompt in English",
-        "Third thumbnail prompt in English"
+        "detailed visual prompt for thumbnail 1",
+        "detailed visual prompt for thumbnail 2",
+        "detailed visual prompt for thumbnail 3"
     ]
 }
+
+Make the content engaging and natural sounding. The description should be concise but compelling. 
+The script should match the selected podcast type and maintain consistent tone throughout.
+Each thumbnail prompt should reflect the podcast's theme and type.
 
 Script Guidelines:
 - Write as a continuous monologue for a single speaker
@@ -25,8 +29,6 @@ Script Guidelines:
 - Avoid line breaks between sentences
 - Remove any non-speaking elements (like [pause], [music], etc.)
 - Keep paragraphs flowing naturally without artificial breaks
-
-Make the content engaging and natural sounding. The description should be 2-3 sentences and the script should be appropriate length for {duration} minutes of speaking time.
 
 Important: Generate the content ONLY in the specified {language}. Do not mix languages or use transliteration.
 
