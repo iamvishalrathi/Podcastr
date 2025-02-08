@@ -116,7 +116,7 @@ const CreatePodcast = () => {
                 return;
             }
 
-            if (!imageUrl) {
+            if (!imageUrl || !imageStorageId) {
                 toast({
                     title: 'Please upload or generate a thumbnail',
                     variant: 'destructive'
@@ -125,10 +125,10 @@ const CreatePodcast = () => {
                 return;
             }
 
-            // Only check for voice type if audio is being generated
-            if (audioUrl && !voiceType) {
+            // Check if audio is required
+            if (!audioUrl || !audioStorageId) {
                 toast({
-                    title: 'Please select a voice type',
+                    title: 'Please generate audio for your podcast',
                     variant: 'destructive'
                 });
                 setIsSubmitting(false);
@@ -146,20 +146,25 @@ const CreatePodcast = () => {
                 voicePrompt,
                 views: 0,
                 audioDuration,
-                audioStorageId: audioStorageId!,
-                imageStorageId: imageStorageId!,
+                audioStorageId,  // This will now always be defined
+                imageStorageId,  // This will now always be defined
             });
 
-            toast({ title: 'Podcast created successfully' });
-            setIsSubmitting(false);
-            router.push('/');
+            toast({
+                title: 'Podcast created successfully',
+                description: 'Your podcast has been published'
+            });
+
+            router.push('/'); // or wherever you want to redirect after success
+
         } catch (error) {
-            console.error(error);
+            console.error('Error creating podcast:', error);
             toast({
                 title: 'Error creating podcast',
-                description: error instanceof Error ? error.message : 'Failed to create podcast',
-                variant: 'destructive',
+                description: error instanceof Error ? error.message : 'Something went wrong',
+                variant: 'destructive'
             });
+        } finally {
             setIsSubmitting(false);
         }
     }
