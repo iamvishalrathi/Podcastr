@@ -416,13 +416,8 @@ const CreatePodcast = () => {
                                 </div>
 
                                 <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
-                                    {/* Voice Selection - Moved to top */}
+                                    {/* Voice Selection */}
                                     <div className="space-y-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-4 w-1 bg-orange-1 rounded-full" />
-                                            <h2 className="text-lg font-semibold text-white-1">Voice Settings</h2>
-                                        </div>
-
                                         <div className="grid gap-4">
                                             <div className="space-y-2">
                                                 <Label className="text-white-1">AI Voice Selection</Label>
