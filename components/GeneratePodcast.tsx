@@ -13,7 +13,7 @@ import { useUploadFiles } from '@xixixao/uploadstuff/react';
 import { toast, useToast } from "@/components/ui/use-toast"
 import { Progress } from './ui/progress';
 import { cn } from '@/lib/utils';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const MAX_CHARACTERS = 2500;
 const CHARACTERS_PER_CREDIT = 150;
