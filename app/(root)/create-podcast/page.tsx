@@ -289,7 +289,7 @@ const CreatePodcast = () => {
                                             name="podcastTitle"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                                    <FormLabel className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
                                                         <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                                         Podcast Title
                                                     </FormLabel>
@@ -311,7 +311,7 @@ const CreatePodcast = () => {
                                             name="podcastType"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                                    <FormLabel className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
                                                         <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                                         Podcast Type
                                                     </FormLabel>
@@ -388,7 +388,7 @@ const CreatePodcast = () => {
                                             name="podcastDescription"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                                    <FormLabel className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
                                                         <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                                         Podcast Description
                                                     </FormLabel>

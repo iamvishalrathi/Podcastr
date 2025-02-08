@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toneOptions, targetAudienceOptions, styleOptions } from "@/constants/AIContent";
 import { Textarea } from "@/components/ui/textarea";
 import { languageOptions } from "@/constants/Language_Options";
-import { ToggleButton } from "@/components/ui/toggle-button";
 import { ToggleButtonGroup } from "@/components/ui/toggle-button-group";
 
 interface GenerateAIContentProps {
@@ -50,14 +49,16 @@ const GenerateAIContent = ({
 
     return (
         <div className="flex flex-col gap-6 w-full">
-            <ToggleButtonGroup containerWidth="max-w-[530px]" button1text="Use AI to generate content" button2text="Write custom content" 
+            <ToggleButtonGroup containerWidth="max-w-[530px]" button1text="Use AI to generate content" button2text="Write custom content"
                 button1Active={isAiContent} button2Active={!isAiContent} setButtonActive={setIsAiContent} />
 
             {/* Main Content Area */}
             <div className="space-y-8">
                 {/* Language Selection with consistent spacing */}
                 <div className="flex flex-col gap-3">
-                    <Label htmlFor="language-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                    <Label
+                        htmlFor="language-select"
+                        className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
                         <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                         Content Language
                     </Label>
@@ -86,7 +87,7 @@ const GenerateAIContent = ({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
                             {/* Content Tone */}
                             <div className="flex flex-col gap-3">
-                                <Label htmlFor="tone-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <Label htmlFor="tone-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
                                     <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                     Content Tone
                                 </Label>
@@ -111,7 +112,7 @@ const GenerateAIContent = ({
 
                             {/* Target Audience */}
                             <div className="flex flex-col gap-3">
-                                <Label htmlFor="target-audience-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <Label htmlFor="target-audience-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
                                     <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                     Target Audience
                                 </Label>
@@ -136,7 +137,7 @@ const GenerateAIContent = ({
 
                             {/* Content Style */}
                             <div className="flex flex-col gap-3">
-                                <Label htmlFor="style-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <Label htmlFor="style-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
                                     <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                     Content Style
                                 </Label>
@@ -162,7 +163,8 @@ const GenerateAIContent = ({
                             {/* Script Duration with better alignment */}
                             <div className="flex flex-col gap-4">
                                 <div className="flex items-center justify-between">
-                                    <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                    <Label
+                                        className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
                                         <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                         Script Duration
                                     </Label>
@@ -178,7 +180,7 @@ const GenerateAIContent = ({
                                         min={1}
                                         max={10}
                                         step={1}
-                                        className="w-full"
+                                        className="w-full cursor-pointer"
                                         aria-label="Script Duration"
                                     />
                                     <div className="flex justify-between mt-4 text-sm text-gray-1">
@@ -191,7 +193,7 @@ const GenerateAIContent = ({
 
                             {/* Additional Notes with full width */}
                             <div className="md:col-span-2 space-y-3">
-                                <Label htmlFor="notes-textarea" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <Label htmlFor="notes-textarea" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
                                     <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                     Additional Notes (Optional)
                                 </Label>
