@@ -263,7 +263,7 @@ const CreatePodcast = () => {
 
     return (
         <section className="container max-w-4xl mx-auto px-4 py-10">
-            <div className="space-y-6">
+            <div className="space-y-10">
                 {/* Header */}
                 <div className="space-y-2">
                     <h1 className="text-3xl font-bold text-white-1">Create New Podcast</h1>
@@ -275,44 +275,6 @@ const CreatePodcast = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <div className="grid gap-8">
-                            {/* Voice Selection - Moved to top */}
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-2">
-                                    <div className="h-4 w-1 bg-orange-1 rounded-full" />
-                                    <h2 className="text-lg font-semibold text-white-1">Voice Settings</h2>
-                                </div>
-
-                                <div className="grid gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-white-1">AI Voice Selection</Label>
-                                        <Select
-                                            onValueChange={(value) => {
-                                                setVoiceType(value);
-                                                const audio = new Audio(`/${value}.mp3`);
-                                                audio.play().catch(error => {
-                                                    console.error("Error playing voice sample:", error);
-                                                });
-                                            }}
-                                        >
-                                            <SelectTrigger className="input-class h-12">
-                                                <SelectValue placeholder="Choose an AI voice" />
-                                            </SelectTrigger>
-                                            <SelectContent className="bg-black-1 text-white-1 border-gray-800">
-                                                {voiceCategories.map((category) => (
-                                                    <SelectItem
-                                                        key={category}
-                                                        value={category}
-                                                        className="hover:bg-orange-1 hover:text-white"
-                                                    >
-                                                        {category}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                            </div>
-
                             {/* Basic Information */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2">
@@ -321,13 +283,14 @@ const CreatePodcast = () => {
                                 </div>
 
                                 <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
-                                    <div className={`flex flex-col gap-6 pt-10`}>
+                                    <div className={`flex flex-col gap-6 pt-5`}>
                                         <FormField
                                             control={form.control}
                                             name="podcastTitle"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-white-1">
+                                                    <FormLabel className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                                        <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                                         Podcast Title
                                                     </FormLabel>
                                                     <FormControl>
@@ -348,7 +311,8 @@ const CreatePodcast = () => {
                                             name="podcastType"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-white-1">
+                                                    <FormLabel className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                                        <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                                         Podcast Type
                                                     </FormLabel>
                                                     <Select
@@ -380,10 +344,6 @@ const CreatePodcast = () => {
                                         />
                                     </div>
                                 </div>
-
-                                <div className="space-y-4">
-
-                                </div>
                             </div>
 
                             {/* Content Generation */}
@@ -412,27 +372,40 @@ const CreatePodcast = () => {
                                         setSelectedLanguage={setSelectedLanguage}
                                     />
                                 </div>
+                            </div>
 
-                                <FormField
-                                    control={form.control}
-                                    name="podcastDescription"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-white-1">
-                                                Podcast Description
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Textarea
-                                                    className="input-class min-h-[120px]"
-                                                    placeholder="Write or generate a compelling description for your podcast..."
-                                                    suppressHydrationWarning
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage className="text-white-1" />
-                                        </FormItem>
-                                    )}
-                                />
+                            {/* Additional Details */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="h-4 w-1 bg-orange-1 rounded-full" />
+                                    <h2 className="text-lg font-semibold text-white-1">Additional Details</h2>
+                                </div>
+
+                                <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
+                                    <div className={`flex flex-col gap-6 pt-5`}>
+                                        <FormField
+                                            control={form.control}
+                                            name="podcastDescription"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                                        <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+                                                        Podcast Description
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Textarea
+                                                            className="input-class min-h-[120px]"
+                                                            placeholder="Write or generate a compelling description for your podcast..."
+                                                            suppressHydrationWarning
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage className="text-white-1" />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Audio Generation - Renamed from Media Generation */}
@@ -443,6 +416,43 @@ const CreatePodcast = () => {
                                 </div>
 
                                 <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
+                                    {/* Voice Selection - Moved to top */}
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-4 w-1 bg-orange-1 rounded-full" />
+                                            <h2 className="text-lg font-semibold text-white-1">Voice Settings</h2>
+                                        </div>
+
+                                        <div className="grid gap-4">
+                                            <div className="space-y-2">
+                                                <Label className="text-white-1">AI Voice Selection</Label>
+                                                <Select
+                                                    onValueChange={(value) => {
+                                                        setVoiceType(value);
+                                                        const audio = new Audio(`/${value}.mp3`);
+                                                        audio.play().catch(error => {
+                                                            console.error("Error playing voice sample:", error);
+                                                        });
+                                                    }}
+                                                >
+                                                    <SelectTrigger className="input-class h-12">
+                                                        <SelectValue placeholder="Choose an AI voice" />
+                                                    </SelectTrigger>
+                                                    <SelectContent className="bg-black-1 text-white-1 border-gray-800">
+                                                        {voiceCategories.map((category) => (
+                                                            <SelectItem
+                                                                key={category}
+                                                                value={category}
+                                                                className="hover:bg-orange-1 hover:text-white"
+                                                            >
+                                                                {category}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <GeneratePodcast
                                         setAudioStorageId={setAudioStorageId}
                                         audioStorageId={audioStorageId}

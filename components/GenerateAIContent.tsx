@@ -57,12 +57,12 @@ const GenerateAIContent = ({
             <div className="space-y-8">
                 {/* Language Selection with consistent spacing */}
                 <div className="flex flex-col gap-3">
-                    <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                    <Label htmlFor="language-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
                         <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                         Content Language
                     </Label>
                     <Select onValueChange={setSelectedLanguage} defaultValue={selectedLanguage}>
-                        <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+                        <SelectTrigger id="language-select" className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
                             transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
                             <SelectValue placeholder="Select language" className="text-left" />
                         </SelectTrigger>
@@ -86,12 +86,12 @@ const GenerateAIContent = ({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
                             {/* Content Tone */}
                             <div className="flex flex-col gap-3">
-                                <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <Label htmlFor="tone-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
                                     <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                     Content Tone
                                 </Label>
                                 <Select onValueChange={setTone} defaultValue={tone}>
-                                    <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+                                    <SelectTrigger id="tone-select" className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
                                         transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
                                         <SelectValue placeholder="Select tone" className="text-left" />
                                     </SelectTrigger>
@@ -111,12 +111,12 @@ const GenerateAIContent = ({
 
                             {/* Target Audience */}
                             <div className="flex flex-col gap-3">
-                                <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <Label htmlFor="target-audience-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
                                     <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                     Target Audience
                                 </Label>
                                 <Select onValueChange={setTargetAudience} defaultValue={targetAudience}>
-                                    <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+                                    <SelectTrigger id="target-audience-select" className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
                                         transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
                                         <SelectValue placeholder="Select audience" className="text-left" />
                                     </SelectTrigger>
@@ -136,12 +136,12 @@ const GenerateAIContent = ({
 
                             {/* Content Style */}
                             <div className="flex flex-col gap-3">
-                                <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <Label htmlFor="style-select" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
                                     <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                     Content Style
                                 </Label>
                                 <Select onValueChange={setStyle} defaultValue={style}>
-                                    <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+                                    <SelectTrigger id="style-select" className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
                                         transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
                                         <SelectValue placeholder="Select style" className="text-left" />
                                     </SelectTrigger>
@@ -191,11 +191,12 @@ const GenerateAIContent = ({
 
                             {/* Additional Notes with full width */}
                             <div className="md:col-span-2 space-y-3">
-                                <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+                                <Label htmlFor="notes-textarea" className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
                                     <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
                                     Additional Notes (Optional)
                                 </Label>
                                 <Textarea
+                                    id="notes-textarea"
                                     className={cn(
                                         "min-h-[120px] w-full rounded-xl",
                                         "bg-black-1/50 hover:bg-black-1/70",
