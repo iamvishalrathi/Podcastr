@@ -15,6 +15,7 @@ interface ImagePreviewProps {
   setIsPreviewOpen: (open: boolean) => void;
   handleDownload: (e: React.MouseEvent) => Promise<void>;
   handleDelete: (e: React.MouseEvent) => Promise<void>;
+  isDownloading: boolean;
 }
 
 // Update the PreviewControls for a more elegant overlay
@@ -22,7 +23,8 @@ const PreviewControls = ({
   setIsPreviewOpen,
   handleDownload,
   handleDelete,
-}: Pick<ImagePreviewProps, "setIsPreviewOpen" | "handleDownload" | "handleDelete">) => (
+  isDownloading,
+}: Pick<ImagePreviewProps, "setIsPreviewOpen" | "handleDownload" | "handleDelete" | "isDownloading">) => (
   <div
     className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent 
       opacity-0 group-hover/image:opacity-100 transition-all duration-500
@@ -36,15 +38,34 @@ const PreviewControls = ({
       onClick={(e) => e.stopPropagation()}
     >
       {[
-        { icon: Expand, onClick: () => setIsPreviewOpen(true), label: "Full preview", delay: "delay-[0ms]" },
-        { icon: Download, onClick: handleDownload, label: "Download image", delay: "delay-[50ms]" },
-        { icon: Trash2, onClick: handleDelete, label: "Delete image", delay: "delay-[100ms]" },
+        { 
+          icon: Expand, 
+          onClick: () => setIsPreviewOpen(true), 
+          label: "Full preview", 
+          delay: "delay-[0ms]",
+          isLoading: false 
+        },
+        { 
+          icon: Download, 
+          onClick: handleDownload, 
+          label: "Download image", 
+          delay: "delay-[50ms]",
+          isLoading: isDownloading 
+        },
+        { 
+          icon: Trash2, 
+          onClick: handleDelete, 
+          label: "Delete image", 
+          delay: "delay-[100ms]",
+          isLoading: false 
+        },
       ].map((button) => (
         <ActionButton
           key={button.label}
           icon={button.icon}
           onClick={button.onClick}
           label={button.label}
+          isLoading={button.isLoading}
           className={cn("transition-all duration-500", button.delay)}
         />
       ))}
@@ -89,6 +110,7 @@ const ImagePreview = ({
   setIsPreviewOpen,
   handleDownload,
   handleDelete,
+  isDownloading,
 }: ImagePreviewProps) => {
   // Add a loading state for image preview
   const [isPreviewLoading, setIsPreviewLoading] = useState(true);
@@ -174,6 +196,7 @@ const ImagePreview = ({
                     setIsPreviewOpen={setIsPreviewOpen}
                     handleDownload={handleDownload}
                     handleDelete={handleDelete}
+                    isDownloading={isDownloading}
                   />
                   <TypeBadge isAiGenerated={isAiGenerated} />
                 </>

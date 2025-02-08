@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Loader } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
 interface ActionButtonProps {
@@ -8,6 +9,8 @@ interface ActionButtonProps {
   label: string;
   className?: string;
   size?: "default" | "large";
+  isLoading?: boolean;
+  disabled?: boolean;
 }
 
 export const ActionButton = ({
@@ -15,7 +18,9 @@ export const ActionButton = ({
   icon: Icon,
   label,
   className = "",
-  size = "default"
+  size = "default",
+  isLoading = false,
+  disabled = false
 }: ActionButtonProps) => (
   <Button
     variant="secondary"
@@ -30,6 +35,7 @@ export const ActionButton = ({
       "hover:shadow-[0_8px_24px_rgba(0,0,0,0.6)]",
       "hover:border-white/40",
       "group/button",
+      "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:rotate-0",
       size === "large" ? "h-12 w-12" : "h-11 w-11",
       className
     )}
@@ -38,15 +44,26 @@ export const ActionButton = ({
       e.stopPropagation();
       onClick(e);
     }}
+    disabled={isLoading || disabled}
     aria-label={label}
   >
-    <Icon 
-      className={cn(
-        "transition-transform duration-300",
-        "group-hover/button:scale-110",
-        size === "large" ? "h-6 w-6" : "h-5 w-5",
-        className.includes("text-") ? "" : "text-white"
-      )} 
-    />
+    {isLoading ? (
+      <Loader 
+        className={cn(
+          "animate-spin",
+          size === "large" ? "h-6 w-6" : "h-5 w-5",
+          "text-white"
+        )} 
+      />
+    ) : (
+      <Icon 
+        className={cn(
+          "transition-transform duration-300",
+          "group-hover/button:scale-110",
+          size === "large" ? "h-6 w-6" : "h-5 w-5",
+          className.includes("text-") ? "" : "text-white"
+        )} 
+      />
+    )}
   </Button>
 ); 

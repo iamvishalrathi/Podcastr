@@ -4,7 +4,6 @@ import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { cn } from "@/lib/utils"
 import Image from 'next/image'
-import { Button } from './button'
 import { X, Download } from 'lucide-react'
 import { PreviewLoading } from './preview-loading'
 import { ActionButton } from "@/components/ui/action-button"
@@ -38,8 +37,9 @@ const ImageDialogContent = React.forwardRef<
     image: string;
     onDownload?: (e: React.MouseEvent) => Promise<void>;
     onClose?: () => void;
+    isDownloading?: boolean;
   }
->(({ className, image, onDownload, onClose, ...props }, ref) => {
+>(({ className, image, onDownload, onClose, isDownloading = false, ...props }, ref) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const isAnimated = image.endsWith('.gif') || image.includes('convex.cloud');
 
@@ -104,6 +104,7 @@ const ImageDialogContent = React.forwardRef<
                   onClick={onDownload}
                   label="Download"
                   size="large"
+                  isLoading={isDownloading}
                 />
               )}
               <DialogPrimitive.Close asChild>

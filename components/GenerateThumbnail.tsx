@@ -44,6 +44,7 @@ const GenerateThumbnail = ({
   const [progress, setProgress] = useState(0)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [isFullPreviewLoading, setIsFullPreviewLoading] = useState(true)
+  const [isDownloading, setIsDownloading] = useState(false)
 
   //To upload Image & fetch uploaded url
   const generateUploadUrl = useMutation(api.files.generateUploadUrl)
@@ -208,7 +209,10 @@ const GenerateThumbnail = ({
 
   const handleDownload = async (e: React.MouseEvent) => {
     e.stopPropagation()
+    if (isDownloading) return;
+    
     try {
+      setIsDownloading(true);
       const response = await fetch(image)
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
@@ -225,6 +229,8 @@ const GenerateThumbnail = ({
         description: "Failed to download image",
         variant: "destructive",
       })
+    } finally {
+      setIsDownloading(false);
     }
   }
 
@@ -399,6 +405,7 @@ const GenerateThumbnail = ({
             setIsPreviewOpen={setIsPreviewOpen}
             handleDownload={handleDownload}
             handleDelete={handleDelete}
+            isDownloading={isDownloading}
           />
         </div>
       )}
@@ -409,6 +416,7 @@ const GenerateThumbnail = ({
             image={image} 
             onDownload={handleDownload} 
             onClose={() => setIsPreviewOpen(false)}
+            isDownloading={isDownloading}
           />
         </Dialog>
       )}
