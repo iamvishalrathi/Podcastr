@@ -55,6 +55,7 @@ export interface GeneratePodcastProps {
   audioStorageId: Id<"_storage"> | null;
   setAudio: (url: string) => void;
   voiceType: string;
+  setVoiceType: (type: string) => void;
   audio: string;
   voicePrompt: string;
   setVoicePrompt: (prompt: string) => void;

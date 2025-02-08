@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -47,8 +46,6 @@ const formSchema = z.object({
         required_error: "Please select a podcast type.",
     }),
 });
-
-const voiceCategories = ['Drew', "Rachel", "Sarah"];
 
 const CreatePodcast = () => {
     const router = useRouter()
@@ -416,44 +413,8 @@ const CreatePodcast = () => {
                                 </div>
 
                                 <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
-                                    {/* Voice Selection - Moved to top */}
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-4 w-1 bg-orange-1 rounded-full" />
-                                            <h2 className="text-lg font-semibold text-white-1">Voice Settings</h2>
-                                        </div>
-
-                                        <div className="grid gap-4">
-                                            <div className="space-y-2">
-                                                <Label className="text-white-1">AI Voice Selection</Label>
-                                                <Select
-                                                    onValueChange={(value) => {
-                                                        setVoiceType(value);
-                                                        const audio = new Audio(`/${value}.mp3`);
-                                                        audio.play().catch(error => {
-                                                            console.error("Error playing voice sample:", error);
-                                                        });
-                                                    }}
-                                                >
-                                                    <SelectTrigger className="input-class h-12">
-                                                        <SelectValue placeholder="Choose an AI voice" />
-                                                    </SelectTrigger>
-                                                    <SelectContent className="bg-black-1 text-white-1 border-gray-800">
-                                                        {voiceCategories.map((category) => (
-                                                            <SelectItem
-                                                                key={category}
-                                                                value={category}
-                                                                className="hover:bg-orange-1 hover:text-white"
-                                                            >
-                                                                {category}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <GeneratePodcast
+                                        setVoiceType={setVoiceType}
                                         setAudioStorageId={setAudioStorageId}
                                         audioStorageId={audioStorageId}
                                         setAudio={setAudioUrl}

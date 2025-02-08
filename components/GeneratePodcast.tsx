@@ -1,3 +1,5 @@
+'use client'
+
 import { GeneratePodcastProps } from '@/types'
 import { Label } from './ui/label'
 import { Textarea } from './ui/textarea'
@@ -8,9 +10,10 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { v4 as uuidv4 } from 'uuid';
 import { useUploadFiles } from '@xixixao/uploadstuff/react';
-import { useToast } from "@/components/ui/use-toast"
+import { toast, useToast } from "@/components/ui/use-toast"
 import { Progress } from './ui/progress';
 import { cn } from '@/lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
 
 const MAX_CHARACTERS = 2500;
 const CHARACTERS_PER_CREDIT = 150;
@@ -41,7 +44,7 @@ const useGeneratePodcast = ({
     },
     onUploadError: (error) => {
       console.error("Upload error:", error);
-      setUploadError(error);
+      setUploadError(error as Error);
       toast({
         title: "Upload failed",
         description: error.message,
@@ -94,7 +97,7 @@ const useGeneratePodcast = ({
   const togglePlayPause = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (audioRef.current) {
       try {
         if (isPlaying) {
@@ -197,7 +200,7 @@ const useGeneratePodcast = ({
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     try {
       if (audioStorageId) {
         await deleteFile({ storageId: audioStorageId });
@@ -241,7 +244,6 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
   const {
     isGenerating,
     generatePodcast,
-    isUploading,
     progress,
     characterCount,
     estimatedCredits,
@@ -254,18 +256,14 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     handleAudioEnded,
     handleDelete,
     setDuration,
-    setCurrentTime
+    setCurrentTime,
+    setVoiceType
   } = useGeneratePodcast(props);
 
-  // Add client-side only rendering for the audio player
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const voiceCategories = ['Drew', "Rachel", "Sarah"];
 
   return (
-    <div className={`flex flex-col gap-6 pt-10 ${FADE_IN_ANIMATION}`}>
+    <div className={`flex flex-col gap-6 pt-5 ${FADE_IN_ANIMATION}`}>
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-center">
           <Label className="text-lg font-bold text-white-1 tracking-tight">Script</Label>
@@ -298,6 +296,35 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
           }}
         />
       </div>
+
+      <div className="flex flex-col gap-3">
+          <Label className="text-white-1">AI Voice Selection</Label>
+          <Select
+            onValueChange={(value) => {
+              setVoiceType(value);
+              const audio = new Audio(`/${value}.mp3`);
+              audio.play().catch(error => {
+                console.error("Error playing voice sample:", error);
+              });
+            }}
+          >
+          <SelectTrigger id="style-select" className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+                                        transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
+            <SelectValue placeholder="Select style" className="text-left" />
+          </SelectTrigger>
+          <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
+            {voiceCategories.map((option) => (
+              <SelectItem
+                key={option}
+                value={option}
+                className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
+              >
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+          </Select>
+        </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -350,22 +377,22 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
                   isPlaying && "animate-pulse ring-2 ring-orange-1/50 ring-offset-2 ring-offset-black"
                 )}
               >
-                {isPlaying ? 
-                  <Square size={24} className="text-white" /> : 
+                {isPlaying ?
+                  <Square size={24} className="text-white" /> :
                   <Play size={24} className="ml-1 text-white" />
                 }
               </Button>
               <div className="flex-1 space-y-2">
                 <div className="relative h-2 bg-black-1/50 rounded-full overflow-hidden">
                   <div className="absolute inset-0 bg-black-1/50" />
-                  
-                  <div 
+
+                  <div
                     className="absolute inset-y-0 left-0 bg-gradient-to-r from-orange-1 to-orange-400 
                       transition-all duration-150 ease-out rounded-full"
-                    style={{ 
+                    style={{
                       width: `${(currentTime / duration) * 100}%`,
                       transform: 'translateZ(0)'
-                    }} 
+                    }}
                   />
                 </div>
 
@@ -394,7 +421,6 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
               onEnded={handleAudioEnded}
               onError={(e) => {
                 console.error("Audio playback error:", e);
-                setIsPlaying(false);
               }}
             />
           </div>

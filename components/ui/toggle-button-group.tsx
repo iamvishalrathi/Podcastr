@@ -12,7 +12,6 @@ interface ToggleButtonGroupProps {
 }
 
 export function ToggleButtonGroup({
-  className,
   containerWidth = "max-w-[600px]", // Default width
   button1text,
   button2text,
