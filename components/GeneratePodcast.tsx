@@ -29,6 +29,7 @@ const useGeneratePodcast = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const { toast } = useToast()
@@ -220,6 +221,11 @@ const useGeneratePodcast = ({
     }
   };
 
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
+
   return {
     isGenerating,
     generatePodcast,
@@ -236,7 +242,8 @@ const useGeneratePodcast = ({
     handleAudioEnded,
     handleDelete,
     setDuration,
-    setCurrentTime
+    setCurrentTime,
+    isMounted
   }
 }
 
@@ -262,7 +269,8 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     handleAudioEnded,
     handleDelete,
     setDuration,
-    setCurrentTime
+    setCurrentTime,
+    isMounted
   } = useGeneratePodcast(props);
 
   return (

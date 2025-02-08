@@ -34,7 +34,6 @@ import GenerateAIContent from "@/components/GenerateAIContent";
 import { chatSession } from "@/service/Gemini";
 import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
 import { podcastTypes } from "@/constants/PodcastType";
-import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
     podcastTitle: z.string().min(2, {
@@ -61,7 +60,7 @@ const CreatePodcast = () => {
     const [audioDuration, setAudioDuration] = useState(0);
 
     //Voice States
-    const [voiceType, setVoiceType] = useState<string | null>(null);
+    const [voiceType, setVoiceType] = useState<string | null>("Drew");
     const [voicePrompt, setVoicePrompt] = useState("");
 
     //AI States
