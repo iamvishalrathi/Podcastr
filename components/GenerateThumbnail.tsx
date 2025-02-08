@@ -140,19 +140,6 @@ const GenerateThumbnail = ({
     }
   }
 
-  // Add validation helper
-  const isImageRequired = () => {
-    if (!image && !isImageLoading) {
-      toast({
-        title: "Thumbnail is required",
-        description: "Please upload or generate a thumbnail image",
-        variant: "destructive",
-      })
-      return false
-    }
-    return true
-  }
-
   // Update generate function with better error handling
   const generateImage = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -268,6 +255,28 @@ const GenerateThumbnail = ({
                   bg-black-1/40 rounded-full border border-white/5">
                   {thumbnailPrompts.length} suggestions
                 </span>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                {thumbnailPrompts.map((prompt, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setImagePrompt(prompt);
+                    }}
+                    className={cn(
+                      "text-left px-4 py-3 rounded-lg transition-all duration-200",
+                      "hover:bg-black-1/50 border border-black-6 hover:border-orange-1/30",
+                      "text-gray-1 hover:text-white-1",
+                      imagePrompt === prompt && "bg-black-1/50 border-orange-1/50 text-white-1"
+                    )}
+                  >
+                    {prompt}
+                  </button>
+                ))}
               </div>
             </div>
           )}

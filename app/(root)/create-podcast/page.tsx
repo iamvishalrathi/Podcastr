@@ -21,7 +21,6 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import GeneratePodcast from "@/components/GeneratePodcast";
@@ -33,7 +32,6 @@ import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import GenerateAIContent from "@/components/GenerateAIContent";
-import { languageOptions } from "@/constants/Language_Options";
 import { chatSession } from "@/service/Gemini";
 import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
 
@@ -118,27 +116,19 @@ const CreatePodcast = () => {
                 return;
             }
 
-            if (!voiceType) {
-                toast({
-                    title: 'Please select a voice type',
-                    variant: 'destructive'
-                });
-                setIsSubmitting(false);
-                return;
-            }
-
-            if (!audioUrl) {
-                toast({
-                    title: 'Please generate audio content',
-                    variant: 'destructive'
-                });
-                setIsSubmitting(false);
-                return;
-            }
-
             if (!imageUrl) {
                 toast({
                     title: 'Please upload or generate a thumbnail',
+                    variant: 'destructive'
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            // Only check for voice type if audio is being generated
+            if (audioUrl && !voiceType) {
+                toast({
+                    title: 'Please select a voice type',
                     variant: 'destructive'
                 });
                 setIsSubmitting(false);
@@ -151,7 +141,7 @@ const CreatePodcast = () => {
                 podcastDescription: data.podcastDescription,
                 audioUrl,
                 imageUrl,
-                voiceType: voiceType,
+                voiceType: voiceType || '',
                 imagePrompt,
                 voicePrompt,
                 views: 0,
