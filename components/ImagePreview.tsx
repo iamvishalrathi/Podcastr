@@ -200,7 +200,7 @@ const ImagePreview = ({
           <div className="flex items-center gap-2">
             <span className="px-2 py-1 rounded-md bg-black-1/40 border border-white/5 
               text-[10px] font-medium text-gray-400">
-              {isAiThumbnail ? 'AI' : 'Custom'}
+              {isAiGenerated ? 'AI' : 'Custom'}
             </span>
           </div>
         </div>
