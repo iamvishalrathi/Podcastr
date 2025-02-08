@@ -248,23 +248,11 @@ const GenerateThumbnail = ({
 
   return (
     <div className="space-y-6 animate-in fade-in-50 w-full max-w-[800px] mx-auto px-4 sm:px-6">
-      <ToggleButtonGroup>
-        <ToggleButton
-          isActive={isAiThumbnail}
-          onClick={() => setIsAiThumbnail(true)}
-          activeColor="orange"
-        >
-          Use AI to generate thumbnail
-        </ToggleButton>
-
-        <ToggleButton
-          isActive={!isAiThumbnail}
-          onClick={() => setIsAiThumbnail(false)}
-          activeColor="blue"
-        >
-          Upload custom thumbnail
-        </ToggleButton>
-      </ToggleButtonGroup>
+      <ToggleButtonGroup containerWidth="max-w-[600px]"
+        button1text="Use AI to generate thumbnail" button2text="Upload custom thumbnail"
+        button1Active={isAiThumbnail} button2Active={!isAiThumbnail}
+        setButtonActive={setIsAiThumbnail}
+      />
 
       {isAiThumbnail ? (
         <div className="flex flex-col gap-5 animate-in fade-in-50">
@@ -282,74 +270,6 @@ const GenerateThumbnail = ({
                   {thumbnailPrompts.length} suggestions
                 </span>
               </div>
-
-              <div className="flex flex-col gap-3 overflow-y-auto custom-scrollbar pr-3
-                min-h-[120px] max-h-[320px] sm:max-h-[400px]">
-                {thumbnailPrompts.map((prompt, index) => (
-                  <Button
-                    key={index}
-                    type="button"
-                    variant={imagePrompt === prompt ? "default" : "outline"}
-                    className={cn(
-                      "w-full text-left font-normal text-sm sm:text-base",
-                      "transition-all duration-300 group/prompt",
-                      "rounded-xl relative overflow-hidden",
-                      "py-4 px-5",
-                      "hover:scale-[1.01]",
-                      imagePrompt === prompt
-                        ? "bg-gradient-to-r from-orange-1 to-orange-400 text-white border-none shadow-lg hover:shadow-orange-1/20"
-                        : "bg-black-1/50 hover:bg-black-1/70 border-orange-1/10 hover:border-orange-1/30",
-                    )}
-                    onClick={() => setImagePrompt(prompt)}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent 
-                      translate-x-[-100%] group-hover/prompt:translate-x-[100%] transition-transform duration-1000" />
-                    
-                    <div className="flex items-start gap-4 relative">
-                      <div className={cn(
-                        "flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full text-xs font-semibold mt-0.5",
-                        "transition-all duration-300 group-hover/prompt:scale-110",
-                        imagePrompt === prompt 
-                          ? "bg-white/20 text-white" 
-                          : "bg-orange-1/10 text-orange-1"
-                      )}>
-                        #{index + 1}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm sm:text-base leading-relaxed break-words">
-                          {prompt}
-                        </p>
-                      </div>
-                      
-                      {imagePrompt === prompt && (
-                        <div className="flex-shrink-0 ml-2 flex items-center justify-center w-5 h-5 rounded-full 
-                          bg-white shadow-lg mt-0.5">
-                          <div className="w-2.5 h-2.5 rounded-full bg-orange-1" />
-                        </div>
-                      )}
-                    </div>
-                  </Button>
-                ))}
-              </div>
-
-              <style jsx global>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                  width: 8px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                  background: rgba(0, 0, 0, 0.2);
-                  border-radius: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                  background: rgba(249, 117, 53, 0.3);
-                  border-radius: 4px;
-                  transition: all 0.3s;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                  background: rgba(249, 117, 53, 0.5);
-                }
-              `}</style>
             </div>
           )}
 

@@ -50,23 +50,8 @@ const GenerateAIContent = ({
 
     return (
         <div className="flex flex-col gap-6 w-full">
-            <ToggleButtonGroup>
-                <ToggleButton
-                    isActive={isAiContent}
-                    onClick={() => setIsAiContent(true)}
-                    activeColor="orange"
-                >
-                    Use AI to generate content
-                </ToggleButton>
-
-                <ToggleButton
-                    isActive={!isAiContent}
-                    onClick={() => setIsAiContent(false)}
-                    activeColor="blue"
-                >
-                    Write custom content
-                </ToggleButton>
-            </ToggleButtonGroup>
+            <ToggleButtonGroup containerWidth="max-w-[530px]" button1text="Use AI to generate content" button2text="Write custom content" 
+                button1Active={isAiContent} button2Active={!isAiContent} setButtonActive={setIsAiContent} />
 
             {/* Main Content Area */}
             <div className="space-y-8">

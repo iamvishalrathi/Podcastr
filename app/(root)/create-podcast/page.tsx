@@ -194,11 +194,11 @@ const CreatePodcast = () => {
                 .replace('{style}', style)
                 .replace('{note}', note || 'No additional notes');
 
-            console.log(Final_Gemini_Prompt);
+            // console.log(Final_Gemini_Prompt);
             const result = await chatSession.sendMessage(Final_Gemini_Prompt);
             const response = await result.response;
             const text = response.text();
-            console.log(text);
+            // console.log(text);
 
             try {
                 const content = JSON.parse(text);
