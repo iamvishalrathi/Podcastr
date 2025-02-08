@@ -20,7 +20,7 @@ const CHARACTERS_PER_CREDIT = 150;
 const FADE_IN_ANIMATION = "animate-in fade-in duration-500";
 
 const useGeneratePodcast = ({
-  setAudio, voiceType,setVoiceType, voicePrompt, setAudioStorageId, audioStorageId
+  setAudio, voiceType, voicePrompt, setAudioStorageId, audioStorageId
 }: GeneratePodcastProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -262,15 +262,19 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     handleAudioEnded,
     handleDelete,
     setDuration,
-    setCurrentTime,
-    setVoiceType
+    setCurrentTime
   } = useGeneratePodcast(props);
 
   return (
     <div className={`flex flex-col gap-6 pt-5 ${FADE_IN_ANIMATION}`}>
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-center">
-          <Label className="text-lg font-bold text-white-1 tracking-tight">Script</Label>
+          <Label
+            htmlFor='script-textarea'
+            className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
+            <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+            Script
+          </Label>
           <div className="text-sm text-gray-1 bg-black-1/50 px-3 py-1.5 rounded-full flex gap-3">
             <span className={characterCount > MAX_CHARACTERS ? "text-red-500 font-medium" : ""}>
               {characterCount}/{MAX_CHARACTERS}
@@ -282,6 +286,7 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
           </div>
         </div>
         <Textarea
+          id='script-textarea'
           placeholder="Write or generate script for your podcast..."
           className="input-class focus-visible:ring-offset-orange-1 min-h-[200px] text-base leading-relaxed
             transition-all duration-200 resize-y bg-black-1/50 hover:bg-black-1/70"
@@ -303,11 +308,12 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
 
       <div className="flex flex-col gap-3">
         <Label
+          htmlFor='voice-select'
           className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
           <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
-          Voice Selection
+          AI Voice
         </Label>
-        <Select 
+        <Select
           onValueChange={(value) => {
             props.setVoiceType(value);
             const audio = new Audio(`/${value}.mp3`);
@@ -315,9 +321,9 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
               console.error("Error playing voice sample:", error);
             });
           }}
-          defaultValue={props.voiceType}
+          defaultValue={voiceCategories[0].value}
         >
-          <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+          <SelectTrigger id='voice-select' className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
             transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
             <SelectValue placeholder="Select voice type" className="text-left" />
           </SelectTrigger>

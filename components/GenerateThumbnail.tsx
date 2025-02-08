@@ -310,11 +310,12 @@ const GenerateThumbnail = ({
           )}
 
           <div className="space-y-3 mt-6">
-            <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
+            <Label htmlFor='thumbnail-prompt' className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
               <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
               {thumbnailPrompts.length > 0 ? "Customize Prompt" : "Enter Prompt"}
             </Label>
             <Textarea
+              id='thumbnail-prompt'
               className={cn(
                 "input-class font-light min-h-[120px] w-full",
                 "bg-black-1/50 hover:bg-black-1/70",
