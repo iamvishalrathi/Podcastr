@@ -11,12 +11,10 @@ import { useUploadFiles } from '@xixixao/uploadstuff/react';
 import { useToast } from "@/components/ui/use-toast"
 import { Progress } from './ui/progress';
 import { cn } from '@/lib/utils';
-import { Id } from 'convex/react';
 
 const MAX_CHARACTERS = 2500;
 const CHARACTERS_PER_CREDIT = 150;
 const FADE_IN_ANIMATION = "animate-in fade-in duration-500";
-const SLIDE_IN_ANIMATION = "animate-in slide-in-from-bottom-4 duration-500";
 
 const useGeneratePodcast = ({
   setAudio, voiceType, voicePrompt, setAudioStorageId, audioStorageId

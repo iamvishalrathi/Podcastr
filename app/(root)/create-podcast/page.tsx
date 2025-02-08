@@ -34,6 +34,7 @@ import { useRouter } from "next/navigation";
 import GenerateAIContent from "@/components/GenerateAIContent";
 import { chatSession } from "@/service/Gemini";
 import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
+import { podcastTypes } from "@/constants/PodcastType";
 
 const formSchema = z.object({
     podcastTitle: z.string().min(2, {
@@ -41,6 +42,9 @@ const formSchema = z.object({
     }),
     podcastDescription: z.string().min(2, {
         message: "Podcast description must be at least 2 characters.",
+    }),
+    podcastType: z.string({
+        required_error: "Please select a podcast type.",
     }),
 });
 
@@ -80,6 +84,7 @@ const CreatePodcast = () => {
         defaultValues: {
             podcastTitle: "",
             podcastDescription: "",
+            podcastType: "",
         },
     });
 
@@ -101,6 +106,15 @@ const CreatePodcast = () => {
             if (!data.podcastTitle.trim()) {
                 toast({
                     title: 'Podcast title is required',
+                    variant: 'destructive'
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (!data.podcastType) {
+                toast({
+                    title: 'Please select a podcast type',
                     variant: 'destructive'
                 });
                 setIsSubmitting(false);
@@ -139,6 +153,7 @@ const CreatePodcast = () => {
             await createPodcast({
                 podcastTitle: data.podcastTitle,
                 podcastDescription: data.podcastDescription,
+                podcastType: data.podcastType,
                 audioUrl,
                 imageUrl,
                 voiceType: voiceType || '',
@@ -146,8 +161,8 @@ const CreatePodcast = () => {
                 voicePrompt,
                 views: 0,
                 audioDuration,
-                audioStorageId,  // This will now always be defined
-                imageStorageId,  // This will now always be defined
+                audioStorageId,
+                imageStorageId,
             });
 
             toast({
@@ -305,26 +320,70 @@ const CreatePodcast = () => {
                                     <h2 className="text-lg font-semibold text-white-1">Basic Information</h2>
                                 </div>
 
-                                <FormField
-                                    control={form.control}
-                                    name="podcastTitle"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-white-1">
-                                                Podcast Title
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    className="input-class focus-visible:ring-offset-orange-1 h-12"
-                                                    placeholder="Enter your podcast title..."
-                                                    suppressHydrationWarning
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage className="text-white-1" />
-                                        </FormItem>
-                                    )}
-                                />
+                                <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
+                                    <div className={`flex flex-col gap-6 pt-10`}>
+                                        <FormField
+                                            control={form.control}
+                                            name="podcastTitle"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="text-white-1">
+                                                        Podcast Title
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            className="input-class focus-visible:ring-offset-orange-1 h-12"
+                                                            placeholder="Enter your podcast title..."
+                                                            suppressHydrationWarning
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage className="text-white-1" />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={form.control}
+                                            name="podcastType"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="text-white-1">
+                                                        Podcast Type
+                                                    </FormLabel>
+                                                    <Select
+                                                        onValueChange={field.onChange}
+                                                        defaultValue={field.value}
+                                                    >
+                                                        <FormControl>
+                                                            <SelectTrigger
+                                                                className="input-class focus-visible:ring-offset-orange-1 h-12"
+                                                            >
+                                                                <SelectValue placeholder="Select a podcast type" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
+                                                            {podcastTypes.map((option) => (
+                                                                <SelectItem
+                                                                    key={option.value}
+                                                                    value={option.value}
+                                                                    className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
+                                                                >
+                                                                    {option.label}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage className="text-white-1" />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+
+                                </div>
                             </div>
 
                             {/* Content Generation */}
