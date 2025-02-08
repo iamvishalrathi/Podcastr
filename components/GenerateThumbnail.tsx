@@ -219,10 +219,6 @@ const GenerateThumbnail = ({
       link.click()
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
-
-      toast({
-        title: "Image downloaded successfully",
-      })
     } catch (error) {
       toast({
         title: "Error downloading image",
