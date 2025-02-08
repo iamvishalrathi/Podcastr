@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { Button } from './button'
 import { X, Download } from 'lucide-react'
 import { PreviewLoading } from './preview-loading'
+import { ActionButton } from "@/components/ui/action-button"
 const Dialog = DialogPrimitive.Root
 
 const DialogTrigger = DialogPrimitive.Trigger
@@ -36,14 +37,24 @@ const ImageDialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
     image: string;
     onDownload?: (e: React.MouseEvent) => Promise<void>;
+    onClose?: () => void;
   }
->(({ className, image, onDownload, ...props }, ref) => {
+>(({ className, image, onDownload, onClose, ...props }, ref) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const isAnimated = image.endsWith('.gif') || image.includes('convex.cloud');
 
+  const handleOutsideClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose?.();
+    }
+  };
+
   return (
     <DialogPortal>
-      <DialogOverlay className="bg-black/95 backdrop-blur-sm" />
+      <DialogOverlay 
+        className="bg-black/95 backdrop-blur-sm" 
+        onClick={handleOutsideClick}
+      />
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
@@ -59,7 +70,7 @@ const ImageDialogContent = React.forwardRef<
           "backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
           className
         )}
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleOutsideClick}
         {...props}
       >
         <div className="relative group min-h-[200px]">
@@ -88,37 +99,24 @@ const ImageDialogContent = React.forwardRef<
               onClick={(e) => e.stopPropagation()}
             >
               {onDownload && (
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="h-12 w-12 rounded-full 
-                    bg-black/40 hover:bg-black/60
-                    backdrop-blur-xl border border-white/30 
-                    transition-all duration-300 hover:scale-110
-                    shadow-[0_4px_16px_rgba(0,0,0,0.5)]
-                    hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)]
-                    hover:border-white/40"
+                <ActionButton
+                  icon={Download}
                   onClick={onDownload}
-                  aria-label="Download"
-                >
-                  <Download className="h-6 w-6 text-white" />
-                </Button>
+                  label="Download"
+                  size="large"
+                />
               )}
               <DialogPrimitive.Close asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="h-12 w-12 rounded-full 
-                    bg-black/40 hover:bg-black/60
-                    backdrop-blur-xl border border-white/30 
-                    transition-all duration-300 hover:scale-110
-                    shadow-[0_4px_16px_rgba(0,0,0,0.5)]
-                    hover:shadow-[0_8px_32px_rgba(0,0,0,0.6)]
-                    hover:border-white/40"
-                  aria-label="Close"
-                >
-                  <X className="h-6 w-6 text-white" />
-                </Button>
+                <ActionButton
+                  icon={X}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onClose?.();
+                  }}
+                  label="Close"
+                  size="large"
+                />
               </DialogPrimitive.Close>
             </div>
           )}

@@ -409,7 +409,11 @@ const GenerateThumbnail = ({
 
       {image && (
         <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-          <ImageDialogContent image={image} onDownload={handleDownload} />
+          <ImageDialogContent 
+            image={image} 
+            onDownload={handleDownload} 
+            onClose={() => setIsPreviewOpen(false)}
+          />
         </Dialog>
       )}
 

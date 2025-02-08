@@ -4,6 +4,7 @@ import { Download, Expand, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { PreviewLoading } from './ui/preview-loading';
+import { ActionButton } from "@/components/ui/action-button";
 
 interface ImagePreviewProps {
   image: string;
@@ -15,49 +16,6 @@ interface ImagePreviewProps {
   handleDownload: (e: React.MouseEvent) => Promise<void>;
   handleDelete: (e: React.MouseEvent) => Promise<void>;
 }
-
-
-// Update the PreviewActionButton for better visibility and interaction
-const PreviewActionButton = ({
-  onClick,
-  icon: Icon,
-  className = "",
-  "aria-label": ariaLabel,
-}: {
-  onClick: (e: React.MouseEvent) => void;
-  icon: React.ElementType;
-  className?: string;
-  "aria-label": string;
-}) => (
-  <Button
-    variant="secondary"
-    size="icon"
-    className={cn(
-      "h-11 w-11 rounded-full",
-      "bg-black/40 hover:bg-black/60",
-      "backdrop-blur-xl border border-white/30",
-      "transition-all duration-300",
-      "hover:scale-110 hover:rotate-3",
-      "shadow-[0_4px_16px_rgba(0,0,0,0.5)]",
-      "hover:shadow-[0_8px_24px_rgba(0,0,0,0.6)]",
-      "hover:border-white/40",
-      "group/button",
-      className
-    )}
-    onClick={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      onClick(e);
-    }}
-    aria-label={ariaLabel}
-  >
-    <Icon className={cn(
-      "h-5 w-5 transition-transform duration-300",
-      "group-hover/button:scale-110",
-      className.includes("text-") ? "" : "text-white"
-    )} />
-  </Button>
-);
 
 // Update the PreviewControls for a more elegant overlay
 const PreviewControls = ({
@@ -81,12 +39,12 @@ const PreviewControls = ({
         { icon: Expand, onClick: () => setIsPreviewOpen(true), label: "Full preview", delay: "delay-[0ms]" },
         { icon: Download, onClick: handleDownload, label: "Download image", delay: "delay-[50ms]" },
         { icon: Trash2, onClick: handleDelete, label: "Delete image", delay: "delay-[100ms]" },
-      ].map((button, index) => (
-        <PreviewActionButton
+      ].map((button) => (
+        <ActionButton
           key={button.label}
           icon={button.icon}
           onClick={button.onClick}
-          aria-label={button.label}
+          label={button.label}
           className={cn("transition-all duration-500", button.delay)}
         />
       ))}
