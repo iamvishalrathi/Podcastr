@@ -14,7 +14,6 @@ import type { Id } from "@/convex/_generated/dataModel"
 import { Dialog } from "./ui/dialog"
 import ImagePreview from "./ImagePreview"
 import { ImageDialogContent } from "./ui/dialog"
-import { ToggleButton } from "@/components/ui/toggle-button"
 import { ToggleButtonGroup } from "@/components/ui/toggle-button-group"
 
 interface GenerateThumbnailProps {
@@ -248,7 +247,7 @@ const GenerateThumbnail = ({
 
   return (
     <div className="space-y-6 animate-in fade-in-50 w-full max-w-[800px] mx-auto px-4 sm:px-6">
-      <ToggleButtonGroup containerWidth="max-w-[600px]"
+      <ToggleButtonGroup containerWidth="max-w-[580px]"
         button1text="Use AI to generate thumbnail" button2text="Upload custom thumbnail"
         button1Active={isAiThumbnail} button2Active={!isAiThumbnail}
         setButtonActive={setIsAiThumbnail}
