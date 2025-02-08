@@ -34,6 +34,7 @@ import GenerateAIContent from "@/components/GenerateAIContent";
 import { chatSession } from "@/service/Gemini";
 import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
 import { podcastTypes } from "@/constants/PodcastType";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
     podcastTitle: z.string().min(2, {
@@ -258,6 +259,8 @@ const CreatePodcast = () => {
         }
     };
 
+    const voiceCategories = ['Drew', "Rachel", "Sarah"];
+
     return (
         <section className="container max-w-4xl mx-auto px-4 py-10">
             <div className="space-y-10">
@@ -413,12 +416,49 @@ const CreatePodcast = () => {
                                 </div>
 
                                 <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
+                                    {/* Voice Selection - Moved to top */}
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-4 w-1 bg-orange-1 rounded-full" />
+                                            <h2 className="text-lg font-semibold text-white-1">Voice Settings</h2>
+                                        </div>
+
+                                        <div className="grid gap-4">
+                                            <div className="space-y-2">
+                                                <Label className="text-white-1">AI Voice Selection</Label>
+                                                <Select
+                                                    onValueChange={(value) => {
+                                                        setVoiceType(value);
+                                                        const audio = new Audio(`/${value}.mp3`);
+                                                        audio.play().catch(error => {
+                                                            console.error("Error playing voice sample:", error);
+                                                        });
+                                                    }}
+                                                >
+                                                    <SelectTrigger className="input-class h-12">
+                                                        <SelectValue placeholder="Choose an AI voice" />
+                                                    </SelectTrigger>
+                                                    <SelectContent className="bg-black-1 text-white-1 border-gray-800">
+                                                        {voiceCategories.map((category) => (
+                                                            <SelectItem
+                                                                key={category}
+                                                                value={category}
+                                                                className="hover:bg-orange-1 hover:text-white"
+                                                            >
+                                                                {category}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <GeneratePodcast
-                                        setVoiceType={setVoiceType}
                                         setAudioStorageId={setAudioStorageId}
                                         audioStorageId={audioStorageId}
                                         setAudio={setAudioUrl}
                                         voiceType={voiceType!}
+                                        setVoiceType={setVoiceType}
                                         audio={audioUrl}
                                         voicePrompt={voicePrompt}
                                         setVoicePrompt={setVoicePrompt}

@@ -260,8 +260,6 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     setVoiceType
   } = useGeneratePodcast(props);
 
-  const voiceCategories = ['Drew', "Rachel", "Sarah"];
-
   return (
     <div className={`flex flex-col gap-6 pt-5 ${FADE_IN_ANIMATION}`}>
       <div className="flex flex-col gap-3">
@@ -296,35 +294,6 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
           }}
         />
       </div>
-
-      <div className="flex flex-col gap-3">
-          <Label className="text-white-1">AI Voice Selection</Label>
-          <Select
-            onValueChange={(value) => {
-              setVoiceType(value);
-              const audio = new Audio(`/${value}.mp3`);
-              audio.play().catch(error => {
-                console.error("Error playing voice sample:", error);
-              });
-            }}
-          >
-          <SelectTrigger id="style-select" className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
-                                        transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
-            <SelectValue placeholder="Select style" className="text-left" />
-          </SelectTrigger>
-          <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
-            {voiceCategories.map((option) => (
-              <SelectItem
-                key={option}
-                value={option}
-                className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
-              >
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-          </Select>
-        </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
