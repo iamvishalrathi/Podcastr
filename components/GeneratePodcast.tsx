@@ -13,14 +13,14 @@ import { useUploadFiles } from '@xixixao/uploadstuff/react';
 import { toast, useToast } from "@/components/ui/use-toast"
 import { Progress } from './ui/progress';
 import { cn } from '@/lib/utils';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const MAX_CHARACTERS = 2500;
 const CHARACTERS_PER_CREDIT = 150;
 const FADE_IN_ANIMATION = "animate-in fade-in duration-500";
 
 const useGeneratePodcast = ({
-  setAudio, voiceType, voicePrompt, setAudioStorageId, audioStorageId
+  setAudio, voiceType,setVoiceType, voicePrompt, setAudioStorageId, audioStorageId
 }: GeneratePodcastProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -240,6 +240,12 @@ const useGeneratePodcast = ({
   }
 }
 
+const voiceCategories = [
+  { value: 'Drew', label: 'Drew (Male)', description: 'Deep and professional' },
+  { value: 'Rachel', label: 'Rachel (Female)', description: 'Clear and engaging' },
+  { value: 'Sarah', label: 'Sarah (Female)', description: 'Warm and friendly' },
+];
+
 const GeneratePodcast = (props: GeneratePodcastProps) => {
   const {
     isGenerating,
@@ -293,6 +299,43 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
             }
           }}
         />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <Label
+          className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
+          <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+          Voice Selection
+        </Label>
+        <Select 
+          onValueChange={(value) => {
+            props.setVoiceType(value);
+            const audio = new Audio(`/${value}.mp3`);
+            audio.play().catch(error => {
+              console.error("Error playing voice sample:", error);
+            });
+          }}
+          defaultValue={props.voiceType}
+        >
+          <SelectTrigger className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+            transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
+            <SelectValue placeholder="Select voice type" className="text-left" />
+          </SelectTrigger>
+          <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
+            {voiceCategories.map((voice) => (
+              <SelectItem
+                key={voice.value}
+                value={voice.value}
+                className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
+              >
+                <div className="flex flex-col">
+                  <span className="font-medium">{voice.label}</span>
+                  <span className="text-sm text-gray-1">{voice.description}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-4">

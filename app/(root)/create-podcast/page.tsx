@@ -416,38 +416,6 @@ const CreatePodcast = () => {
                                 </div>
 
                                 <div className="bg-black-1/30 rounded-xl p-6 border border-gray-800">
-                                    {/* Voice Selection */}
-                                    <div className="space-y-4">
-                                        <div className="grid gap-4">
-                                            <div className="space-y-2">
-                                                <Label className="text-white-1">AI Voice Selection</Label>
-                                                <Select
-                                                    onValueChange={(value) => {
-                                                        setVoiceType(value);
-                                                        const audio = new Audio(`/${value}.mp3`);
-                                                        audio.play().catch(error => {
-                                                            console.error("Error playing voice sample:", error);
-                                                        });
-                                                    }}
-                                                >
-                                                    <SelectTrigger className="input-class h-12">
-                                                        <SelectValue placeholder="Choose an AI voice" />
-                                                    </SelectTrigger>
-                                                    <SelectContent className="bg-black-1 text-white-1 border-gray-800">
-                                                        {voiceCategories.map((category) => (
-                                                            <SelectItem
-                                                                key={category}
-                                                                value={category}
-                                                                className="hover:bg-orange-1 hover:text-white"
-                                                            >
-                                                                {category}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <GeneratePodcast
                                         setAudioStorageId={setAudioStorageId}
                                         audioStorageId={audioStorageId}
