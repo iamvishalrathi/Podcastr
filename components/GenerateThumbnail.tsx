@@ -268,13 +268,39 @@ const GenerateThumbnail = ({
                       setImagePrompt(prompt);
                     }}
                     className={cn(
-                      "text-left px-4 py-3 rounded-lg transition-all duration-200",
-                      "hover:bg-black-1/50 border border-black-6 hover:border-orange-1/30",
+                      "group relative text-left px-6 py-4 rounded-xl transition-all duration-300",
+                      "hover:bg-black-1/70 border border-black-6",
                       "text-gray-1 hover:text-white-1",
-                      imagePrompt === prompt && "bg-black-1/50 border-orange-1/50 text-white-1"
+                      "flex items-center justify-between",
+                      "hover:shadow-lg hover:shadow-orange-1/5",
+                      "hover:scale-[1.01] active:scale-[0.99]",
+                      imagePrompt === prompt ? [
+                        "bg-black-1/70 border-orange-1/50 text-white-1",
+                        "shadow-lg shadow-orange-1/10"
+                      ] : "hover:border-orange-1/30"
                     )}
                   >
-                    {prompt}
+                    <div className="flex items-center gap-3 flex-1">
+                      {imagePrompt === prompt && (
+                        <div className="h-full w-1 absolute left-0 top-0 bg-gradient-to-t from-orange-1 to-orange-400 rounded-l-xl" />
+                      )}
+                      <span className="text-sm font-medium leading-relaxed">{prompt}</span>
+                    </div>
+                    <div className={cn(
+                      "w-4 h-4 rounded-full border-2 flex-shrink-0 transition-all duration-300",
+                      "flex items-center justify-center",
+                      imagePrompt === prompt ? [
+                        "border-orange-1 bg-orange-1",
+                        "group-hover:bg-orange-400 group-hover:border-orange-400"
+                      ] : [
+                        "border-gray-1/30 group-hover:border-orange-1/50",
+                        "group-hover:scale-110"
+                      ]
+                    )}>
+                      {imagePrompt === prompt && (
+                        <div className="w-2 h-2 bg-white rounded-full" />
+                      )}
+                    </div>
                   </button>
                 ))}
               </div>
