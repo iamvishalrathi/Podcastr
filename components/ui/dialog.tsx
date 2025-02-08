@@ -6,8 +6,7 @@ import { cn } from "@/lib/utils"
 import Image from 'next/image'
 import { Button } from './button'
 import { X, Download } from 'lucide-react'
-import { LoadingSkeleton } from '../ImagePreview'
-
+import { PreviewLoading } from './preview-loading'
 const Dialog = DialogPrimitive.Root
 
 const DialogTrigger = DialogPrimitive.Trigger
@@ -64,7 +63,7 @@ const ImageDialogContent = React.forwardRef<
         {...props}
       >
         <div className="relative group min-h-[200px]">
-          {isLoading && <LoadingSkeleton />}
+          {isLoading && <PreviewLoading />}
           <Image
             src={image}
             width={1920}
