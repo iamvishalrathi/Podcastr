@@ -164,14 +164,37 @@ const GenerateThumbnail = ({
       }
 
       setProgress(40)
-      const imgResponse = await fetch(imageUrl)
-      if (!imgResponse.ok) {
-        throw new Error(`Failed to fetch generated image: ${imgResponse.status}`)
-      }
+      // Add proper error handling for fetch with timeout
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 30000)
 
-      setProgress(60)
-      const blob = await imgResponse.blob()
-      await handleImage(blob, `thumbnail-${uuidv4()}.png`, true) // Set isAiGenerated to true
+      try {
+        const imgResponse = await fetch(imageUrl, {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'image/*'
+          }
+        })
+        clearTimeout(timeout)
+
+        if (!imgResponse.ok) {
+          const errorText = await imgResponse.text()
+          throw new Error(`Failed to fetch generated image: ${imgResponse.status} - ${errorText}`)
+        }
+
+        if (!imgResponse.headers.get('content-type')?.includes('image/')) {
+          throw new Error('Response is not an image')
+        }
+
+        setProgress(60)
+        const blob = await imgResponse.blob()
+        await handleImage(blob, `thumbnail-${uuidv4()}.png`, true)
+      } catch (fetchError) {
+        if (fetchError.name === 'AbortError') {
+          throw new Error('Image fetch timed out after 30 seconds')
+        }
+        throw fetchError
+      }
     } catch (error) {
       console.error("Error generating thumbnail:", error)
       toast({
@@ -429,4 +452,3 @@ const GenerateThumbnail = ({
 }
 
 export default GenerateThumbnail
-

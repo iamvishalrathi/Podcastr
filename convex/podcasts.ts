@@ -5,17 +5,18 @@ import { mutation, query } from "./_generated/server";
 // create podcast mutation
 export const createPodcast = mutation({
   args: {
-    audioStorageId: v.id("_storage"),
+    audioStorageId: v.optional(v.id("_storage")),
     podcastTitle: v.string(),
     podcastDescription: v.string(),
-    audioUrl: v.string(),
-    imageUrl: v.string(),
-    imageStorageId: v.id("_storage"),
+    audioUrl: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
+    imageStorageId: v.optional(v.id("_storage")),
     voicePrompt: v.string(),
     imagePrompt: v.string(),
     voiceType: v.string(),
-    views: v.number(),
-    audioDuration: v.number(),
+    views: v.float64(),
+    audioDuration: v.float64(),
+    podcastType: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -49,6 +50,7 @@ export const createPodcast = mutation({
       views: args.views,
       authorImageUrl: user[0].imageUrl,
       audioDuration: args.audioDuration,
+      podcastType: args.podcastType,
     });
   },
 });
