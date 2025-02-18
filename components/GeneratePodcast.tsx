@@ -43,7 +43,7 @@ const useGeneratePodcast = ({
       setUploadError(null);
       setProgress(80);
     },
-    onUploadError: (error) => {
+    onUploadError: (error: any) => {
       console.error("Upload error:", error);
       setUploadError(error as Error);
       toast({
