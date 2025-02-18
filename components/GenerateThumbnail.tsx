@@ -158,43 +158,19 @@ const GenerateThumbnail = ({
       setIsImageLoading(true)
       setProgress(20)
 
-      const imageUrl = await handleGenerateThumbnail({ prompt: imagePrompt })
-      if (!imageUrl) {
-        throw new Error("No image URL received from generation")
+      const dataUrl = await handleGenerateThumbnail({ prompt: imagePrompt })
+      if (!dataUrl) {
+        throw new Error("No image data received from generation")
       }
 
       setProgress(40)
-      // Add proper error handling for fetch with timeout
-      const controller = new AbortController()
-      const timeout = setTimeout(() => controller.abort(), 30000)
-
-      try {
-        const imgResponse = await fetch(imageUrl, {
-          signal: controller.signal,
-          headers: {
-            'Accept': 'image/*'
-          }
-        })
-        clearTimeout(timeout)
-
-        if (!imgResponse.ok) {
-          const errorText = await imgResponse.text()
-          throw new Error(`Failed to fetch generated image: ${imgResponse.status} - ${errorText}`)
-        }
-
-        if (!imgResponse.headers.get('content-type')?.includes('image/')) {
-          throw new Error('Response is not an image')
-        }
-
-        setProgress(60)
-        const blob = await imgResponse.blob()
-        await handleImage(blob, `thumbnail-${uuidv4()}.png`, true)
-      } catch (fetchError) {
-        if (fetchError.name === 'AbortError') {
-          throw new Error('Image fetch timed out after 30 seconds')
-        }
-        throw fetchError
-      }
+      
+      // Convert data URL to blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      
+      setProgress(60)
+      await handleImage(blob, `thumbnail-${uuidv4()}.png`, true)
     } catch (error) {
       console.error("Error generating thumbnail:", error)
       toast({
