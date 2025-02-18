@@ -42,6 +42,7 @@ const CreatePodcast = () => {
     const [imagePrompt, setImagePrompt] = useState("");
     const [imageStorageId, setImageStorageId] = useState<Id<"_storage"> | null>(null);
     const [imageUrl, setImageUrl] = useState("");
+    const [thumbnailPrompts, setThumbnailPrompts] = useState<string[]>([]);
 
     //Audio States
     const [audioUrl, setAudioUrl] = useState("");
@@ -57,12 +58,15 @@ const CreatePodcast = () => {
     const [tone, setTone] = useState('casual');
     const [targetAudience, setTargetAudience] = useState('general');
     const [style, setStyle] = useState('conversational');
+    const [note, setNote] = useState("");
+    const [selectedLanguage, setSelectedLanguage] = useState('english');
 
     //Form States
     const [isGeneratingContent, setIsGeneratingContent] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const createPodcast = useMutation(api.podcasts.createPodcast)
+    const createPodcast = useMutation(api.podcasts.createPodcast);
+    const voiceCategories = ['Drew', "Rachel", "Sarah"];
 
     // 1. Define your form
     const form = useForm<z.infer<typeof formSchema>>({
@@ -73,15 +77,6 @@ const CreatePodcast = () => {
             podcastType: "",
         },
     });
-
-    // Add new state for thumbnail prompts
-    const [thumbnailPrompts, setThumbnailPrompts] = useState<string[]>([]);
-
-    // Add new state for note
-    const [note, setNote] = useState("");
-
-    // Add new state for language
-    const [selectedLanguage, setSelectedLanguage] = useState('english');
 
     // 2. Define a submit handler.
     async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -253,8 +248,6 @@ const CreatePodcast = () => {
             setIsGeneratingContent(false);
         }
     };
-
-    const voiceCategories = ['Drew', "Rachel", "Sarah"];
 
     return (
         <section className="container max-w-4xl mx-auto px-4 py-10">
