@@ -396,7 +396,7 @@ const CreatePodcast = () => {
                                 </div>
                             </div>
 
-                            {/* Audio Generation - Renamed from Media Generation */}
+                            {/* Audio Generation */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2">
                                     <div className="h-4 w-1 bg-orange-1 rounded-full" />
@@ -418,7 +418,7 @@ const CreatePodcast = () => {
                                 </div>
                             </div>
 
-                            {/* Thumbnail Generation - New separate section */}
+                            {/* Thumbnail Generation */}
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
