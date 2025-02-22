@@ -35,7 +35,7 @@ const GenerateThumbnail = ({
   imageStorageId,
   thumbnailPrompts,
 }: GenerateThumbnailProps) => {
-  const [isAiThumbnail, setIsAiThumbnail] = useState(false)
+  const [isAiThumbnail, setIsAiThumbnail] = useState(true)
   const [isImageLoading, setIsImageLoading] = useState(false)
   const imageRef = useRef<HTMLInputElement>(null) //To store Img ref
   const { toast } = useToast()

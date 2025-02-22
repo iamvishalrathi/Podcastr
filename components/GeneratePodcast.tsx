@@ -14,6 +14,7 @@ import { toast, useToast } from "@/components/ui/use-toast"
 import { Progress } from './ui/progress';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleButtonGroup } from './ui/toggle-button-group';
 
 const MAX_CHARACTERS = 2500;
 const CHARACTERS_PER_CREDIT = 150;
@@ -221,6 +222,15 @@ const useGeneratePodcast = ({
     }
   };
 
+  const handleAudioUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Handle the file upload logic here (e.g., storing it in state or uploading to a server)
+      console.log('File uploaded:', file);
+      setAudio(URL.createObjectURL(file));
+    }
+  };
+
   useEffect(() => {
     setIsMounted(true);
     return () => setIsMounted(false);
@@ -243,7 +253,8 @@ const useGeneratePodcast = ({
     handleDelete,
     setDuration,
     setCurrentTime,
-    isMounted
+    isMounted,
+    handleAudioUpload
   }
 }
 
@@ -270,95 +281,111 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     handleDelete,
     setDuration,
     setCurrentTime,
-    isMounted
+    isMounted,
+    handleAudioUpload
   } = useGeneratePodcast(props);
+
+  const [isAudioUploadEnabled, setIsAudioUploadEnabled] = useState(false);
+  const [isAiAudio, setIsAiAudio] = useState(true);
+
+  const toggleAudioUpload = () => {
+    setIsAudioUploadEnabled(prev => !prev);
+  };
 
   return (
     <div className={`flex flex-col gap-6 pt-5 ${FADE_IN_ANIMATION}`}>
+      <ToggleButtonGroup containerWidth="max-w-[520px]"
+        button1text="Use AI to generate Audio" button2text="Upload custom Audio"
+        button1Active={isAiAudio} button2Active={!isAiAudio}
+        setButtonActive={setIsAiAudio}
+      />
+      {isAiAudio ? (
       <div className="flex flex-col gap-3">
-        <div className="flex justify-between items-center">
-          <Label
-            htmlFor='script-textarea'
-            className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
-            <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
-            Script
-          </Label>
-          <div className="text-sm text-gray-1 bg-black-1/50 px-3 py-1.5 rounded-full flex gap-3">
-            <span className={characterCount > MAX_CHARACTERS ? "text-red-500 font-medium" : ""}>
-              {characterCount}/{MAX_CHARACTERS}
-            </span>
-            <span className="opacity-50">|</span>
-            <span className={estimatedCredits > 50 ? "text-orange-1 font-medium" : ""}>
-              {estimatedCredits} credits
-            </span>
-          </div>
-        </div>
-        <Textarea
-          id='script-textarea'
-          placeholder="Write or generate script for your podcast..."
-          className="input-class focus-visible:ring-offset-orange-1 min-h-[200px] text-base leading-relaxed
-            transition-all duration-200 resize-y bg-black-1/50 hover:bg-black-1/70"
-          value={props.voicePrompt}
-          onChange={(e) => {
-            const text = e.target.value;
-            if (text.length <= MAX_CHARACTERS) {
-              props.setVoicePrompt(text);
-            } else {
-              toast({
-                title: "Character limit exceeded",
-                description: `Maximum ${MAX_CHARACTERS} characters allowed`,
-                variant: "destructive",
-              });
-            }
-          }}
-        />
-      </div>
-
-      <div className="flex flex-col gap-3">
+      <div className="flex justify-between items-center">
         <Label
-          htmlFor='voice-select'
+          htmlFor='script-textarea'
           className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
           <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
-          AI Voice
+          Script
         </Label>
-        <Select
-          onValueChange={(value) => {
-            props.setVoiceType(value);
-            const audio = new Audio(`/${value}.mp3`);
-            audio.play().catch(error => {
-              console.error("Error playing voice sample:", error);
-            });
-          }}
-          defaultValue={voiceCategories[0].value}
-        >
-          <SelectTrigger id='voice-select' className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
-            transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
-            <SelectValue placeholder="Select voice type" className="text-left" />
-          </SelectTrigger>
-          <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
-            {voiceCategories.map((voice) => (
-              <SelectItem
-                key={voice.value}
-                value={voice.value}
-                className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
-              >
-                <div className="flex flex-col">
-                  <span className="font-medium">{voice.label}</span>
-                  <span className="text-sm text-gray-1">{voice.description}</span>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="text-sm text-gray-1 bg-black-1/50 px-3 py-1.5 rounded-full flex gap-3">
+          <span className={characterCount > MAX_CHARACTERS ? "text-red-500 font-medium" : ""}>
+            {characterCount}/{MAX_CHARACTERS}
+          </span>
+          <span className="opacity-50">|</span>
+          <span className={estimatedCredits > 50 ? "text-orange-1 font-medium" : ""}>
+            {estimatedCredits} credits
+          </span>
+        </div>
       </div>
+      <Textarea
+        id='script-textarea'
+        placeholder="Write or generate script for your podcast..."
+        className="input-class focus-visible:ring-offset-orange-1 min-h-[200px] text-base leading-relaxed
+          transition-all duration-200 resize-y bg-black-1/50 hover:bg-black-1/70"
+        value={props.voicePrompt}
+        onChange={(e) => {
+          const text = e.target.value;
+          if (text.length <= MAX_CHARACTERS) {
+            props.setVoicePrompt(text);
+          } else {
+            toast({
+              title: "Character limit exceeded",
+              description: `Maximum ${MAX_CHARACTERS} characters allowed`,
+              variant: "destructive",
+            });
+          }
+        }}
+      />
+      <Label
+        htmlFor='voice-select'
+        className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
+        <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+        AI Voice
+      </Label>
+      <Select
+        onValueChange={(value) => {
+          props.setVoiceType(value);
+          const audio = new Audio(`/${value}.mp3`);
+          audio.play().catch(error => {
+            console.error("Error playing voice sample:", error);
+          });
+        }}
+        defaultValue={voiceCategories[0].value}
+      >
+        <SelectTrigger id='voice-select' className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+          transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
+          <SelectValue placeholder="Select voice type" className="text-left" />
+        </SelectTrigger>
+        <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
+          {voiceCategories.map((voice) => (
+            <SelectItem
+              key={voice.value}
+              value={voice.value}
+              className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
+            >
+              <div className="flex flex-col">
+                <span className="font-medium">{voice.label}</span>
+                <span className="text-sm text-gray-1">{voice.description}</span>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>  
+      )
+        : (
+        <div>
+        </div>
+        )}
 
       <div className="space-y-4">
+      {props.audio && (
         <div className="flex items-center justify-between">
           <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
             <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
             Audio Preview
           </Label>
-          {props.audio && (
             <Button
               onClick={(e) => handleDelete(e)}
               variant="destructive"
@@ -373,8 +400,9 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
               <Trash2 size={16} className="text-white" />
               <span className="text-white">Delete Audio</span>
             </Button>
-          )}
+          
         </div>
+        )}
 
         {isGenerating && !props.audio && (
           <div className="flex flex-col gap-3 bg-black-1/50 p-6 rounded-xl border border-white/5 
