@@ -132,7 +132,7 @@ const CreatePodcast = () => {
             }
 
             // If all checks pass, proceed with submission
-            await createPodcast({
+            const newPodcast = await createPodcast({
                 podcastTitle: data.podcastTitle,
                 podcastDescription: data.podcastDescription,
                 podcastType: data.podcastType,
@@ -152,7 +152,8 @@ const CreatePodcast = () => {
                 description: 'Your podcast has been published'
             });
 
-            router.push('/'); // or wherever you want to redirect after success
+            // Redirect to the podcast detail page
+            router.push(`/podcasts/${newPodcast}`);
 
         } catch (error) {
             console.error('Error creating podcast:', error);
