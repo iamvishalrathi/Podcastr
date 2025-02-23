@@ -223,6 +223,15 @@ const useGeneratePodcast = ({
     }
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      console.log("Selected file:", file);
+      setAudio(URL.createObjectURL(file));
+    }
+  };
+
   const handleAudioUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -374,44 +383,44 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
             </SelectContent>
           </Select>
           <div className="flex flex-col gap-4 mt-6">
-          <Button
-            onClick={generatePodcast}
-            disabled={
-              isGenerating ||
-              !props.voiceType ||
-              !props.voicePrompt ||
-              props.voicePrompt.length > MAX_CHARACTERS ||
-              estimatedCredits > 50
-            }
-            className={cn(
-              "bg-gradient-to-r from-orange-1 to-orange-400",
-              "text-white font-semibold gap-3 py-6 text-lg",
-              "transition-all duration-300 hover:scale-[1.02]",
-              "shadow-lg hover:shadow-orange-1/20",
-              "rounded-xl",
-              "disabled:opacity-50 disabled:hover:scale-100"
-            )}
-          >
-            {isGenerating ? (
-              <>
-                Generating Audio
-                <Loader size={20} className="animate-spin" />
-              </>
-            ) : (
-              <>
-                Generate Audio
-                <Mic size={20} className="animate-bounce" />
-              </>
-            )}
-          </Button>
+            <Button
+              onClick={generatePodcast}
+              disabled={
+                isGenerating ||
+                !props.voiceType ||
+                !props.voicePrompt ||
+                props.voicePrompt.length > MAX_CHARACTERS ||
+                estimatedCredits > 50
+              }
+              className={cn(
+                "bg-gradient-to-r from-orange-1 to-orange-400",
+                "text-white font-semibold gap-3 py-6 text-lg",
+                "transition-all duration-300 hover:scale-[1.02]",
+                "shadow-lg hover:shadow-orange-1/20",
+                "rounded-xl",
+                "disabled:opacity-50 disabled:hover:scale-100"
+              )}
+            >
+              {isGenerating ? (
+                <>
+                  Generating Audio
+                  <Loader size={20} className="animate-spin" />
+                </>
+              ) : (
+                <>
+                  Generate Audio
+                  <Mic size={20} className="animate-bounce" />
+                </>
+              )}
+            </Button>
 
-          {estimatedCredits > 50 && (
-            <p className="text-sm text-red-500 bg-red-500/10 p-4 rounded-xl 
+            {estimatedCredits > 50 && (
+              <p className="text-sm text-red-500 bg-red-500/10 p-4 rounded-xl 
               border border-red-500/20 animate-pulse shadow-lg">
-              Text is too long and would require too many credits. Please reduce the length.
-            </p>
-          )}
-        </div>
+                Text is too long and would require too many credits. Please reduce the length.
+              </p>
+            )}
+          </div>
         </div>
       )
         : (
@@ -427,13 +436,13 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
               )}
             >
               {/* <Input
-              type="file"
-              accept="audio/*"
-              onChange={handleFileChange}
-              className="hidden"
-              ref={audioRef}
-              disabled={isGenerating}
-            /> */}
+                type="file"
+                accept=".mp3, .wav, .ogg"
+                onChange={handleFileChange}
+                className="hidden"
+                ref={audioRef}
+                disabled={isGenerating}
+              /> */}
 
               <div className="flex flex-col items-center gap-1">
                 <h2
@@ -444,7 +453,7 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
                 >
                   Click to upload
                 </h2>
-                <p className="text-12 font-normal text-gray-1">SVG, PNG, JPG, or GIF (max. 1080x1080px)</p>
+                <p className="text-12 font-normal text-gray-1">MP3, WAV, or OGG (max. 10MB)</p>
               </div>
             </div>
           </div>
