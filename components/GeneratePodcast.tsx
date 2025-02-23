@@ -224,21 +224,81 @@ const useGeneratePodcast = ({
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      console.log("Selected file:", file);
-      setAudio(URL.createObjectURL(file));
-    }
-  };
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isCustomUploading, setIsCustomUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleAudioUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Handle the file upload logic here (e.g., storing it in state or uploading to a server)
-      console.log('File uploaded:', file);
-      setAudio(URL.createObjectURL(file));
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an audio file smaller than 10MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('audio/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload an audio file (MP3, WAV, or OGG)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsCustomUploading(true);
+    setUploadProgress(0);
+
+    try {
+      // Create a new FileReader
+      const reader = new FileReader();
+      
+      reader.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(progress);
+        }
+      };
+
+      reader.onload = async () => {
+        // Create object URL for preview
+        const audioUrl = URL.createObjectURL(file);
+        setAudio(audioUrl);
+        
+        // Reset progress
+        setIsCustomUploading(false);
+        setUploadProgress(100);
+        
+        // Generate a unique ID for the audio file
+        const newAudioId = uuidv4();
+        setAudioStorageId(newAudioId);
+      };
+
+      reader.onerror = () => {
+        setIsCustomUploading(false);
+        toast({
+          title: "Upload failed",
+          description: "An error occurred while uploading the file",
+          variant: "destructive",
+        });
+      };
+
+      // Start reading the file
+      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      setIsCustomUploading(false);
+      console.error("File upload error:", error);
+      toast({
+        title: "Upload failed",
+        description: "An error occurred while uploading the file",
+        variant: "destructive",
+      });
     }
   };
 
@@ -250,7 +310,6 @@ const useGeneratePodcast = ({
   return {
     isGenerating,
     generatePodcast,
-    isUploading,
     progress,
     characterCount,
     estimatedCredits,
@@ -265,8 +324,11 @@ const useGeneratePodcast = ({
     setDuration,
     setCurrentTime,
     isMounted,
-    handleAudioUpload,
     handleFileChange,
+    uploadProgress,
+    fileInputRef,
+    isCustomUploading,
+    isUploading
   }
 }
 
@@ -288,28 +350,25 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     setDuration,
     setCurrentTime,
     isMounted,
-    handleAudioUpload,
-    handleFileChange
+    handleFileChange,
+    uploadProgress,
+    fileInputRef,
+    isCustomUploading,
+    isUploading
   } = useGeneratePodcast(props);
 
-  const [isAudioUploadEnabled, setIsAudioUploadEnabled] = useState(false);
-  const [isAiAudio, setIsAiAudio] = useState(false);
-
-  const toggleAudioUpload = () => {
-    setIsAudioUploadEnabled(prev => !prev);
-  };
+  const [isCustomAudio, setIsCustomAudio] = useState(false);
 
   return (
     <div className="flex flex-col gap-6 w-full">
       <ToggleButtonGroup containerWidth="max-w-[520px]"
         button1text="Use AI to generate Audio" button2text="Upload custom Audio"
-        button1Active={isAiAudio} button2Active={!isAiAudio}
-        setButtonActive={setIsAiAudio}
+        button1Active={!isCustomAudio} button2Active={isCustomAudio}
+        setButtonActive={(value) => setIsCustomAudio(!value)}
       />
       {/* Main Area */}
-      {isAiAudio ? (
+      {!isCustomAudio ? (
         <div className="flex flex-col gap-8">
-
           {/* Voice */}
           <div className="flex flex-col gap-3">
             <Label
@@ -432,43 +491,52 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
             )}
           </div>
         </div>
-      )
-        : (
-          <div className="space-y-4">
-            <div
-              onClick={() => !isGenerating && audioRef?.current?.click()}
-              className={cn(
-                "image_div hover:border-orange-1/50 hover:bg-black-1/30",
-                "transition-all duration-200 group animate-in fade-in-50",
-                "border-black-6 bg-black-1/50",
-                "p-4 sm:p-6 rounded-lg",
-                isGenerating && "opacity-50 cursor-not-allowed hover:border-gray-700 hover:bg-transparent",
-              )}
-            >
-              {/* <Input
-                type="file"
-                accept=".mp3, .wav, .ogg"
-                onChange={handleFileChange}
-                className="hidden"
-                ref={audioRef}
-                disabled={isGenerating}
-              /> */}
+      ) : (
+        <div className="space-y-4">
+          <div
+            onClick={() => !isGenerating && !isCustomUploading && fileInputRef.current?.click()}
+            className={cn(
+              "image_div hover:border-orange-1/50 hover:bg-black-1/30",
+              "transition-all duration-200 group animate-in fade-in-50",
+              "border-black-6 bg-black-1/50",
+              "p-4 sm:p-6 rounded-lg",
+              (isGenerating || isCustomUploading) && "opacity-50 cursor-not-allowed hover:border-gray-700 hover:bg-transparent",
+            )}
+          >
+            <Input
+              type="file"
+              accept="audio/*"
+              onChange={handleFileChange}
+              className="hidden"
+              ref={fileInputRef}
+              disabled={isGenerating || isCustomUploading}
+            />
 
-              <div className="flex flex-col items-center gap-1">
-                <h2
-                  className={cn(
-                    "text-12 font-bold text-orange-1 group-hover:text-orange-400",
-                    "transition-colors duration-200",
-                  )}
-                >
-                  Click to upload
-                </h2>
-                <p className="text-12 font-normal text-gray-1">MP3, WAV, or OGG (max. 10MB)</p>
-              </div>
+            <div className="flex flex-col items-center gap-1">
+              <h2
+                className={cn(
+                  "text-12 font-bold text-orange-1 group-hover:text-orange-400",
+                  "transition-colors duration-200",
+                )}
+              >
+                Click to upload
+              </h2>
+              <p className="text-12 font-normal text-gray-1">MP3, WAV, or OGG (max. 10MB)</p>
             </div>
           </div>
-        )}
 
+          {isCustomUploading && (
+            <div className="flex flex-col gap-3 mt-4 bg-black-1/50 p-6 rounded-xl border border-white/5 
+            backdrop-blur-sm shadow-lg">
+              <Progress value={uploadProgress} className="h-3 bg-black-1/50" />
+              <div className="flex items-center gap-2.5 text-sm text-gray-1">
+                <Loader size={16} className="animate-spin text-orange-1" />
+                <p>Uploading audio... {uploadProgress}%</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Audio Preview */}
       {props.audio ? (
@@ -558,7 +626,7 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
             </div>
           )}
         </div>
-      ) : (
+      ):(
         <>
           {isGenerating && (
             <div className="flex flex-col gap-3 mt-8 bg-black-1/50 p-6 rounded-xl border border-white/5 
@@ -573,7 +641,7 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
 export default GeneratePodcast
