@@ -24,7 +24,7 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import GeneratePodcast from "@/components/GeneratePodcast";
 import GenerateThumbnail from "@/components/GenerateThumbnail";
-import { Loader } from "lucide-react";
+import { Loader, Podcast } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/convex/_generated/api";
@@ -35,6 +35,7 @@ import { chatSession } from "@/service/Gemini";
 import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
 import { podcastTypes } from "@/constants/PodcastFields";
 import { formSchema } from "@/constants/FormSchema";
+import { cn } from "@/lib/utils";
 
 const CreatePodcast = () => {
     const router = useRouter()
@@ -445,23 +446,35 @@ const CreatePodcast = () => {
                                 </div>
                             </div>
 
-                            {/* Submit Button */}
-                            <Button
-                                type="submit"
-                                className="w-full bg-orange-1 hover:bg-orange-600 text-white-1 font-bold 
-                                    py-4 rounded-lg transition-all duration-300 flex items-center justify-center 
-                                    gap-2 h-14 mt-4 disabled:opacity-50"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        Creating Podcast
-                                        <Loader size={20} className="animate-spin" />
-                                    </>
-                                ) : (
-                                    "Publish Podcast"
-                                )}
-                            </Button>
+                            {/* Generate Button */}
+                            <div className="flex flex-col gap-4 items-center">
+                                <Button
+                                    disabled={isSubmitting}
+                                    type="submit"
+                                    className={cn(
+                                        "bg-gradient-to-r from-orange-1 to-orange-400",
+                                        "text-white font-semibold gap-3 py-6 text-lg",
+                                        "transition-all duration-300 hover:scale-[1.02]",
+                                        "shadow-lg hover:shadow-orange-1/20",
+                                        "rounded-xl",
+                                        "disabled:opacity-50 disabled:hover:scale-100",
+                                        "max-w-[600px]",
+                                        "w-full"
+                                    )}
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            Publishing Podcast
+                                            <Loader size={20} className="animate-spin" />
+                                        </>
+                                    ) : (
+                                        <>
+                                            Publish Podcast
+                                            <Podcast size={20} className="animate-bounce" />
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
                         </div>
                     </form>
                 </Form>

@@ -234,7 +234,7 @@ const GenerateThumbnail = ({
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full px-4 sm:px-6">
+    <div className="flex flex-col gap-6 w-full">
       <ToggleButtonGroup containerWidth="max-w-[580px]"
         button1text="Use AI to generate thumbnail" button2text="Upload custom thumbnail"
         button1Active={isAiThumbnail} button2Active={!isAiThumbnail}
@@ -275,6 +275,7 @@ const GenerateThumbnail = ({
                       "flex items-center justify-between",
                       "hover:shadow-lg hover:shadow-orange-1/5",
                       "hover:scale-[1.01] active:scale-[0.99]",
+                      "gap-3",
                       imagePrompt === prompt ? [
                         "bg-black-1/70 border-orange-1/50 text-white-1",
                         "shadow-lg shadow-orange-1/10"
@@ -406,7 +407,6 @@ const GenerateThumbnail = ({
       )}
 
       {(image || isImageLoading) && (
-        <div className="mt-6 sm:mt-8">
           <ImagePreview
             image={image}
             isImageLoading={isImageLoading}
@@ -418,7 +418,6 @@ const GenerateThumbnail = ({
             handleDelete={handleDelete}
             isDownloading={isDownloading}
           />
-        </div>
       )}
 
       {image && (
