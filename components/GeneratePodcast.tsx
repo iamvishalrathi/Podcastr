@@ -265,7 +265,8 @@ const useGeneratePodcast = ({
     setDuration,
     setCurrentTime,
     isMounted,
-    handleAudioUpload
+    handleAudioUpload,
+    handleFileChange,
   }
 }
 
@@ -287,7 +288,8 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     setDuration,
     setCurrentTime,
     isMounted,
-    handleAudioUpload
+    handleAudioUpload,
+    handleFileChange
   } = useGeneratePodcast(props);
 
   const [isAudioUploadEnabled, setIsAudioUploadEnabled] = useState(false);
@@ -298,86 +300,97 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
   };
 
   return (
-    <div className={`flex flex-col gap-6 pt-5 ${FADE_IN_ANIMATION}`}>
+    <div className="flex flex-col gap-6 w-full">
       <ToggleButtonGroup containerWidth="max-w-[520px]"
         button1text="Use AI to generate Audio" button2text="Upload custom Audio"
         button1Active={isAiAudio} button2Active={!isAiAudio}
         setButtonActive={setIsAiAudio}
       />
+      {/* Main Area */}
       {isAiAudio ? (
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-8">
+
+          {/* Voice */}
+          <div className="flex flex-col gap-3">
             <Label
-              htmlFor='script-textarea'
+              htmlFor='voice-select'
               className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
               <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
-              Script
+              AI Voice
             </Label>
-            <div className="text-sm text-gray-1 bg-black-1/50 px-3 py-1.5 rounded-full flex gap-3">
-              <span className={characterCount > MAX_CHARACTERS ? "text-red-500 font-medium" : ""}>
-                {characterCount}/{MAX_CHARACTERS}
-              </span>
-              <span className="opacity-50">|</span>
-              <span className={estimatedCredits > 50 ? "text-orange-1 font-medium" : ""}>
-                {estimatedCredits} credits
-              </span>
-            </div>
-          </div>
-          <Textarea
-            id='script-textarea'
-            placeholder="Write or generate script for your podcast..."
-            className="input-class focus-visible:ring-offset-orange-1 min-h-[200px] text-base leading-relaxed
-          transition-all duration-200 resize-y bg-black-1/50 hover:bg-black-1/70"
-            value={props.voicePrompt}
-            onChange={(e) => {
-              const text = e.target.value;
-              if (text.length <= MAX_CHARACTERS) {
-                props.setVoicePrompt(text);
-              } else {
-                toast({
-                  title: "Character limit exceeded",
-                  description: `Maximum ${MAX_CHARACTERS} characters allowed`,
-                  variant: "destructive",
+            <Select
+              onValueChange={(value) => {
+                props.setVoiceType(value);
+                const audio = new Audio(`/${value}.mp3`);
+                audio.play().catch(error => {
+                  console.error("Error playing voice sample:", error);
                 });
-              }
-            }}
-          />
-          <Label
-            htmlFor='voice-select'
-            className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
-            <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
-            AI Voice
-          </Label>
-          <Select
-            onValueChange={(value) => {
-              props.setVoiceType(value);
-              const audio = new Audio(`/${value}.mp3`);
-              audio.play().catch(error => {
-                console.error("Error playing voice sample:", error);
-              });
-            }}
-            defaultValue={voiceCategories[0].value}
-          >
-            <SelectTrigger id='voice-select' className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
+              }}
+              defaultValue={voiceCategories[0].value}
+            >
+              <SelectTrigger id='voice-select' className="bg-black-1/50 border-orange-1/10 hover:border-orange-1/30 
           transition-all duration-200 h-12 rounded-xl text-gray-1 px-4">
-              <SelectValue placeholder="Select voice type" className="text-left" />
-            </SelectTrigger>
-            <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
-              {voiceCategories.map((voice) => (
-                <SelectItem
-                  key={voice.value}
-                  value={voice.value}
-                  className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
-                >
-                  <div className="flex flex-col">
-                    <span className="font-medium">{voice.label}</span>
-                    <span className="text-sm text-gray-1">{voice.description}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className="flex flex-col gap-4 mt-6">
+                <SelectValue placeholder="Select voice type" className="text-left" />
+              </SelectTrigger>
+              <SelectContent className="bg-black-1/95 text-white-1 border-orange-1/10 rounded-xl">
+                {voiceCategories.map((voice) => (
+                  <SelectItem
+                    key={voice.value}
+                    value={voice.value}
+                    className="focus:bg-orange-1/20 hover:bg-orange-1/10 transition-colors"
+                  >
+                    <div className="flex flex-col">
+                      <span className="font-medium">{voice.label}</span>
+                      <span className="text-sm text-gray-1">{voice.description}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Script */}
+          <div className="flex flex-col gap-3">
+            <div className="flex justify-between items-center">
+              <Label
+                htmlFor='script-textarea'
+                className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
+                <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+                Script
+              </Label>
+              <div className="text-sm text-gray-1 bg-black-1/50 px-3 py-1.5 rounded-full flex gap-3">
+                <span className={characterCount > MAX_CHARACTERS ? "text-red-500 font-medium" : ""}>
+                  {characterCount}/{MAX_CHARACTERS}
+                </span>
+                <span className="opacity-50">|</span>
+                <span className={estimatedCredits > 50 ? "text-orange-1 font-medium" : ""}>
+                  {estimatedCredits} credits
+                </span>
+              </div>
+            </div>
+            <Textarea
+              id='script-textarea'
+              placeholder="Write or generate script for your podcast..."
+              className="input-class focus-visible:ring-offset-orange-1 min-h-[200px] text-base leading-relaxed
+          transition-all duration-200 resize-y bg-black-1/50 hover:bg-black-1/70"
+              value={props.voicePrompt}
+              onChange={(e) => {
+                const text = e.target.value;
+                if (text.length <= MAX_CHARACTERS) {
+                  props.setVoicePrompt(text);
+                } else {
+                  toast({
+                    title: "Character limit exceeded",
+                    description: `Maximum ${MAX_CHARACTERS} characters allowed`,
+                    variant: "destructive",
+                  });
+                }
+              }}
+            />
+          </div>
+
+          {/* Generate Button */}
+          <div className="flex flex-col gap-4">
             <Button
               onClick={generatePodcast}
               disabled={
@@ -454,8 +467,10 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
           </div>
         )}
 
-      <div className="space-y-4">
-        {props.audio && (
+
+      {/* Audio Preview */}
+      {props.audio && (
+        <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
               <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
@@ -475,86 +490,84 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
               <Trash2 size={16} className="text-white" />
               <span className="text-white">Delete Audio</span>
             </Button>
-
           </div>
-        )}
-
-        {isGenerating && !props.audio && (
-          <div className="flex flex-col gap-3 bg-black-1/50 p-6 rounded-xl border border-white/5 
-            backdrop-blur-sm shadow-lg">
-            <Progress value={progress} className="h-3 bg-black-1/50" />
-            <div className="flex items-center gap-2.5 text-sm text-gray-1">
-              <Loader size={16} className="animate-spin text-orange-1" />
-              <p>Generating audio... {progress}%</p>
-            </div>
-          </div>
-        )}
-
-        {props.audio && isMounted && (
-          <div className="flex flex-col gap-4 bg-black-1/80 p-6 rounded-xl backdrop-blur-sm 
+          {isMounted && (
+            <div className="flex flex-col gap-4 bg-black-1/80 p-6 rounded-xl backdrop-blur-sm 
             border border-white/10 shadow-lg">
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={(e) => togglePlayPause(e)}
-                size="icon"
-                variant="ghost"
-                className={cn(
-                  "h-14 w-14 rounded-full",
-                  "bg-gradient-to-r from-orange-1 to-orange-400",
-                  "hover:scale-110 transition-all duration-300",
-                  "shadow-lg hover:shadow-orange-1/20",
-                  isPlaying && "animate-pulse ring-2 ring-orange-1/50 ring-offset-2 ring-offset-black"
-                )}
-              >
-                {isPlaying ?
-                  <Square size={24} className="text-white" /> :
-                  <Play size={24} className="ml-1 text-white" />
-                }
-              </Button>
-              <div className="flex-1 space-y-2">
-                <div className="relative h-2 bg-black-1/50 rounded-full overflow-hidden">
-                  <div className="absolute inset-0 bg-black-1/50" />
+              <div className="flex items-center gap-4">
+                <Button
+                  onClick={(e) => togglePlayPause(e)}
+                  size="icon"
+                  variant="ghost"
+                  className={cn(
+                    "h-14 w-14 rounded-full",
+                    "bg-gradient-to-r from-orange-1 to-orange-400",
+                    "hover:scale-110 transition-all duration-300",
+                    "shadow-lg hover:shadow-orange-1/20",
+                    isPlaying && "animate-pulse ring-2 ring-orange-1/50 ring-offset-2 ring-offset-black"
+                  )}
+                >
+                  {isPlaying ?
+                    <Square size={24} className="text-white" /> :
+                    <Play size={24} className="ml-1 text-white" />
+                  }
+                </Button>
+                <div className="flex-1 space-y-2">
+                  <div className="relative h-2 bg-black-1/50 rounded-full overflow-hidden">
+                    <div className="absolute inset-0 bg-black-1/50" />
 
-                  <div
-                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-orange-1 to-orange-400 
+                    <div
+                      className="absolute inset-y-0 left-0 bg-gradient-to-r from-orange-1 to-orange-400 
                       transition-all duration-150 ease-out rounded-full"
-                    style={{
-                      width: `${(currentTime / duration) * 100}%`,
-                      transform: 'translateZ(0)'
-                    }}
-                  />
-                </div>
-
-                {isMounted && (
-                  <div className="flex justify-between text-sm text-gray-1">
-                    <span>{formatTime(currentTime)}</span>
-                    <span>{formatTime(duration)}</span>
+                      style={{
+                        width: `${(currentTime / duration) * 100}%`,
+                        transform: 'translateZ(0)'
+                      }}
+                    />
                   </div>
-                )}
-              </div>
-            </div>
 
-            <audio
-              ref={audioRef}
-              src={props.audio}
-              className="hidden"
-              onLoadedMetadata={(e) => {
-                props.setAudioDuration(e.currentTarget.duration);
-                setDuration(e.currentTarget.duration);
-              }}
-              onTimeUpdate={() => {
-                if (audioRef.current) {
-                  setCurrentTime(audioRef.current.currentTime);
-                }
-              }}
-              onEnded={handleAudioEnded}
-              onError={(e) => {
-                console.error("Audio playback error:", e);
-              }}
-            />
+                  {isMounted && (
+                    <div className="flex justify-between text-sm text-gray-1">
+                      <span>{formatTime(currentTime)}</span>
+                      <span>{formatTime(duration)}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <audio
+                ref={audioRef}
+                src={props.audio}
+                className="hidden"
+                onLoadedMetadata={(e) => {
+                  props.setAudioDuration(e.currentTarget.duration);
+                  setDuration(e.currentTarget.duration);
+                }}
+                onTimeUpdate={() => {
+                  if (audioRef.current) {
+                    setCurrentTime(audioRef.current.currentTime);
+                  }
+                }}
+                onEnded={handleAudioEnded}
+                onError={(e) => {
+                  console.error("Audio playback error:", e);
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {isGenerating && !props.audio && (
+        <div className="flex flex-col gap-3 bg-black-1/50 p-6 rounded-xl border border-white/5 
+            backdrop-blur-sm shadow-lg">
+          <Progress value={progress} className="h-3 bg-black-1/50" />
+          <div className="flex items-center gap-2.5 text-sm text-gray-1">
+            <Loader size={16} className="animate-spin text-orange-1" />
+            <p>Generating audio... {progress}%</p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
