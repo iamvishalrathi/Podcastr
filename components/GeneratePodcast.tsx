@@ -15,6 +15,7 @@ import { Progress } from './ui/progress';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleButtonGroup } from './ui/toggle-button-group';
+import { Input } from './ui/input';
 
 const MAX_CHARACTERS = 2500;
 const CHARACTERS_PER_CREDIT = 150;
@@ -375,7 +376,38 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     </div>  
       )
         : (
-        <div>
+          <div className="space-y-4">
+          <div
+            onClick={() => !isGenerating && audioRef?.current?.click()}
+            className={cn(
+              "image_div hover:border-orange-1/50 hover:bg-black-1/30",
+              "transition-all duration-200 group animate-in fade-in-50",
+              "border-black-6 bg-black-1/50",
+              "p-4 sm:p-6 rounded-lg",
+              isGenerating && "opacity-50 cursor-not-allowed hover:border-gray-700 hover:bg-transparent",
+            )}
+          >
+            <Input
+              type="file"
+              accept="audio/*"
+              onChange={handleFileChange}
+              className="hidden"
+              ref={audioRef}
+              disabled={isGenerating}
+            />
+
+            <div className="flex flex-col items-center gap-1">
+              <h2
+                className={cn(
+                  "text-12 font-bold text-orange-1 group-hover:text-orange-400",
+                  "transition-colors duration-200",
+                )}
+              >
+                Click to upload
+              </h2>
+              <p className="text-12 font-normal text-gray-1">SVG, PNG, JPG, or GIF (max. 1080x1080px)</p>
+            </div>
+          </div>
         </div>
         )}
 
