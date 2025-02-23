@@ -137,7 +137,14 @@ const useGeneratePodcast = ({
   const generatePodcast = async () => {
     try {
       setIsGenerating(true);
-      setAudio('');
+      
+      // Delete previous audio if it exists
+      if (audioStorageId) {
+        await deleteFile({ storageId: audioStorageId });
+        setAudio('');
+        setAudioStorageId(null);
+      }
+
       setUploadError(null);
       setProgress(20);
 
@@ -256,6 +263,13 @@ const useGeneratePodcast = ({
     setUploadProgress(20);
 
     try {
+      // Delete previous audio if it exists
+      if (audioStorageId) {
+        await deleteFile({ storageId: audioStorageId });
+        setAudio('');
+        setAudioStorageId(null);
+      }
+
       console.log('Starting custom file upload...');
       const uploadResult = await startUpload([file]);
       console.log('Upload result:', uploadResult);
