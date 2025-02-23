@@ -7,8 +7,8 @@ import { api } from '@/convex/_generated/api'
 import { cn } from '@/lib/utils'
 import { useUser } from '@clerk/nextjs'
 import { useMutation, useQuery } from 'convex/react'
-import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { Headphones, Clock, Calendar, BookText, Mic2, Layers } from 'lucide-react'
 
 const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'podcasts'> } }) => {
   const { user } = useUser();
@@ -41,16 +41,25 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
             Currently Playing
           </h1>
         </div>
-        <figure className="flex items-center gap-3 bg-black-1/50 px-4 py-2 rounded-full">
-          <Image
-            src="/icons/headphone.svg"
-            width={24}
-            height={24}
-            alt="headphone"
-            className="opacity-80"
-          />
-          <h2 className="text-16 font-bold text-white-1">{podcast?.views} views</h2>
-        </figure>
+        <div className="flex items-center gap-4">
+          {/* Category */}
+          <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
+            <Layers className="opacity-80" width={20} height={20} />
+            <span className="text-14 font-medium text-white-2 capitalize">{podcast?.podcastType}</span>
+          </div>
+          {/* Duration */}
+          <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
+            <Clock className="opacity-80" width={20} height={20} />
+            <span className="text-14 font-medium text-white-2">
+              {Math.floor(podcast?.audioDuration / 60)}:{Math.floor(podcast?.audioDuration % 60).toString().padStart(2, '0')}
+            </span>
+          </div>
+          {/* Views */}
+          <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
+            <Headphones className="opacity-80" width={20} height={20} />
+            <span className="text-14 font-medium text-white-2">{podcast?.views} views</span>
+          </div>
+        </div>
       </header>
 
       {/* Player Section */}
@@ -75,9 +84,15 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
 
         {/* Transcription */}
         <div className="bg-black-1/30 p-6 rounded-xl border border-gray-800">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
-            <h2 className="text-20 font-bold text-white-1">Transcription</h2>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+              <h2 className="text-20 font-bold text-white-1">Transcription</h2>
+            </div>
+            <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
+              <Mic2 className="opacity-80" width={20} height={20} />
+              <span className="text-14 font-medium text-white-2">Voice: {podcast?.voiceType}</span>
+            </div>
           </div>
           <p className="text-16 text-white-2 leading-relaxed whitespace-pre-wrap">{podcast?.voicePrompt}</p>
         </div>
@@ -92,6 +107,29 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
             <p className="text-16 text-white-2 leading-relaxed">{podcast?.imagePrompt}</p>
           </div>
         )}
+
+        {/* Creation Info */}
+        <div className="bg-black-1/30 p-6 rounded-xl border border-gray-800">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+            <h2 className="text-20 font-bold text-white-1">Creation Info</h2>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="bg-black-1/50 p-3 rounded-full">
+              <Calendar className="opacity-80" width={20} height={20} />
+            </div>
+            <div>
+              <p className="text-14 text-white-3">Created on</p>
+              <p className="text-16 font-medium text-white-2">
+                {new Date(podcast?._creationTime).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Similar Podcasts Section */}
