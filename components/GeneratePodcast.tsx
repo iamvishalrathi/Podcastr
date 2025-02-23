@@ -253,52 +253,40 @@ const useGeneratePodcast = ({
     }
 
     setIsCustomUploading(true);
-    setUploadProgress(0);
+    setUploadProgress(20);
 
     try {
-      // Create a new FileReader
-      const reader = new FileReader();
-      
-      reader.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const progress = Math.round((event.loaded / event.total) * 100);
-          setUploadProgress(progress);
-        }
-      };
+      console.log('Starting custom file upload...');
+      const uploadResult = await startUpload([file]);
+      console.log('Upload result:', uploadResult);
 
-      reader.onload = async () => {
-        // Create object URL for preview
-        const audioUrl = URL.createObjectURL(file);
-        setAudio(audioUrl);
-        
-        // Reset progress
-        setIsCustomUploading(false);
-        setUploadProgress(100);
-        
-        // Generate a unique ID for the audio file
-        const newAudioId = uuidv4();
-        setAudioStorageId(newAudioId);
-      };
+      if (!uploadResult?.[0]?.response?.storageId) {
+        throw new Error('No storage ID received');
+      }
 
-      reader.onerror = () => {
-        setIsCustomUploading(false);
-        toast({
-          title: "Upload failed",
-          description: "An error occurred while uploading the file",
-          variant: "destructive",
-        });
-      };
+      const storageId = uploadResult[0].response.storageId;
+      setAudioStorageId(storageId);
+      console.log('Getting audio URL for storageId:', storageId);
 
-      // Start reading the file
-      reader.readAsArrayBuffer(file);
+      const audioUrl = await getAudioUrl({ storageId });
+      if (!audioUrl) {
+        throw new Error('Failed to get audio URL');
+      }
+
+      setAudio(audioUrl);
+      setUploadProgress(100);
+      toast({
+        title: "Audio uploaded successfully",
+      });
     } catch (error) {
-      setIsCustomUploading(false);
       console.error("File upload error:", error);
       toast({
         title: "Upload failed",
-        description: "An error occurred while uploading the file",
+        description: error instanceof Error ? error.message : "An error occurred while uploading the file",
         variant: "destructive",
       });
+    } finally {
+      setIsCustomUploading(false);
     }
   };
 
