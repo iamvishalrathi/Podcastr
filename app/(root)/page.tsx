@@ -98,7 +98,6 @@ const Home = () => {
                 </div>
                 <hr className="border-gray-800" />
               </div>
-
             </div>
           ))}
         </div>

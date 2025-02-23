@@ -236,7 +236,7 @@ const GenerateThumbnail = ({
   return (
     <div className="flex flex-col gap-6 w-full">
       <ToggleButtonGroup containerWidth="max-w-[580px]"
-        button1text="Use AI to generate thumbnail" button2text="Upload custom thumbnail"
+        button1text="Use AI to generate Thumbnail" button2text="Upload custom Thumbnail"
         button1Active={isAiThumbnail} button2Active={!isAiThumbnail}
         setButtonActive={setIsAiThumbnail}
       />

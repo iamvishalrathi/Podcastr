@@ -49,7 +49,7 @@ const GenerateAIContent = ({
 
     return (
         <div className="flex flex-col gap-6 w-full">
-            <ToggleButtonGroup containerWidth="max-w-[530px]" button1text="Use AI to generate content" button2text="Write custom content"
+            <ToggleButtonGroup containerWidth="max-w-[530px]" button1text="Use AI to generate Content" button2text="Write custom Content"
                 button1Active={isAiContent} button2Active={!isAiContent} setButtonActive={setIsAiContent} />
 
             {/* Main Content Area */}
