@@ -3,7 +3,7 @@ import { Button } from "./ui/button"
 import { useRef, useState, useEffect } from "react"
 import { Label } from "./ui/label"
 import { Textarea } from "./ui/textarea"
-import { Loader } from "lucide-react"
+import { Image, Loader } from "lucide-react"
 import { Input } from "./ui/input"
 import { useToast } from "./ui/use-toast"
 import { useAction, useMutation } from "convex/react"
@@ -335,28 +335,34 @@ const GenerateThumbnail = ({
               disabled={isImageLoading}
             />
           </div>
-
-          <div className="space-y-4">
-            <div className="w-full max-w-[200px]">
-              <Button
-                type="submit"
-                className="text-16 bg-orange-1 py-4 font-bold text-white-1 w-full
-                  hover:bg-orange-600 transition-all duration-300 hover:scale-[1.02]
-                  disabled:opacity-50 disabled:hover:scale-100 rounded-full"
-                onClick={generateImage}
-                disabled={isImageLoading || !imagePrompt.trim()}
-              >
-                {isImageLoading ? (
-                  <div className="flex items-center gap-2">
-                    <Loader size={20} className="animate-spin" />
-                    <span>Generating...</span>
-                  </div>
-                ) : (
-                  "Generate"
-                )}
-              </Button>
-            </div>
-          </div>
+          <Button
+          type="submit"
+            onClick={generateImage}
+            disabled={
+              isImageLoading ||
+              !imagePrompt.trim()
+            }
+            className={cn(
+              "bg-gradient-to-r from-orange-1 to-orange-400",
+              "text-white font-semibold gap-3 py-6 text-lg",
+              "transition-all duration-300 hover:scale-[1.02]",
+              "shadow-lg hover:shadow-orange-1/20",
+              "rounded-xl",
+              "disabled:opacity-50 disabled:hover:scale-100"
+            )}
+          >
+            {isImageLoading ? (
+              <>
+                Generating Image
+                <Loader size={20} className="animate-spin" />
+              </>
+            ) : (
+              <>
+                Generate Image
+                <Image size={20} className="animate-bounce" />
+              </>
+            )}
+          </Button>
         </div>
       ) : (
         <div className="space-y-4">
