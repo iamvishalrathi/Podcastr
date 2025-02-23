@@ -5,9 +5,9 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toneOptions, targetAudienceOptions, styleOptions } from "@/constants/AIContent";
+import { toneOptions, targetAudienceOptions, styleOptions } from "@/constants/PodcastFields";
 import { Textarea } from "@/components/ui/textarea";
-import { languageOptions } from "@/constants/Language_Options";
+import { languageOptions } from "@/constants/PodcastFields";
 import { ToggleButtonGroup } from "@/components/ui/toggle-button-group";
 
 interface GenerateAIContentProps {

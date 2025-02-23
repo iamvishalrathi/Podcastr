@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleButtonGroup } from './ui/toggle-button-group';
 import { Input } from './ui/input';
+import { voiceCategories } from '@/constants/PodcastFields';
 
 const MAX_CHARACTERS = 2500;
 const CHARACTERS_PER_CREDIT = 150;
@@ -267,12 +268,6 @@ const useGeneratePodcast = ({
     handleAudioUpload
   }
 }
-
-const voiceCategories = [
-  { value: 'Drew', label: 'Drew (Male)', description: 'Deep and professional' },
-  { value: 'Rachel', label: 'Rachel (Female)', description: 'Clear and engaging' },
-  { value: 'Sarah', label: 'Sarah (Female)', description: 'Warm and friendly' },
-];
 
 const GeneratePodcast = (props: GeneratePodcastProps) => {
   const {

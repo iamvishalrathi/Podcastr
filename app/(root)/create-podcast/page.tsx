@@ -33,7 +33,7 @@ import { useRouter } from "next/navigation";
 import GenerateAIContent from "@/components/GenerateAIContent";
 import { chatSession } from "@/service/Gemini";
 import { Gemini_Prompt } from "@/constants/Gemini_Prompt";
-import { podcastTypes } from "@/constants/PodcastType";
+import { podcastTypes } from "@/constants/PodcastFields";
 import { formSchema } from "@/constants/FormSchema";
 
 const CreatePodcast = () => {
