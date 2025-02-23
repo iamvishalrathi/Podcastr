@@ -164,11 +164,11 @@ const GenerateThumbnail = ({
       }
 
       setProgress(40)
-      
+
       // Convert data URL to blob
       const response = await fetch(dataUrl);
       const blob = await response.blob();
-      
+
       setProgress(60)
       await handleImage(blob, `thumbnail-${uuidv4()}.png`, true)
     } catch (error) {
@@ -209,7 +209,7 @@ const GenerateThumbnail = ({
   const handleDownload = async (e: React.MouseEvent) => {
     e.stopPropagation()
     if (isDownloading) return;
-    
+
     try {
       setIsDownloading(true);
       const response = await fetch(image)
@@ -234,7 +234,7 @@ const GenerateThumbnail = ({
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in-50 w-full max-w-[800px] mx-auto px-4 sm:px-6">
+    <div className="flex flex-col gap-6 w-full px-4 sm:px-6">
       <ToggleButtonGroup containerWidth="max-w-[580px]"
         button1text="Use AI to generate thumbnail" button2text="Upload custom thumbnail"
         button1Active={isAiThumbnail} button2Active={!isAiThumbnail}
@@ -335,34 +335,39 @@ const GenerateThumbnail = ({
               disabled={isImageLoading}
             />
           </div>
-          <Button
-          type="submit"
-            onClick={generateImage}
-            disabled={
-              isImageLoading ||
-              !imagePrompt.trim()
-            }
-            className={cn(
-              "bg-gradient-to-r from-orange-1 to-orange-400",
-              "text-white font-semibold gap-3 py-6 text-lg",
-              "transition-all duration-300 hover:scale-[1.02]",
-              "shadow-lg hover:shadow-orange-1/20",
-              "rounded-xl",
-              "disabled:opacity-50 disabled:hover:scale-100"
-            )}
-          >
-            {isImageLoading ? (
-              <>
-                Generating Image
-                <Loader size={20} className="animate-spin" />
-              </>
-            ) : (
-              <>
-                Generate Image
-                <Image size={20} className="animate-bounce" />
-              </>
-            )}
-          </Button>
+          <div className="flex flex-col gap-4 items-center">
+            <Button
+              type="submit"
+              onClick={generateImage}
+              disabled={
+                isImageLoading ||
+                !imagePrompt.trim()
+              }
+              className={cn(
+                "bg-gradient-to-r from-orange-1 to-orange-400",
+                "text-white font-semibold gap-3 py-6 text-lg",
+                "transition-all duration-300 hover:scale-[1.02]",
+                "shadow-lg hover:shadow-orange-1/20",
+                "rounded-xl",
+                "disabled:opacity-50 disabled:hover:scale-100",
+                "max-w-[600px]",
+                "w-full"
+              )}
+            >
+              {isImageLoading ? (
+                <>
+                  Generating Image
+                  <Loader size={20} className="animate-spin" />
+                </>
+              ) : (
+                <>
+                  Generate Image
+                  <Image size={20} className="animate-bounce" />
+                </>
+              )}
+            </Button>
+          </div>
+
         </div>
       ) : (
         <div className="space-y-4">
@@ -418,9 +423,9 @@ const GenerateThumbnail = ({
 
       {image && (
         <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-          <ImageDialogContent 
-            image={image} 
-            onDownload={handleDownload} 
+          <ImageDialogContent
+            image={image}
+            onDownload={handleDownload}
             onClose={() => setIsPreviewOpen(false)}
             isDownloading={isDownloading}
           />

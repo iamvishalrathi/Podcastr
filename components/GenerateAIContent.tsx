@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
+import { Loader, NotebookPen } from "lucide-react";
 import { useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
@@ -207,7 +207,8 @@ const GenerateAIContent = ({
                                         "focus:border-orange-1/50 focus:ring-1 focus:ring-orange-1/50",
                                         "p-4",
                                         "placeholder:text-gray-1/70",
-                                        "text-left"
+                                        "text-left",
+                                        "text-[#FFFFFF]"
                                     )}
                                     placeholder="Add any specific requirements or points you want to include in the content..."
                                     value={note}
@@ -216,7 +217,7 @@ const GenerateAIContent = ({
                             </div>
                         </div>
 
-                        {/* Generate Button with better spacing */}
+                        {/* Generate Button with better spacing
                         <div className="flex justify-center mt-8">
                             <Button
                                 type="button"
@@ -238,6 +239,36 @@ const GenerateAIContent = ({
                                     </div>
                                 ) : (
                                     "Generate AI Content"
+                                )}
+                            </Button>
+                        </div> */}
+
+                        {/* Generate Button */}
+                        <div className="flex flex-col gap-4 items-center">
+                            <Button
+                                onClick={generateAIContent}
+                                disabled={isGeneratingContent || !title}
+                                className={cn(
+                                    "bg-gradient-to-r from-orange-1 to-orange-400",
+                                    "text-white font-semibold gap-3 py-6 text-lg",
+                                    "transition-all duration-300 hover:scale-[1.02]",
+                                    "shadow-lg hover:shadow-orange-1/20",
+                                    "rounded-xl",
+                                    "disabled:opacity-50 disabled:hover:scale-100",
+                                    "max-w-[600px]",
+                                    "w-full"
+                                )}
+                            >
+                                {isGeneratingContent ? (
+                                    <>
+                                        Generating Content
+                                        <Loader size={20} className="animate-spin" />
+                                    </>
+                                ) : (
+                                    <>
+                                        Generate Content
+                                        <NotebookPen size={20} className="animate-bounce" />
+                                    </>
                                 )}
                             </Button>
                         </div>

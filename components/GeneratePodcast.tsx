@@ -390,7 +390,7 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
           </div>
 
           {/* Generate Button */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 items-center">
             <Button
               onClick={generatePodcast}
               disabled={
@@ -406,7 +406,9 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
                 "transition-all duration-300 hover:scale-[1.02]",
                 "shadow-lg hover:shadow-orange-1/20",
                 "rounded-xl",
-                "disabled:opacity-50 disabled:hover:scale-100"
+                "disabled:opacity-50 disabled:hover:scale-100",
+                "max-w-[600px]",
+                "w-full"
               )}
             >
               {isGenerating ? (
@@ -469,8 +471,8 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
 
 
       {/* Audio Preview */}
-      {props.audio && (
-        <div className="flex flex-col gap-3">
+      {props.audio ? (
+        <div className="flex flex-col gap-3 mt-8">
           <div className="flex items-center justify-between">
             <Label className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3">
               <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
@@ -556,17 +558,19 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
             </div>
           )}
         </div>
-      )}
-
-      {isGenerating && !props.audio && (
-        <div className="flex flex-col gap-3 bg-black-1/50 p-6 rounded-xl border border-white/5 
+      ) : (
+        <>
+          {isGenerating && (
+            <div className="flex flex-col gap-3 mt-8 bg-black-1/50 p-6 rounded-xl border border-white/5 
             backdrop-blur-sm shadow-lg">
-          <Progress value={progress} className="h-3 bg-black-1/50" />
-          <div className="flex items-center gap-2.5 text-sm text-gray-1">
-            <Loader size={16} className="animate-spin text-orange-1" />
-            <p>Generating audio... {progress}%</p>
-          </div>
-        </div>
+              <Progress value={progress} className="h-3 bg-black-1/50" />
+              <div className="flex items-center gap-2.5 text-sm text-gray-1">
+                <Loader size={16} className="animate-spin text-orange-1" />
+                <p>Generating audio... {progress}%</p>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
