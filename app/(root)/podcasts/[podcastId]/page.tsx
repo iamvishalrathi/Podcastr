@@ -102,15 +102,17 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
         </div>
 
         {/* Thumbnail Prompt */}
-        {podcast?.imagePrompt && (
-          <div className="bg-black-1/30 p-6 rounded-xl border border-gray-800">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
-              <h2 className="text-20 font-bold text-white-1">Thumbnail Prompt</h2>
-            </div>
-            <p className="text-16 text-white-2 leading-relaxed">{podcast?.imagePrompt}</p>
+        <div className="bg-black-1/30 p-6 rounded-xl border border-gray-800">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+            <h2 className="text-20 font-bold text-white-1">Thumbnail Details</h2>
           </div>
-        )}
+          {podcast?.imagePrompt ? (
+            <p className="text-16 text-white-2 leading-relaxed">{podcast?.imagePrompt}</p>
+          ) : (
+            <p className="text-16 text-gray-1 leading-relaxed italic">Custom uploaded thumbnail</p>
+          )}
+        </div>
 
         {/* Creation Info */}
         <div className="bg-black-1/30 p-6 rounded-xl border border-gray-800">
