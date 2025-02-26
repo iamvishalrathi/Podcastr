@@ -23,7 +23,7 @@ const CHARACTERS_PER_CREDIT = 150;
 const FADE_IN_ANIMATION = "animate-in fade-in duration-500";
 
 const useGeneratePodcast = ({
-  setAudio, voiceType, voicePrompt, setAudioStorageId, audioStorageId
+  setAudio, voiceType, voicePrompt, setAudioStorageId, audioStorageId, setVoiceType
 }: GeneratePodcastProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -289,6 +289,7 @@ const useGeneratePodcast = ({
 
       setAudio(audioUrl);
       setUploadProgress(100);
+      setVoiceType("Custom"); // Set voice type to custom for uploaded audio
       toast({
         title: "Audio uploaded successfully",
       });
@@ -359,7 +360,7 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
     isUploading
   } = useGeneratePodcast(props);
 
-  const [isCustomAudio, setIsCustomAudio] = useState(false);
+  const [isCustomAudio, setIsCustomAudio] = useState(true);
 
   return (
     <div className="flex flex-col gap-6 w-full">
