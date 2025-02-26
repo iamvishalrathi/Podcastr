@@ -527,6 +527,25 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
             </div>
           </div>
 
+          {/* Script Input for Custom Audio */}
+          <div className="flex flex-col gap-3 mt-4">
+            <Label
+              htmlFor='custom-script-textarea'
+              className="text-16 sm:text-18 font-bold text-white-1 flex items-center gap-3 cursor-pointer">
+              <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+              Script (Optional)
+            </Label>
+            <Textarea
+              id='custom-script-textarea'
+              placeholder="Add a script for your custom audio..."
+              className="input-class focus-visible:ring-offset-orange-1 min-h-[200px] text-base leading-relaxed
+              transition-all duration-200 resize-y bg-black-1/50 hover:bg-black-1/70"
+              value={props.voicePrompt}
+              onChange={(e) => props.setVoicePrompt(e.target.value)}
+              disabled={isGenerating || isCustomUploading}
+            />
+          </div>
+
           {isCustomUploading && (
             <div className="flex flex-col gap-3 mt-4 bg-black-1/50 p-6 rounded-xl border border-white/5 
             backdrop-blur-sm shadow-lg">
