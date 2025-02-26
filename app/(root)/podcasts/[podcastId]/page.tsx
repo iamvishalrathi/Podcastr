@@ -8,10 +8,12 @@ import { cn } from '@/lib/utils'
 import { useUser } from '@clerk/nextjs'
 import { useMutation, useQuery } from 'convex/react'
 import { useEffect, useState } from 'react'
-import { Headphones, Clock, Calendar, BookText, Mic2, Layers } from 'lucide-react'
+import { Headphones, Clock, Calendar, BookText, Mic2, Layers, Share2 } from 'lucide-react'
+import { useToast } from '@/components/ui/use-toast'
 
 const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'podcasts'> } }) => {
   const { user } = useUser();
+  const { toast } = useToast();
   
   const podcast = useQuery(api.podcasts.getPodcastById, { podcastId }) //To fetch podcast details
   const [hasUpdatedView, setHasUpdatedView] = useState(false);
@@ -42,6 +44,22 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
           </h1>
         </div>
         <div className="flex items-center gap-4">
+          {/* Share Button */}
+          <button
+            onClick={() => {
+              const url = window.location.href;
+              navigator.clipboard.writeText(url).then(() => {
+                toast({
+                  title: "Link copied to clipboard",
+                  description: "Share this podcast with your friends!"
+                });
+              });
+            }}
+            className="flex items-center gap-2 bg-black-1/50 hover:bg-black-1/70 transition-colors px-4 py-2 rounded-full cursor-pointer"
+          >
+            <Share2 size={20} stroke="white" />
+            <span className="text-14 font-medium text-white-2">Share</span>
+          </button>
           {/* Category */}
           <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
             <Layers size={20} stroke="white" />
