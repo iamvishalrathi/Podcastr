@@ -144,17 +144,19 @@ const PodcastDetailPlayer = ({
                     console.error("Error updating like status:", error);
                   }
                 }}
-                className={`flex items-center gap-2 ${
+                className={`flex items-center gap-2 px-3 min-w-[70px] ${
                   isLiked 
                     ? "bg-red-500 hover:bg-red-600" 
                     : "bg-black-1/50 hover:bg-black-1/70"
-                } text-white-1`}
+                } text-white-1 transition-colors`}
               >
                 <Heart 
                   size={20} 
-                  className={isLiked ? "fill-current" : ""}
+                  className={`transition-transform ${isLiked ? "fill-current" : ""}`}
                 />
-                {likes.length || 0}
+                <span className="w-[20px] text-center">
+                  {likes.length || 0}
+                </span>
               </Button>
 
               {isOwner && (
