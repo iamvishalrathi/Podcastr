@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Play, MoreVertical, Trash2, Heart, Share2, Check } from 'lucide-react';
+import MusicBars from './MusicBars';
 
 import { api } from "@/convex/_generated/api";
 import { useAudio } from '@/providers/AudioProvider';
@@ -28,7 +29,7 @@ const PodcastDetailPlayer = ({
   likes = [],
 }: PodcastDetailPlayerProps) => {
   const router = useRouter();
-  const { setAudio } = useAudio();
+  const { audio, setAudio } = useAudio();
   const { toast } = useToast();
   const { user } = useUser();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -56,6 +57,8 @@ const PodcastDetailPlayer = ({
       podcastId,
     });
   };
+
+  const isPlaying = audio?.podcastId === podcastId;
 
   if (!imageUrl || !authorImageUrl) return <LoaderSpinner />;
 
@@ -100,11 +103,20 @@ const PodcastDetailPlayer = ({
 
             <div className="flex items-center gap-4">
               <Button
+                variant="ghost"
+                size="icon"
+                className={`size-12 rounded-full transition-all duration-200 hover:scale-105 flex items-center justify-center ${
+                  isPlaying 
+                    ? "bg-black text-orange-1 hover:bg-black/90" 
+                    : "bg-orange-1 text-white-1 hover:bg-orange-1/90"
+                }`}
                 onClick={handlePlay}
-                className="flex items-center gap-2 bg-orange-1 hover:bg-orange-1/90 text-white-1"
               >
-                <Play size={20} />
-                Play Now
+                {isPlaying ? (
+                  <MusicBars />
+                ) : (
+                  <Play className="size-6" />
+                )}
               </Button>
 
               <button

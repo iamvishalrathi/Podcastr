@@ -54,10 +54,25 @@ const config = {
 					from: { height: "var(--radix-accordion-content-height)" },
 					to: { height: "0" },
 				},
+				'music-bar-1': {
+					'0%, 100%': { height: '8px' },
+					'50%': { height: '24px' },
+				},
+				'music-bar-2': {
+					'0%, 100%': { height: '16px' },
+					'50%': { height: '24px' },
+				},
+				'music-bar-3': {
+					'0%, 100%': { height: '12px' },
+					'50%': { height: '24px' },
+				},
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
+				'music-bar-1': 'music-bar-1 0.8s ease-in-out infinite',
+				'music-bar-2': 'music-bar-2 1s ease-in-out infinite',
+				'music-bar-3': 'music-bar-3 1.2s ease-in-out infinite',
 			},
 		},
 	},
