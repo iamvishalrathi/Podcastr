@@ -171,7 +171,7 @@ const PodcastDetailPlayer = ({
                   </Button>
                   {isDeleting && (
                     <div
-                      className="absolute -left-32 top-12 z-10 flex w-32 cursor-pointer items-center justify-center gap-2 
+                      className="absolute left-0 top-full mt-2 z-10 flex w-32 cursor-pointer items-center justify-center gap-2 
                       rounded-xl bg-black-6 py-2.5 transition-colors duration-200 hover:bg-red-500/20"
                       onClick={handleDelete}
                     >
