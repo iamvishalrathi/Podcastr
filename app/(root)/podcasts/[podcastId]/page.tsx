@@ -44,19 +44,19 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
         <div className="flex items-center gap-4">
           {/* Category */}
           <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
-            <Layers className="opacity-80" width={20} height={20} />
+            <Layers size={20} stroke="white" />
             <span className="text-14 font-medium text-white-2 capitalize">{podcast?.podcastType}</span>
           </div>
           {/* Duration */}
           <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
-            <Clock className="opacity-80" width={20} height={20} />
+            <Clock size={20} stroke="white" />
             <span className="text-14 font-medium text-white-2">
               {Math.floor(podcast?.audioDuration / 60)}:{Math.floor(podcast?.audioDuration % 60).toString().padStart(2, '0')}
             </span>
           </div>
           {/* Views */}
           <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
-            <Headphones className="opacity-80" width={20} height={20} />
+            <Headphones size={20} stroke="white" />
             <span className="text-14 font-medium text-white-2">{podcast?.views} views</span>
           </div>
         </div>
@@ -90,7 +90,7 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
               <h2 className="text-20 font-bold text-white-1">Transcription</h2>
             </div>
             <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
-              <Mic2 className="opacity-80" width={20} height={20} />
+              <Mic2 size={20} stroke="white" />
               <span className="text-14 font-medium text-white-2">Voice: {podcast?.voiceType}</span>
             </div>
           </div>
@@ -116,7 +116,7 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
           </div>
           <div className="flex items-center gap-3">
             <div className="bg-black-1/50 p-3 rounded-full">
-              <Calendar className="opacity-80" width={20} height={20} />
+              <Calendar size={20} stroke="white" />
             </div>
             <div>
               <p className="text-14 text-white-3">Created on</p>

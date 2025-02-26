@@ -3,6 +3,7 @@ import { useMutation } from "convex/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Play, MoreVertical, Trash2 } from 'lucide-react';
 
 import { api } from "@/convex/_generated/api";
 import { useAudio } from '@/providers/AudioProvider';
@@ -102,13 +103,7 @@ const PodcastDetailPlayer = ({
               className="text-16 w-full max-w-[250px] bg-gradient-to-r from-orange-1 to-orange-400 font-bold text-white-1 
               transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-orange-1/20"
             >
-              <Image
-                src="/icons/Play.svg"
-                width={20}
-                height={20}
-                alt="Play icon"
-                className="opacity-90"
-              />
+              <Play size={20} stroke="white" className="mr-2" />
               Play podcast
             </Button>
           </div>
@@ -123,13 +118,7 @@ const PodcastDetailPlayer = ({
               className="hover:bg-black-1/50"
               onClick={() => setIsDeleting((prev) => !prev)}
             >
-              <Image
-                src="/icons/three-dots.svg"
-                width={20}
-                height={30}
-                alt="Menu"
-                className="opacity-80 hover:opacity-100 transition-opacity"
-              />
+              <MoreVertical size={20} stroke="white" />
             </Button>
             {isDeleting && (
               <div
@@ -137,13 +126,7 @@ const PodcastDetailPlayer = ({
                 rounded-xl bg-black-6 py-2.5 transition-colors duration-200 hover:bg-red-500/20"
                 onClick={handleDelete}
               >
-                <Image
-                  src="/icons/delete.svg"
-                  width={16}
-                  height={16}
-                  alt="Delete"
-                  className="opacity-80"
-                />
+                <Trash2 size={16} stroke="white" />
                 <span className="text-16 font-medium text-white-1">Delete</span>
               </div>
             )}
