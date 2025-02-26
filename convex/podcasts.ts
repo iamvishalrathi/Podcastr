@@ -51,6 +51,8 @@ export const createPodcast = mutation({
       authorImageUrl: user[0].imageUrl,
       audioDuration: args.audioDuration,
       podcastType: args.podcastType,
+      likes: args.likes || [],
+      likeCount: args.likeCount || 0,
     });
   },
 });
@@ -216,5 +218,35 @@ export const deletePodcast = mutation({
     await ctx.storage.delete(args.imageStorageId);
     await ctx.storage.delete(args.audioStorageId);
     return await ctx.db.delete(args.podcastId);
+  },
+});
+
+// this mutation will handle liking and unliking podcasts
+export const likePodcast = mutation({
+  args: { podcastId: v.id("podcasts"), userId: v.string() },
+  handler: async (ctx, { podcastId, userId }) => {
+    const podcast = await ctx.db.get(podcastId);
+    if (!podcast) throw new Error("Podcast not found");
+
+    // Initialize likes and likeCount if they don't exist
+    const likes = podcast.likes ?? [];
+    const likeCount = podcast.likeCount ?? 0;
+    const hasLiked = likes.includes(userId);
+
+    if (hasLiked) {
+      // Unlike
+      await ctx.db.patch(podcastId, {
+        likes: likes.filter((id) => id !== userId),
+        likeCount: Math.max(0, likeCount - 1) // Ensure count never goes below 0
+      });
+      return false;
+    } else {
+      // Like
+      await ctx.db.patch(podcastId, {
+        likes: [...likes, userId],
+        likeCount: likeCount + 1
+      });
+      return true;
+    }
   },
 });

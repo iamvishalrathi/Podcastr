@@ -19,6 +19,8 @@ export default defineSchema({
         audioDuration: v.float64(),
         views: v.float64(),
         podcastType: v.optional(v.string()),
+        likes: v.optional(v.array(v.string())),
+        likeCount: v.optional(v.float64()),
     })
         .searchIndex('search_author', { searchField: 'author' })
         .searchIndex('search_title', { searchField: 'podcastTitle' })

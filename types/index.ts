@@ -92,6 +92,8 @@ export interface PodcastDetailPlayerProps {
   audioStorageId: Id<"_storage">;
   authorImageUrl: string;
   authorId: string;
+  likes?: string[];
+  likeCount?: number;
 }
 
 export interface AudioProps {
@@ -128,4 +130,4 @@ export type UseDotButtonType = {
   selectedIndex: number;
   scrollSnaps: number[];
   onDotButtonClick: (index: number) => void;
-};
+}
