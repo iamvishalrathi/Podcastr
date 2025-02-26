@@ -3,7 +3,7 @@ import { useMutation } from "convex/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Play, MoreVertical, Trash2, Heart } from 'lucide-react';
+import { Play, MoreVertical, Trash2, Heart, Share2, Check } from 'lucide-react';
 
 import { api } from "@/convex/_generated/api";
 import { useAudio } from '@/providers/AudioProvider';
@@ -33,22 +33,17 @@ const PodcastDetailPlayer = ({
   const { user } = useUser();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLiked, setIsLiked] = useState(likes?.includes(user?.id || "") || false);
+  const [isCopied, setIsCopied] = useState(false);
+  
   const deletePodcast = useMutation(api.podcasts.deletePodcast);
   const likePodcast = useMutation(api.podcasts.likePodcast);
 
   const handleDelete = async () => {
     try {
       await deletePodcast({ podcastId, imageStorageId, audioStorageId });
-      toast({
-        title: "Podcast deleted",
-      });
       router.push("/");
     } catch (error) {
       console.error("Error deleting podcast", error);
-      toast({
-        title: "Error deleting podcast",
-        variant: "destructive",
-      });
     }
   };
 
@@ -112,6 +107,26 @@ const PodcastDetailPlayer = ({
                 Play Now
               </Button>
 
+              <button
+                onClick={() => {
+                  const url = window.location.href;
+                  navigator.clipboard.writeText(url).then(() => {
+                    setIsCopied(true);
+                    setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+                  });
+                }}
+                className="flex items-center gap-2 bg-black-1/50 hover:bg-black-1/70 transition-colors px-4 py-2 rounded-full cursor-pointer"
+              >
+                {isCopied ? (
+                  <Check size={20} stroke="white" />
+                ) : (
+                  <Share2 size={20} stroke="white" />
+                )}
+                <span className="text-14 font-medium text-white-2">
+                  {isCopied ? "Copied!" : "Share"}
+                </span>
+              </button>
+
               <Button
                 onClick={async () => {
                   if (!user) {
@@ -125,14 +140,8 @@ const PodcastDetailPlayer = ({
                   try {
                     const liked = await likePodcast({ podcastId, userId: user.id });
                     setIsLiked(liked);
-                    toast({
-                      title: liked ? "Added to liked podcasts" : "Removed from liked podcasts",
-                    });
                   } catch (error) {
-                    toast({
-                      title: "Error updating like status",
-                      variant: "destructive",
-                    });
+                    console.error("Error updating like status:", error);
                   }
                 }}
                 className={`flex items-center gap-2 ${
