@@ -83,21 +83,23 @@ const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'po
         </div>
 
         {/* Transcription */}
-        {!podcast?.voicePrompt ? null : (
-          <div className="bg-black-1/30 p-6 rounded-xl border border-gray-800">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
-                <h2 className="text-20 font-bold text-white-1">Transcription</h2>
-              </div>
-              <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
-                <Mic2 size={20} stroke="white" />
-                <span className="text-14 font-medium text-white-2">Voice: {podcast?.voiceType}</span>
-              </div>
+        <div className="bg-black-1/30 p-6 rounded-xl border border-gray-800">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="h-6 w-1.5 bg-gradient-to-t from-orange-1 to-orange-400 rounded-full" />
+              <h2 className="text-20 font-bold text-white-1">Transcription</h2>
             </div>
-            <p className="text-16 text-white-2 leading-relaxed whitespace-pre-wrap">{podcast?.voicePrompt}</p>
+            <div className="flex items-center gap-2 bg-black-1/50 px-4 py-2 rounded-full">
+              <Mic2 size={20} stroke="white" />
+              <span className="text-14 font-medium text-white-2">Voice: {podcast?.voiceType}</span>
+            </div>
           </div>
-        )}
+          {podcast?.voicePrompt ? (
+            <p className="text-16 text-white-2 leading-relaxed whitespace-pre-wrap">{podcast?.voicePrompt}</p>
+          ) : (
+            <p className="text-16 text-gray-1 leading-relaxed italic">No transcription provided</p>
+          )}
+        </div>
 
         {/* Thumbnail Prompt */}
         {podcast?.imagePrompt && (
