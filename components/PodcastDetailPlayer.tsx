@@ -115,14 +115,14 @@ const PodcastDetailPlayer = ({
                     setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
                   });
                 }}
-                className="flex items-center gap-2 bg-black-1/50 hover:bg-black-1/70 transition-colors px-4 py-2 rounded-full cursor-pointer"
+                className="flex items-center gap-2 bg-black-1/50 hover:bg-black-1/70 transition-colors px-4 py-2 rounded-full cursor-pointer min-w-[100px] justify-center"
               >
                 {isCopied ? (
                   <Check size={20} stroke="white" />
                 ) : (
                   <Share2 size={20} stroke="white" />
                 )}
-                <span className="text-14 font-medium text-white-2">
+                <span className="text-14 font-medium text-white-2 w-[45px] text-center">
                   {isCopied ? "Copied!" : "Share"}
                 </span>
               </button>
