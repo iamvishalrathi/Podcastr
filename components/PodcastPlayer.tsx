@@ -8,9 +8,10 @@ import {
   Pause,
   Volume2, 
   VolumeX,
-  Heart,
   Gauge,
-  FastForward
+  FastForward,
+  Repeat,
+  Maximize2
 } from "lucide-react";
 import { 
   DropdownMenu,
@@ -32,7 +33,8 @@ const PodcastPlayer = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(1);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLooping, setIsLooping] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { audio } = useAudio();
 
   const togglePlayPause = () => {
@@ -79,17 +81,38 @@ const PodcastPlayer = () => {
       audioRef.current &&
       audioRef.current.currentTime &&
       audioRef.current.duration &&
-      audioRef.current.currentTime + 10 < audioRef.current.duration
+      audioRef.current.currentTime + 5 < audioRef.current.duration
     ) {
-      audioRef.current.currentTime += 10;
+      audioRef.current.currentTime += 5;
     }
   };
 
   const rewind = () => {
-    if (audioRef.current && audioRef.current.currentTime - 10 > 0) {
-      audioRef.current.currentTime -= 10;
+    if (audioRef.current && audioRef.current.currentTime - 5 > 0) {
+      audioRef.current.currentTime -= 5;
     } else if (audioRef.current) {
       audioRef.current.currentTime = 0;
+    }
+  };
+
+  const toggleLoop = () => {
+    if (audioRef.current) {
+      audioRef.current.loop = !isLooping;
+      setIsLooping(!isLooping);
+      toast.success(isLooping ? "Loop disabled" : "Loop enabled");
+    }
+  };
+
+  const toggleFullscreen = () => {
+    if (audioRef.current) {
+      if (!document.fullscreenElement) {
+        audioRef.current.requestFullscreen().catch(err => {
+          toast.error("Error attempting to enable fullscreen mode");
+        });
+      } else {
+        document.exitFullscreen();
+      }
+      setIsFullscreen(!isFullscreen);
     }
   };
 
@@ -144,6 +167,15 @@ const PodcastPlayer = () => {
     }
   }, [audio]);
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
@@ -152,10 +184,6 @@ const PodcastPlayer = () => {
 
   const handleAudioEnded = () => {
     setIsPlaying(false);
-  };
-
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
   };
 
   return (
@@ -204,47 +232,58 @@ const PodcastPlayer = () => {
         {/* Center Section - Player Controls */}
         <div className="flex items-center justify-center gap-8 flex-1 max-w-[400px]">
           <button 
-            className="text-white hover:text-primary transition-colors"
+            className="rounded-full p-2 text-gray-400 hover:bg-gray-800 hover:text-white"
             onClick={rewind}
-            title="Rewind 10s (Left Arrow)"
+            title="Rewind 5s (Left Arrow)"
           >
             <FastForward className="h-5 w-5 transform rotate-180" stroke="white" />
           </button>
 
           <button
-            className="flex-center h-10 w-10 rounded-full bg-primary hover:bg-primary/80 transition-colors"
+            className="rounded-full bg-primary p-2 text-black hover:bg-primary/80"
             onClick={togglePlayPause}
             title="Play/Pause (Space)"
           >
             {isPlaying ? (
-              <Pause className="h-6 w-6" stroke="white"/>
+              <Pause className="h-5 w-5" stroke="white"/>
             ) : (
-              <Play className="h-6 w-6 translate-x-0.5" stroke="white"/>
+              <Play className="h-5 w-5" stroke="white"/>
             )}
           </button>
 
           <button 
-            className="text-white hover:text-primary transition-colors"
+            className="rounded-full p-2 text-gray-400 hover:bg-gray-800 hover:text-white"
             onClick={forward}
-            title="Forward 10s (Right Arrow)"
+            title="Forward 5s (Right Arrow)"
           >
             <FastForward className="h-5 w-5" stroke="white" />
+          </button>
+
+          <button
+            onClick={toggleLoop}
+            className={cn(
+              "rounded-full p-2 hover:bg-gray-800",
+              isLooping ? "text-orange-500" : "text-[#ffffff] hover:text-white"
+            )}
+            title="Toggle Loop"
+          >
+            <Repeat className="h-5 w-5"/>
+          </button>
+
+          <button
+            onClick={toggleFullscreen}
+            className={cn(
+              "rounded-full p-2 hover:bg-gray-800",
+              isFullscreen ? "text-primary" : "text-gray-400 hover:text-white"
+            )}
+            title="Toggle Fullscreen"
+          >
+            <Maximize2 className="h-5 w-5" stroke="white" />
           </button>
         </div>
 
         {/* Right Section - Volume and Settings */}
         <div className="flex items-center gap-4 min-w-[200px] justify-end">
-          <button
-            onClick={toggleLike}
-            className={cn(
-              "text-white hover:text-primary transition-colors",
-              isLiked && "text-primary"
-            )}
-            title="Add to favorites"
-          >
-            <Heart className="h-5 w-5" fill={isLiked ? "currentColor" : "none"} stroke="white"/>
-          </button>
-
           <div className="flex items-center gap-2">
             <button
               onClick={toggleMute}
