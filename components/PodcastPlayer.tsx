@@ -57,7 +57,13 @@ const PodcastPlayer = () => {
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
       setVolume(newVolume);
-      setIsMuted(newVolume === 0);
+      if (newVolume > 0) {
+        setIsMuted(false);
+        audioRef.current.muted = false;
+      } else {
+        setIsMuted(true);
+        audioRef.current.muted = true;
+      }
     }
   };
 
@@ -65,7 +71,6 @@ const PodcastPlayer = () => {
     if (audioRef.current) {
       audioRef.current.playbackRate = rate;
       setPlaybackRate(rate);
-      toast.success(`Playback speed set to ${rate}x`);
     }
   };
 
@@ -151,7 +156,6 @@ const PodcastPlayer = () => {
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
-    toast.success(isLiked ? "Removed from favorites" : "Added to favorites");
   };
 
   return (
