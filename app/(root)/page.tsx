@@ -8,8 +8,7 @@ import { useRouter } from "next/navigation";
 import LoaderSpinner from "@/components/LoaderSpinner";
 import { TrendingUp, Clock, Headphones, Heart, ArrowRight, Play } from "lucide-react";
 import useEmblaCarousel from 'embla-carousel-react';
-import { useCallback, useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const Home = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
@@ -19,8 +18,6 @@ const Home = () => {
   const allPodcasts = useQuery(api.podcasts.getAllPodcasts);
   const router = useRouter();
 
-  // Get the most liked podcast as featured
-  const featuredPodcast = allPodcasts?.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0))[0];
 
   function formatAudioDuration(duration: number): string {
     const hours = Math.floor(duration / 3600);
@@ -63,9 +60,9 @@ const Home = () => {
                         src={podcast.imageUrl!}
                         alt={podcast.podcastTitle}
                         fill
-                        className="object-cover opacity-50"
+                        className="object-cover opacity-60 blur-[1px]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-black/20" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/50" />
                     </div>
                     <div className="relative h-full flex flex-col justify-end p-6 gap-4">
                       <div className="flex items-center gap-3">
@@ -74,12 +71,12 @@ const Home = () => {
                           alt={podcast.author}
                           width={40}
                           height={40}
-                          className="rounded-full"
+                          className="rounded-full border-2 border-orange-1/50"
                         />
                         <span className="text-white-1 font-medium">{podcast.author}</span>
                       </div>
-                      <h1 className="text-3xl font-bold text-white-1">{podcast.podcastTitle}</h1>
-                      <p className="text-white-2 line-clamp-2">{podcast.podcastDescription}</p>
+                      <h1 className="text-3xl font-bold text-white-1 drop-shadow-md">{podcast.podcastTitle}</h1>
+                      <p className="text-white-2 line-clamp-2 backdrop-blur-sm bg-black/20 p-2 rounded-md">{podcast.podcastDescription}</p>
                       <div className="flex items-center gap-6">
                         <button
                           onClick={() => router.push(`/podcasts/${podcast._id}`)}
