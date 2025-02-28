@@ -63,7 +63,7 @@ const Home = () => {
   return (
     <div className="mt-5 flex flex-col gap-9 md:overflow-hidden">
       {/* Featured Podcasts */}
-      {featuredPodcasts && featuredPodcasts.length > 0 && (
+      {featuredPodcasts && featuredPodcasts.length > 0 ? (
         <section className="relative w-full h-[300px]">
           <div className="overflow-hidden rounded-2xl" ref={emblaRef}>
             <div className="flex">
@@ -129,6 +129,40 @@ const Home = () => {
                     }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="relative w-full h-[300px]">
+          <div className="rounded-2xl overflow-hidden bg-white-1/5 h-full">
+            <div className="relative w-full h-full">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/50" />
+              <div className="relative h-full flex flex-col justify-end p-6 gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white-1/10 animate-pulse" />
+                  <div className="h-5 bg-white-1/10 rounded animate-pulse w-24" />
+                </div>
+                <div className="h-8 bg-white-1/10 rounded animate-pulse w-3/4" />
+                <div className="h-16 bg-white-1/10 rounded animate-pulse w-full" />
+                <div className="flex items-center gap-6">
+                  <div className="h-10 bg-white-1/10 rounded-full animate-pulse w-32" />
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-white-1/10 animate-pulse" />
+                    <div className="h-5 bg-white-1/10 rounded animate-pulse w-12" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-white-1/10 animate-pulse" />
+                    <div className="h-5 bg-white-1/10 rounded animate-pulse w-12" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-center w-full mt-8">
+            <div className="flex gap-3">
+              {[...Array(3)].map((_, index) => (
+                <div key={index} className="w-3 h-3 rounded-full bg-white-1/10 animate-pulse" />
               ))}
             </div>
           </div>
