@@ -106,35 +106,21 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Carousel Controls - Positioned outside the image */}
           <div className="flex justify-between mt-4">
-            <button
-              onClick={scrollPrev}
-              className="bg-black/50 hover:bg-black/70 p-2 rounded-full transition-colors flex items-center gap-2"
-            >
-              <ChevronLeft size={20} className="text-white" />
-              <span className="text-white text-sm font-medium hidden sm:inline">Previous</span>
-            </button>
-            
-            {/* Dots Indicator - Moved to center between arrows */}
-            <div className="flex gap-2 items-center">
+            {/* Carousel Controls - Only dots for navigation */}
+            <div className="flex justify-center w-full mt-4">
               {featuredPodcasts.map((_, index) => (
-                <div
+                <button
                   key={index}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    index === selectedIndex ? 'bg-orange-1' : 'bg-white/50'
-                  }`}
+                  onClick={() => emblaApi?.scrollTo(index)}
+                  className={`w-3 h-3 rounded-full transition-all mx-1 ${index === selectedIndex
+                    ? 'bg-orange-1 scale-125'
+                    : 'bg-[white] hover:bg-white/50'
+                    }`}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
-            
-            <button
-              onClick={scrollNext}
-              className="bg-black/50 hover:bg-black/70 p-2 rounded-full transition-colors flex items-center gap-2"
-            >
-              <span className="text-white text-sm font-medium hidden sm:inline">Next</span>
-              <ChevronRight size={20} className="text-white" />
-            </button>
           </div>
         </section>
       )}
