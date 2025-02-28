@@ -5,7 +5,6 @@ import { api } from "@/convex/_generated/api";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import LoaderSpinner from "@/components/LoaderSpinner";
 import { TrendingUp, Clock, Headphones, Heart, ArrowRight, Play } from "lucide-react";
 import useEmblaCarousel from 'embla-carousel-react';
 import { useEffect, useState } from 'react';
@@ -13,6 +12,7 @@ import { useEffect, useState } from 'react';
 const Home = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [featuredPodcasts, setFeaturedPodcasts] = useState([]);
   const trendingPodcasts = useQuery(api.podcasts.getTrendingPodcasts);
   const latestPodcasts = useQuery(api.podcasts.getLatestPodcasts);
   const allPodcasts = useQuery(api.podcasts.getAllPodcasts);
@@ -35,6 +35,7 @@ const Home = () => {
       clearInterval(autoplay);
     };
   }, [emblaApi]);
+
   function formatAudioDuration(duration: number): string {
     const hours = Math.floor(duration / 3600);
     const minutes = Math.floor((duration % 3600) / 60);
@@ -46,11 +47,17 @@ const Home = () => {
 
     return formattedHours + formattedMinutes + formattedSeconds;
   }
+
   // Get top 3 featured podcasts
-  const featuredPodcasts = allPodcasts
-    ?.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0))
-    ?.sort((a, b) => (b.views || 0) - (a.views || 0))
-    .slice(0, 3);
+  useEffect(() => {
+    if (!allPodcasts) return;
+
+    const featured = allPodcasts
+      .sort((a, b) => (b.likeCount && b.views || 0) - (a.likeCount && a.views || 0))
+      .slice(0, 3);
+
+    setFeaturedPodcasts(featured);
+  }, [allPodcasts]);
 
   useEffect(() => {
     if (!emblaApi) return;
