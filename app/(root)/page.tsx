@@ -166,7 +166,22 @@ const Home = () => {
               />
             ))
           ) : (
-            <LoaderSpinner />
+            <div className="podcast_grid">
+              {[...Array(6)].map((_, index) => (
+                <div key={index} className="bg-white-1/5 rounded-xl overflow-hidden">
+                  <div className="w-full aspect-square bg-white-1/10 animate-pulse" />
+                  <div className="p-4 space-y-3">
+                    <div className="h-5 bg-white-1/10 rounded animate-pulse w-3/4" />
+                    <div className="h-4 bg-white-1/10 rounded animate-pulse w-full" />
+                    <div className="h-4 bg-white-1/10 rounded animate-pulse w-1/2" />
+                    <div className="flex justify-between pt-2">
+                      <div className="h-4 bg-white-1/10 rounded animate-pulse w-16" />
+                      <div className="h-4 bg-white-1/10 rounded animate-pulse w-16" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </section>
@@ -208,7 +223,7 @@ const Home = () => {
                           alt={podcastTitle}
                           width={64}
                           height={64}
-                          className="aspect-square rounded-lg group-hover:scale-105 transition-transform"
+                          className="aspect-square rounded-lg"
                         />
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="bg-orange-1/80 rounded-full p-2">
@@ -243,7 +258,30 @@ const Home = () => {
               </div>
             ))
           ) : (
-            <LoaderSpinner />
+            <div className="flex flex-col gap-4">
+              {[...Array(5)].map((_, index) => (
+                <div key={index} className="flex items-center p-3 bg-white-1/5 rounded-lg">
+                  <div className="w-8 text-center">
+                    <div className="h-5 w-5 bg-white-1/10 rounded animate-pulse mx-auto" />
+                  </div>
+                  <div className="flex-1 ml-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-16 h-16 bg-white-1/10 rounded-lg animate-pulse" />
+                      <div className="space-y-2 flex-1">
+                        <div className="h-5 bg-white-1/10 rounded animate-pulse w-3/4" />
+                        <div className="h-4 bg-white-1/10 rounded animate-pulse w-1/2" />
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="h-4 w-16 bg-white-1/10 rounded animate-pulse" />
+                        <div className="h-4 w-16 bg-white-1/10 rounded animate-pulse" />
+                        <div className="h-4 w-24 bg-white-1/10 rounded animate-pulse max-sm:hidden" />
+                      </div>
+                    </div>
+                    <div className="mt-3 h-px bg-gray-800" />
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </section>
