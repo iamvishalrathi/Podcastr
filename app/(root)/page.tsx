@@ -5,11 +5,17 @@ import { api } from "@/convex/_generated/api";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import LoaderSpinner from "@/components/LoaderSpinner";
+import { TrendingUp, Clock, Headphones, Heart, ArrowRight, Play } from "lucide-react";
 
 const Home = () => {
   const trendingPodcasts = useQuery(api.podcasts.getTrendingPodcasts);
   const latestPodcasts = useQuery(api.podcasts.getLatestPodcasts);
+  const allPodcasts = useQuery(api.podcasts.getAllPodcasts);
   const router = useRouter();
+
+  // Get the most liked podcast as featured
+  const featuredPodcast = allPodcasts?.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0))[0];
 
   function formatAudioDuration(duration: number): string {
     const hours = Math.floor(duration / 3600);
@@ -25,81 +31,158 @@ const Home = () => {
 
   return (
     <div className="mt-5 flex flex-col gap-9 md:overflow-hidden">
+      {/* Featured Podcast */}
+      {featuredPodcast && (
+        <section className="relative w-full h-[300px] rounded-2xl overflow-hidden shadow-lg">
+          <div className="absolute inset-0">
+            <Image
+              src={featuredPodcast.imageUrl!}
+              alt={featuredPodcast.podcastTitle}
+              fill
+              className="object-cover opacity-50"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-black/20" />
+          </div>
+          <div className="relative h-full flex flex-col justify-end p-6 gap-4">
+            <div className="flex items-center gap-3">
+              <Image
+                src={featuredPodcast.authorImageUrl!}
+                alt={featuredPodcast.author}
+                width={40}
+                height={40}
+                className="rounded-full"
+              />
+              <span className="text-white-1 font-medium">{featuredPodcast.author}</span>
+            </div>
+            <h1 className="text-3xl font-bold text-white-1">{featuredPodcast.podcastTitle}</h1>
+            <p className="text-white-2 line-clamp-2">{featuredPodcast.podcastDescription}</p>
+            <div className="flex items-center gap-6">
+              <button
+                onClick={() => router.push(`/podcasts/${featuredPodcast._id}`)}
+                className="bg-orange-1 text-black px-6 py-2 rounded-full font-semibold hover:bg-orange-2 transition flex items-center gap-2"
+              >
+                <Play size={18} className="fill-black" />
+                Listen Now
+              </button>
+              <div className="flex items-center gap-2">
+                <Headphones size={20} className="text-white-1" />
+                <span className="text-white-1">{featuredPodcast.views}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Heart size={20} className="text-white-1" />
+                <span className="text-white-1">{featuredPodcast.likeCount || 0}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Trending */}
       <section className="flex flex-col gap-5">
         <header className="flex items-center justify-between">
-          <h1 className="text-20 font-bold text-white-1">Trending Podcasts</h1>
-          <Link href="/discover" className="text-16 font-semibold text-orange-1">
+          <div className="flex items-center gap-3">
+            <TrendingUp size={24} className="text-orange-1" />
+            <h1 className="text-20 font-bold text-white-1">Trending Podcasts</h1>
+          </div>
+          <Link
+            href="/discover"
+            className="flex items-center gap-2 text-16 font-semibold text-orange-1 hover:text-orange-2 transition"
+          >
             See all
+            <ArrowRight size={20} className="text-orange-1" />
           </Link>
         </header>
         <div className="podcast_grid">
-          {trendingPodcasts?.map(({ _id, podcastTitle, podcastDescription, imageUrl }) => (
-            <PodcastCard
-              key={_id}
-              imgUrl={imageUrl as string}
-              title={podcastTitle}
-              description={podcastDescription}
-              podcastId={_id}
-            />
-          ))}
+          {trendingPodcasts ? (
+            trendingPodcasts.map(({ _id, podcastTitle, podcastDescription, imageUrl, views, likeCount }) => (
+              <PodcastCard
+                key={_id}
+                imgUrl={imageUrl as string}
+                title={podcastTitle}
+                description={podcastDescription}
+                podcastId={_id}
+                views={views}
+                likes={likeCount || 0}
+              />
+            ))
+          ) : (
+            <LoaderSpinner />
+          )}
         </div>
       </section>
 
       {/* Latest */}
       <section className="flex flex-col gap-5">
         <header className="flex items-center justify-between">
-          <h1 className="text-20 font-bold text-white-1">Latest Podcasts</h1>
-          <Link href="/discover" className="text-16 font-semibold text-orange-1">
+          <div className="flex items-center gap-3">
+            <Clock size={24} className="text-orange-1" />
+            <h1 className="text-20 font-bold text-white-1">Latest Podcasts</h1>
+          </div>
+          <Link
+            href="/discover"
+            className="flex items-center gap-2 text-16 font-semibold text-orange-1 hover:text-orange-2 transition"
+          >
             See all
+            <ArrowRight size={20} className="text-orange-1" />
           </Link>
         </header>
         <div className="flex flex-col gap-6">
-          {latestPodcasts?.map(({ _id, podcastTitle, imageUrl, views, audioDuration }, index) => (
-            <div
-              key={_id}
-              onClick={() => router.push(`/podcasts/${_id}`)}
-              className="flex cursor-pointer items-center"
-            >
-              <span className="inline-block text-center w-6 text-sm text-white-1 mr-2">
-                {index + 1}
-              </span>
-              <div className="flex flex-col size-full gap-3">
-                <div className="flex justify-between">
-                  <figure className="flex items-center gap-2">
-                    <Image
-                      src={imageUrl!}
-                      alt={podcastTitle}
-                      width={64}
-                      height={64}
-                      className="aspect-square rounded-lg"
-                    />
-                    <h2 className="text-14 font-semibold text-white-1 text-wrap w-[200px] max-sm:w-[100px] max-sm:truncate">{podcastTitle}</h2>
-                  </figure>
-                  <figure className="flex gap-3 items-center">
-                    <Image
-                      src="/icons/headphone.svg"
-                      width={24}
-                      height={24}
-                      alt="headphone"
-                    />
-                    <h2 className="text-16 font-bold text-white-1">{views}</h2>
-                  </figure>
-                  <figure className="flex gap-3 items-center">
-                    <Image
-                      src="/icons/watch.svg"
-                      width={24}
-                      height={24}
-                      alt="watch"
-                      className="max-sm:hidden"
-                    />
-                    <h2 className="text-16 font-bold text-white-1 max-sm:hidden">{formatAudioDuration(audioDuration)}</h2>
-                  </figure>
+          {latestPodcasts ? (
+            latestPodcasts.map(({ _id, podcastTitle, imageUrl, views, audioDuration, author, likeCount }, index) => (
+              <div
+                key={_id}
+                onClick={() => router.push(`/podcasts/${_id}`)}
+                className="flex cursor-pointer items-center hover:bg-white-1/5 rounded-lg p-3 transition group"
+              >
+                <span className="inline-block text-center w-8 text-sm font-medium text-orange-1">
+                  {(index + 1).toString().padStart(2, '0')}
+                </span>
+                <div className="flex flex-col size-full gap-3">
+                  <div className="flex justify-between items-center">
+                    <figure className="flex items-center gap-3">
+                      <div className="relative">
+                        <Image
+                          src={imageUrl!}
+                          alt={podcastTitle}
+                          width={64}
+                          height={64}
+                          className="aspect-square rounded-lg group-hover:scale-105 transition-transform"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="bg-orange-1/80 rounded-full p-2">
+                            <Play size={16} className="fill-black text-black" />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <h2 className="text-16 font-semibold text-white-1 text-wrap w-[200px] max-sm:w-[100px] max-sm:truncate group-hover:text-orange-1 transition-colors">
+                          {podcastTitle}
+                        </h2>
+                        <p className="text-14 text-white-2">{author}</p>
+                      </div>
+                    </figure>
+                    <div className="flex items-center gap-6">
+                      <figure className="flex gap-2 items-center">
+                        <Headphones size={20} className="text-white-2 group-hover:text-orange-1 transition-colors" />
+                        <span className="text-14 font-medium text-white-1">{views}</span>
+                      </figure>
+                      <figure className="flex gap-2 items-center">
+                        <Heart size={20} className="text-white-2 group-hover:text-orange-1 transition-colors" />
+                        <span className="text-14 font-medium text-white-1">{likeCount || 0}</span>
+                      </figure>
+                      <figure className="flex gap-2 items-center max-sm:hidden">
+                        <Clock size={20} className="text-white-2 group-hover:text-orange-1 transition-colors" />
+                        <span className="text-14 font-medium text-white-1">{formatAudioDuration(audioDuration)}</span>
+                      </figure>
+                    </div>
+                  </div>
+                  <hr className="border-gray-800" />
                 </div>
-                <hr className="border-gray-800" />
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <LoaderSpinner />
+          )}
         </div>
       </section>
     </div>
