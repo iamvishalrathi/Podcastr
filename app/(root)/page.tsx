@@ -98,7 +98,7 @@ const Home = () => {
                         <span className="text-white-1 font-medium">{podcast.author}</span>
                       </div>
                       <h1 className="text-3xl font-bold text-white-1 drop-shadow-md">{podcast.podcastTitle}</h1>
-                      <p className="text-white-2 line-clamp-2 backdrop-blur-sm bg-black/20 p-2 rounded-md">{podcast.podcastDescription}</p>
+                      <p className="text-white-2 line-clamp-2 backdrop-blur-sm bg-black/20 p-1.5 rounded-md">{podcast.podcastDescription}</p>
                       <div className="flex items-center gap-6">
                         <button
                           onClick={() => router.push(`/podcasts/${podcast._id}`)}
@@ -210,7 +210,7 @@ const Home = () => {
             <div className="podcast_grid">
               {[...Array(6)].map((_, index) => (
                 <div key={index} className="bg-white-1/5 rounded-xl overflow-hidden">
-                  <div className="w-full aspect-square bg-white-1/10 animate-pulse" />
+                  <div className="w-full aspect-square bg-white-1/10 animate-pulse " />
                   <div className="p-4 space-y-3">
                     <div className="h-5 bg-white-1/10 rounded animate-pulse w-3/4" />
                     <div className="h-4 bg-white-1/10 rounded animate-pulse w-full" />
