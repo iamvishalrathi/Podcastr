@@ -1,27 +1,24 @@
 "use client"
 
-import EmptyState from '@/components/EmptyState'
-import LoaderSpinner from '@/components/LoaderSpinner'
 import PodcastCard from '@/components/PodcastCard'
 import Searchbar from '@/components/Searchbar'
 import { api } from '@/convex/_generated/api'
 import { useQuery } from 'convex/react'
 import { useState, useEffect } from 'react'
 import { Filter, Clock, TrendingUp, Heart, RefreshCw } from 'lucide-react'
-import Image from 'next/image'
 
 const Discover = ({ searchParams: { search } }: { searchParams: { search: string } }) => {
     const [filterOption, setFilterOption] = useState<'latest' | 'trending' | 'popular'>('trending')
     const [isLoading, setIsLoading] = useState(true)
-    
+
     const podcastsData = useQuery(api.podcasts.getPodcastBySearch, { search: search || '' })
-    
+
     useEffect(() => {
         if (podcastsData) {
             setIsLoading(false)
         }
     }, [podcastsData])
-    
+
     // Filter podcasts based on selected option
     const filteredPodcasts = podcastsData ? [...podcastsData].sort((a, b) => {
         if (filterOption === 'latest') {
@@ -29,7 +26,7 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
         } else if (filterOption === 'trending') {
             return (b.views || 0) - (a.views || 0)
         } else {
-            return (b.likeCount || 0) - (a.likeCount || 0)
+            return (b.likeCount && b.views || 0) - (a.likeCount && a.views || 0)
         }
     }) : []
 
@@ -39,46 +36,43 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                 <h1 className="text-2xl font-bold text-white-1 mb-4">Discover Podcasts</h1>
                 <Searchbar />
             </div>
-            
+
             <div className="flex flex-col gap-6">
                 <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold text-white-1">
                         {!search ? 'Browse Community Podcasts' : 'Search results for '}
                         {search && <span className="text-orange-1 ml-1">"{search}"</span>}
                     </h2>
-                    
+
                     <div className="flex items-center gap-2 bg-white-1/5 p-2 rounded-lg">
                         <Filter size={18} className="text-white-2" />
                         <div className="flex gap-1">
-                            <button 
+                            <button
                                 onClick={() => setFilterOption('trending')}
-                                className={`px-3 py-1 rounded-md text-sm font-medium flex items-center gap-1 ${
-                                    filterOption === 'trending' 
-                                        ? 'bg-orange-1 text-black' 
-                                        : 'text-white-2 hover:bg-white-1/10'
-                                }`}
+                                className={`px-3 py-1 rounded-md text-sm font-medium flex items-center gap-1 ${filterOption === 'trending'
+                                    ? 'bg-orange-1 text-black'
+                                    : 'text-white-2 hover:bg-white-1/10'
+                                    }`}
                             >
                                 <TrendingUp size={14} />
                                 Trending
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setFilterOption('latest')}
-                                className={`px-3 py-1 rounded-md text-sm font-medium flex items-center gap-1 ${
-                                    filterOption === 'latest' 
-                                        ? 'bg-orange-1 text-black' 
-                                        : 'text-white-2 hover:bg-white-1/10'
-                                }`}
+                                className={`px-3 py-1 rounded-md text-sm font-medium flex items-center gap-1 ${filterOption === 'latest'
+                                    ? 'bg-orange-1 text-black'
+                                    : 'text-white-2 hover:bg-white-1/10'
+                                    }`}
                             >
                                 <Clock size={14} />
                                 Latest
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setFilterOption('popular')}
-                                className={`px-3 py-1 rounded-md text-sm font-medium flex items-center gap-1 ${
-                                    filterOption === 'popular' 
-                                        ? 'bg-orange-1 text-black' 
-                                        : 'text-white-2 hover:bg-white-1/10'
-                                }`}
+                                className={`px-3 py-1 rounded-md text-sm font-medium flex items-center gap-1 ${filterOption === 'popular'
+                                    ? 'bg-orange-1 text-black'
+                                    : 'text-white-2 hover:bg-white-1/10'
+                                    }`}
                             >
                                 <Heart size={14} />
                                 Popular
@@ -86,7 +80,7 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                         </div>
                     </div>
                 </div>
-                
+
                 {isLoading ? (
                     <div className="podcast_grid">
                         {[...Array(8)].map((_, index) => (
@@ -132,11 +126,11 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                 </div>
                                 <h3 className="text-xl font-bold text-white-1 mb-2">No podcasts found</h3>
                                 <p className="text-white-2 text-center max-w-md mb-6">
-                                    {search 
-                                        ? `We couldn't find any podcasts matching "${search}". Try a different search term.` 
+                                    {search
+                                        ? `We couldn't find any podcasts matching "${search}". Try a different search term.`
                                         : "We couldn't find any podcasts. Try a different filter or check back later."}
                                 </p>
-                                <button 
+                                <button
                                     onClick={() => window.location.href = '/discover'}
                                     className="bg-orange-1 text-black px-6 py-2 rounded-full font-semibold hover:bg-orange-2 transition"
                                 >
