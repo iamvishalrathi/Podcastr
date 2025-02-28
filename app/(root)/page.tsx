@@ -7,8 +7,13 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import LoaderSpinner from "@/components/LoaderSpinner";
 import { TrendingUp, Clock, Headphones, Heart, ArrowRight, Play } from "lucide-react";
+import useEmblaCarousel from 'embla-carousel-react';
+import { useCallback, useEffect, useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Home = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const trendingPodcasts = useQuery(api.podcasts.getTrendingPodcasts);
   const latestPodcasts = useQuery(api.podcasts.getLatestPodcasts);
   const allPodcasts = useQuery(api.podcasts.getAllPodcasts);
@@ -29,50 +34,107 @@ const Home = () => {
     return formattedHours + formattedMinutes + formattedSeconds;
   }
 
+  // Get top 3 featured podcasts
+  const featuredPodcasts = allPodcasts
+    ?.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0))
+    .slice(0, 3);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    emblaApi.on('select', () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    });
+  }, [emblaApi]);
+
   return (
     <div className="mt-5 flex flex-col gap-9 md:overflow-hidden">
-      {/* Featured Podcast */}
-      {featuredPodcast && (
-        <section className="relative w-full h-[300px] rounded-2xl overflow-hidden shadow-lg">
-          <div className="absolute inset-0">
-            <Image
-              src={featuredPodcast.imageUrl!}
-              alt={featuredPodcast.podcastTitle}
-              fill
-              className="object-cover opacity-50"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-black/20" />
+      {/* Featured Podcasts */}
+      {featuredPodcasts && featuredPodcasts.length > 0 && (
+        <section className="relative w-full h-[300px]">
+          <div className="overflow-hidden rounded-2xl" ref={emblaRef}>
+            <div className="flex">
+              {featuredPodcasts.map((podcast, index) => (
+                <div key={podcast._id} className="relative w-full flex-[0_0_100%]">
+                  <div className="relative w-full h-[300px] rounded-2xl overflow-hidden shadow-lg">
+                    <div className="absolute inset-0">
+                      <Image
+                        src={podcast.imageUrl!}
+                        alt={podcast.podcastTitle}
+                        fill
+                        className="object-cover opacity-50"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-black/20" />
+                    </div>
+                    <div className="relative h-full flex flex-col justify-end p-6 gap-4">
+                      <div className="flex items-center gap-3">
+                        <Image
+                          src={podcast.authorImageUrl!}
+                          alt={podcast.author}
+                          width={40}
+                          height={40}
+                          className="rounded-full"
+                        />
+                        <span className="text-white-1 font-medium">{podcast.author}</span>
+                      </div>
+                      <h1 className="text-3xl font-bold text-white-1">{podcast.podcastTitle}</h1>
+                      <p className="text-white-2 line-clamp-2">{podcast.podcastDescription}</p>
+                      <div className="flex items-center gap-6">
+                        <button
+                          onClick={() => router.push(`/podcasts/${podcast._id}`)}
+                          className="bg-orange-1 text-black px-6 py-2 rounded-full font-semibold hover:bg-orange-2 transition flex items-center gap-2"
+                        >
+                          <Play size={18} className="fill-black" />
+                          Listen Now
+                        </button>
+                        <div className="flex items-center gap-2">
+                          <Headphones size={20} className="text-white-1" />
+                          <span className="text-white-1">{podcast.views}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Heart size={20} className="text-white-1" />
+                          <span className="text-white-1">{podcast.likeCount || 0}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="relative h-full flex flex-col justify-end p-6 gap-4">
-            <div className="flex items-center gap-3">
-              <Image
-                src={featuredPodcast.authorImageUrl!}
-                alt={featuredPodcast.author}
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
-              <span className="text-white-1 font-medium">{featuredPodcast.author}</span>
+
+          {/* Carousel Controls - Positioned outside the image */}
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={scrollPrev}
+              className="bg-black/50 hover:bg-black/70 p-2 rounded-full transition-colors flex items-center gap-2"
+            >
+              <ChevronLeft size={20} className="text-white" />
+              <span className="text-white text-sm font-medium hidden sm:inline">Previous</span>
+            </button>
+            
+            {/* Dots Indicator - Moved to center between arrows */}
+            <div className="flex gap-2 items-center">
+              {featuredPodcasts.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    index === selectedIndex ? 'bg-orange-1' : 'bg-white/50'
+                  }`}
+                />
+              ))}
             </div>
-            <h1 className="text-3xl font-bold text-white-1">{featuredPodcast.podcastTitle}</h1>
-            <p className="text-white-2 line-clamp-2">{featuredPodcast.podcastDescription}</p>
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => router.push(`/podcasts/${featuredPodcast._id}`)}
-                className="bg-orange-1 text-black px-6 py-2 rounded-full font-semibold hover:bg-orange-2 transition flex items-center gap-2"
-              >
-                <Play size={18} className="fill-black" />
-                Listen Now
-              </button>
-              <div className="flex items-center gap-2">
-                <Headphones size={20} className="text-white-1" />
-                <span className="text-white-1">{featuredPodcast.views}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Heart size={20} className="text-white-1" />
-                <span className="text-white-1">{featuredPodcast.likeCount || 0}</span>
-              </div>
-            </div>
+            
+            <button
+              onClick={scrollNext}
+              className="bg-black/50 hover:bg-black/70 p-2 rounded-full transition-colors flex items-center gap-2"
+            >
+              <span className="text-white text-sm font-medium hidden sm:inline">Next</span>
+              <ChevronRight size={20} className="text-white" />
+            </button>
           </div>
         </section>
       )}
