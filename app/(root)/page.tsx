@@ -136,11 +136,13 @@ const Home = () => {
       )}
 
       {/* Trending */}
-      <section className="flex flex-col gap-5">
+      <section className="flex flex-col gap-5 mt-6">
         <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <TrendingUp size={24} className="text-orange-1" />
-            <h1 className="text-20 font-bold text-white-1">Trending Podcasts</h1>
+          <div className="flex items-center gap-4">
+            <div className="bg-orange-1/10 p-3 rounded-xl">
+              <TrendingUp size={28} className="text-orange-1" />
+            </div>
+            <h1 className="text-2xl font-bold text-white-1">Trending Podcasts</h1>
           </div>
           <Link
             href="/discover"
@@ -170,11 +172,13 @@ const Home = () => {
       </section>
 
       {/* Latest */}
-      <section className="flex flex-col gap-5">
+      <section className="flex flex-col gap-5 mt-6">
         <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Clock size={24} className="text-orange-1" />
-            <h1 className="text-20 font-bold text-white-1">Latest Podcasts</h1>
+          <div className="flex items-center gap-4">
+            <div className="bg-orange-1/10 p-3 rounded-xl">
+              <Clock size={28} className="text-orange-1" />
+            </div>
+            <h1 className="text-2xl font-bold text-white-1">Latest Podcasts</h1>
           </div>
           <Link
             href="/discover"
