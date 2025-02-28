@@ -17,8 +17,24 @@ const Home = () => {
   const latestPodcasts = useQuery(api.podcasts.getLatestPodcasts);
   const allPodcasts = useQuery(api.podcasts.getAllPodcasts);
   const router = useRouter();
-
-
+  
+  // Add auto-scroll functionality
+  useEffect(() => {
+    if (!emblaApi) return;
+  
+    const autoplay = setInterval(() => {
+      emblaApi.scrollNext();
+    }, 5000); // Change slide every 5 seconds
+  
+    emblaApi.on('select', () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    });
+  
+    // Cleanup interval on unmount
+    return () => {
+      clearInterval(autoplay);
+    };
+  }, [emblaApi]);
   function formatAudioDuration(duration: number): string {
     const hours = Math.floor(duration / 3600);
     const minutes = Math.floor((duration % 3600) / 60);
@@ -30,21 +46,20 @@ const Home = () => {
 
     return formattedHours + formattedMinutes + formattedSeconds;
   }
-
   // Get top 3 featured podcasts
   const featuredPodcasts = allPodcasts
     ?.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0))
     ?.sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 3);
-
+  
   useEffect(() => {
     if (!emblaApi) return;
-
+  
     emblaApi.on('select', () => {
       setSelectedIndex(emblaApi.selectedScrollSnap());
     });
   }, [emblaApi]);
-
+  
   return (
     <div className="mt-5 flex flex-col gap-9 md:overflow-hidden">
       {/* Featured Podcasts */}
@@ -100,7 +115,7 @@ const Home = () => {
               ))}
             </div>
           </div>
-
+  
           <div className="flex justify-between mt-4">
             {/* Carousel Controls - Only dots for navigation */}
             <div className="flex justify-center w-full mt-4">
@@ -119,7 +134,7 @@ const Home = () => {
           </div>
         </section>
       )}
-
+  
       {/* Trending */}
       <section className="flex flex-col gap-5">
         <header className="flex items-center justify-between">
@@ -153,7 +168,7 @@ const Home = () => {
           )}
         </div>
       </section>
-
+  
       {/* Latest */}
       <section className="flex flex-col gap-5">
         <header className="flex items-center justify-between">
