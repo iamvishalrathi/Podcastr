@@ -37,10 +37,8 @@ const Home = () => {
   // Get top 3 featured podcasts
   const featuredPodcasts = allPodcasts
     ?.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0))
+    ?.sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 3);
-
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
