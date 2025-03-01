@@ -68,7 +68,7 @@ const Home = () => {
   }, [emblaApi]);
 
   return (
-    <div className="mt-5 flex flex-col gap-9 md:overflow-hidden">
+    <div className="mt-5 flex flex-col gap-9 md:overflow-hidden p-5">
       {/* Featured Podcasts */}
       {featuredPodcasts && featuredPodcasts.length > 0 ? (
         <section className="relative w-full h-[300px]">
