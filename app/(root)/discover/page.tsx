@@ -80,7 +80,6 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                 <div className="relative z-10">
                     <h1 className="text-3xl font-bold text-white-1 mb-5 flex items-center gap-2">
                         Discover Podcasts
-                        <span className="bg-orange-1/20 text-orange-1 text-sm px-3 py-1 rounded-full">Beta</span>
                     </h1>
                     <Searchbar />
                 </div>
@@ -89,116 +88,119 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
             <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-5">
                     {/* Improved header and filter controls with better visual hierarchy */}
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 bg-white-1/5 p-4 rounded-xl border border-white-1/10">
-                        <h2 className="text-2xl font-bold text-white-1">
-                            {!search ? 'Browse Community Podcasts' : 'Search results for '}
-                            {search && <span className="text-orange-1 ml-1">"{search}"</span>}
-                        </h2>
-
-                        <div className="flex flex-wrap items-center gap-3">
-                            {/* View toggle with improved styling */}
-                            <div className="bg-white-1/10 p-1 rounded-lg flex shadow-inner">
+                    <div className="bg-gradient-to-br from-white-1/10 to-white-1/5 backdrop-blur-sm p-5 rounded-xl border border-white-1/10 shadow-lg">
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                            <h2 className="text-2xl font-bold text-white-1 flex items-center">
+                                {!search ? 'Browse Community Podcasts' : 'Search results for '}
+                                {search && <span className="text-orange-1 ml-1 bg-orange-1/10 px-3 py-1 rounded-lg">{search}</span>}
+                            </h2>
+                            <div className="flex flex-wrap items-center gap-3">
+                                {/* View toggle with improved styling */}
+                                <div className="bg-black/20 p-1 rounded-lg flex shadow-inner backdrop-blur-sm">
+                                    <button
+                                        onClick={() => setViewMode('grid')}
+                                        className={`p-1.5 rounded-md transition-all duration-200 ${viewMode === 'grid'
+                                            ? 'bg-orange-1 text-black shadow-md scale-105'
+                                            : 'text-white-2 hover:bg-white-1/10'}`}
+                                        aria-label="Grid view"
+                                    >
+                                        <LayoutGrid size={18} />
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode('list')}
+                                        className={`p-1.5 rounded-md transition-all duration-200 ${viewMode === 'list'
+                                            ? 'bg-orange-1 text-black shadow-md scale-105'
+                                            : 'text-white-2 hover:bg-white-1/10'}`}
+                                        aria-label="List view"
+                                    >
+                                        <List size={18} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Filter controls in a separate row with better spacing */}
+                        <div className="mt-5 flex flex-wrap gap-3 items-center">
+                            <div className="flex-1 flex flex-wrap gap-3">
+                                {/* Enhanced filter buttons */}
                                 <button
-                                    onClick={() => setViewMode('grid')}
-                                    className={`p-1.5 rounded-md ${viewMode === 'grid' 
-                                        ? 'bg-orange-1 text-black shadow-md' 
-                                        : 'text-white-2 hover:bg-white-1/5'}`}
-                                    aria-label="Grid view"
+                                    onClick={() => {
+                                        setShowCategoryFilter(!showCategoryFilter)
+                                        if (showLanguageFilter) setShowLanguageFilter(false)
+                                    }}
+                                    className={`px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all duration-200 ${showCategoryFilter || selectedCategories.length > 0
+                                        ? 'bg-orange-1 text-black shadow-md'
+                                        : 'bg-black/20 text-white-2 hover:bg-white-1/10'
+                                        }`}
                                 >
-                                    <LayoutGrid size={18} />
+                                    <Filter size={16} />
+                                    Categories {selectedCategories.length > 0 && (
+                                        <span className="bg-black/30 text-white px-2 py-0.5 rounded-full text-xs ml-1">
+                                            {selectedCategories.length}
+                                        </span>
+                                    )}
                                 </button>
+
                                 <button
-                                    onClick={() => setViewMode('list')}
-                                    className={`p-1.5 rounded-md ${viewMode === 'list' 
-                                        ? 'bg-orange-1 text-black shadow-md' 
-                                        : 'text-white-2 hover:bg-white-1/5'}`}
-                                    aria-label="List view"
+                                    onClick={() => {
+                                        setShowLanguageFilter(!showLanguageFilter)
+                                        if (showCategoryFilter) setShowCategoryFilter(false)
+                                    }}
+                                    className={`px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all duration-200 ${showLanguageFilter || selectedLanguages.length > 0
+                                        ? 'bg-orange-1 text-black shadow-md'
+                                        : 'bg-black/20 text-white-2 hover:bg-white-1/10'
+                                        }`}
                                 >
-                                    <List size={18} />
+                                    <Globe size={16} />
+                                    Languages {selectedLanguages.length > 0 && (
+                                        <span className="bg-black/30 text-white px-2 py-0.5 rounded-full text-xs ml-1">
+                                            {selectedLanguages.length}
+                                        </span>
+                                    )}
                                 </button>
                             </div>
 
-                            {/* Enhanced filter buttons */}
-                            <button
-                                onClick={() => {
-                                    setShowCategoryFilter(!showCategoryFilter)
-                                    if (showLanguageFilter) setShowLanguageFilter(false)
-                                }}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
-                                    showCategoryFilter || selectedCategories.length > 0
-                                        ? 'bg-orange-1 text-black shadow-md' 
-                                        : 'bg-white-1/10 text-white-2 hover:bg-white-1/15'
-                                    }`}
-                            >
-                                <Filter size={16} />
-                                Categories {selectedCategories.length > 0 && (
-                                    <span className="bg-black/30 text-white px-2 py-0.5 rounded-full text-xs">
-                                        {selectedCategories.length}
-                                    </span>
-                                )}
-                            </button>
-
-                            <button
-                                onClick={() => {
-                                    setShowLanguageFilter(!showLanguageFilter)
-                                    if (showCategoryFilter) setShowCategoryFilter(false)
-                                }}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
-                                    showLanguageFilter || selectedLanguages.length > 0
-                                        ? 'bg-orange-1 text-black shadow-md' 
-                                        : 'bg-white-1/10 text-white-2 hover:bg-white-1/15'
-                                    }`}
-                            >
-                                <Globe size={16} />
-                                Languages {selectedLanguages.length > 0 && (
-                                    <span className="bg-black/30 text-white px-2 py-0.5 rounded-full text-xs">
-                                        {selectedLanguages.length}
-                                    </span>
-                                )}
-                            </button>
-
                             {/* Enhanced sort options */}
-                            <div className="flex items-center gap-2 bg-white-1/10 p-1.5 rounded-lg shadow-inner">
-                                <button
-                                    onClick={() => setFilterOption('trending')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all ${
-                                        filterOption === 'trending'
-                                            ? 'bg-orange-1 text-black shadow-md' 
-                                            : 'text-white-2 hover:bg-white-1/5'
-                                        }`}
-                                >
-                                    <TrendingUp size={15} />
-                                    Trending
-                                </button>
-                                <button
-                                    onClick={() => setFilterOption('latest')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all ${
-                                        filterOption === 'latest'
-                                            ? 'bg-orange-1 text-black shadow-md' 
-                                            : 'text-white-2 hover:bg-white-1/5'
-                                        }`}
-                                >
-                                    <Clock size={15} />
-                                    Latest
-                                </button>
-                                <button
-                                    onClick={() => setFilterOption('popular')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all ${
-                                        filterOption === 'popular'
-                                            ? 'bg-orange-1 text-black shadow-md' 
-                                            : 'text-white-2 hover:bg-white-1/5'
-                                        }`}
-                                >
-                                    <Heart size={15} />
-                                    Popular
-                                </button>
+                            <div className="bg-black/20 p-1.5 rounded-lg shadow-inner backdrop-blur-sm">
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        onClick={() => setFilterOption('trending')}
+                                        className={`px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all duration-200 ${filterOption === 'trending'
+                                            ? 'bg-orange-1 text-black shadow-md'
+                                            : 'text-white-2 hover:bg-white-1/10'
+                                            }`}
+                                    >
+                                        <TrendingUp size={15} />
+                                        Trending
+                                    </button>
+                                    <button
+                                        onClick={() => setFilterOption('latest')}
+                                        className={`px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all duration-200 ${filterOption === 'latest'
+                                            ? 'bg-orange-1 text-black shadow-md'
+                                            : 'text-white-2 hover:bg-white-1/10'
+                                            }`}
+                                    >
+                                        <Clock size={15} />
+                                        Latest
+                                    </button>
+                                    <button
+                                        onClick={() => setFilterOption('popular')}
+                                        className={`px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all duration-200 ${filterOption === 'popular'
+                                            ? 'bg-orange-1 text-black shadow-md'
+                                            : 'text-white-2 hover:bg-white-1/10'
+                                            }`}
+                                    >
+                                        <Heart size={15} />
+                                        Popular
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Enhanced category filter with glass morphism */}
                     {showCategoryFilter && (
-                        <div className="bg-white-1/10 backdrop-blur-sm p-6 rounded-xl border border-white-1/10 shadow-lg animate-fadeIn">
+                        <div className="bg-gradient-to-br from-white-1/10 to-white-1/5 backdrop-blur-sm p-6 rounded-xl border border-white-1/10 shadow-lg animate-fadeIn">
                             <div className="flex justify-between items-center mb-5">
                                 <h3 className="text-white-1 font-semibold flex items-center gap-2 text-lg">
                                     <Filter size={18} className="text-orange-1" />
@@ -208,14 +210,14 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     {selectedCategories.length > 0 && (
                                         <button
                                             onClick={clearCategories}
-                                            className="text-sm text-white-2 hover:text-orange-1 flex items-center gap-1.5 transition-colors px-3 py-1 rounded-lg hover:bg-white-1/5"
+                                            className="text-sm text-white-2 hover:text-orange-1 flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-lg hover:bg-black/20"
                                         >
                                             Clear all <X size={14} />
                                         </button>
                                     )}
                                     <button
                                         onClick={() => setShowCategoryFilter(false)}
-                                        className="text-sm bg-white-1/10 hover:bg-white-1/20 px-3 py-1 rounded-lg text-white-2 transition-colors"
+                                        className="text-sm bg-black/20 hover:bg-white-1/10 px-3 py-1.5 rounded-lg text-white-2 transition-colors"
                                     >
                                         Close
                                     </button>
@@ -226,10 +228,9 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     <button
                                         key={category.value}
                                         onClick={() => toggleCategory(category.value)}
-                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                                            selectedCategories.includes(category.value)
-                                                ? 'bg-orange-1 text-black shadow-md scale-105'
-                                                : 'bg-white-1/10 text-white-2 hover:bg-white-1/20 hover:scale-105'
+                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${selectedCategories.includes(category.value)
+                                            ? 'bg-orange-1 text-black shadow-md scale-105'
+                                            : 'bg-black/20 text-white-2 hover:bg-white-1/10 hover:scale-105'
                                             }`}
                                     >
                                         {category.label}
@@ -268,10 +269,9 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     <button
                                         key={language.value}
                                         onClick={() => toggleLanguage(language.value)}
-                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                                            selectedLanguages.includes(language.value)
-                                                ? 'bg-orange-1 text-black shadow-md scale-105'
-                                                : 'bg-white-1/10 text-white-2 hover:bg-white-1/20 hover:scale-105'
+                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedLanguages.includes(language.value)
+                                            ? 'bg-orange-1 text-black shadow-md scale-105'
+                                            : 'bg-white-1/10 text-white-2 hover:bg-white-1/20 hover:scale-105'
                                             }`}
                                     >
                                         {language.label}
@@ -327,8 +327,7 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                 {isLoading ? (
                     <div className={viewMode === 'grid' ? "podcast_grid" : "flex flex-col gap-4"}>
                         {[...Array(8)].map((_, index) => (
-                            <div key={index} className={`bg-white-1/5 rounded-xl overflow-hidden border border-white-1/10 shadow-md ${
-                                viewMode === 'list' ? "flex" : ""
+                            <div key={index} className={`bg-white-1/5 rounded-xl overflow-hidden border border-white-1/10 shadow-md ${viewMode === 'list' ? "flex" : ""
                                 }`}>
                                 <div className={`${viewMode === 'grid' ? "w-full aspect-square" : "w-[120px] h-[120px]"} bg-white-1/10 animate-pulse relative`}>
                                     <div className="absolute inset-0 bg-gradient-to-br from-white-1/5 to-transparent"></div>
