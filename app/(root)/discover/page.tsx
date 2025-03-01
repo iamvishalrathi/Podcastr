@@ -118,7 +118,7 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                 </div>
                             </div>
                         </div>
-                        
+
                         {/* Filter controls in a separate row with better spacing */}
                         <div className="mt-5 flex flex-wrap gap-3 items-center">
                             <div className="flex-1 flex flex-wrap gap-3">
@@ -223,7 +223,7 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex flex-wrap gap-3 max-h-[200px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
+                            <div className="flex pl-1 flex-wrap gap-3 max-h-[200px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
                                 {podcastTypes.map((category) => (
                                     <button
                                         key={category.value}
@@ -264,16 +264,16 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     </button>
                                 </div>
                             </div>
-                            
-                            {/* Alphabetical language groups */}
-                            <div className="max-h-[300px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
+
+                            {/* Alphabetical language groups with reduced height */}
+                            <div className="max-h-[140px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
                                 {/* Group languages alphabetically */}
                                 {(() => {
                                     // Sort languages alphabetically by label
-                                    const sortedLanguages = [...languageOptions].sort((a, b) => 
+                                    const sortedLanguages = [...languageOptions].sort((a, b) =>
                                         a.label.localeCompare(b.label)
                                     );
-                                    
+
                                     // Group by first letter
                                     const groups = sortedLanguages.reduce((acc, lang) => {
                                         const firstLetter = lang.label[0].toUpperCase();
@@ -281,25 +281,24 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                         acc[firstLetter].push(lang);
                                         return acc;
                                     }, {} as Record<string, typeof languageOptions>);
-                                    
+
                                     // Get sorted letters
                                     const letters = Object.keys(groups).sort();
-                                    
+
                                     return letters.map(letter => (
-                                        <div key={letter} className="mb-4">
-                                            <div className="text-orange-1 font-bold text-lg mb-2 border-b border-white-1/10 pb-1">
+                                        <div key={letter} className="mb-3">
+                                            <div className="text-orange-1 font-bold text-sm mb-1.5 border-b border-white-1/10 pb-0.5">
                                                 {letter}
                                             </div>
-                                            <div className="flex flex-wrap gap-3 pl-2">
+                                            <div className="flex flex-wrap gap-2 pl-1.5">
                                                 {groups[letter].map((language) => (
                                                     <button
                                                         key={language.value}
                                                         onClick={() => toggleLanguage(language.value)}
-                                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                                                            selectedLanguages.includes(language.value)
-                                                                ? 'bg-orange-1 text-black shadow-md scale-105'
-                                                                : 'bg-black/20 text-white-2 hover:bg-white-1/10 hover:scale-105'
-                                                        }`}
+                                                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${selectedLanguages.includes(language.value)
+                                                            ? 'bg-orange-1 text-black shadow-md scale-105'
+                                                            : 'bg-black/20 text-white-2 hover:bg-white-1/10 hover:scale-105'
+                                                            }`}
                                                     >
                                                         {language.label}
                                                     </button>
