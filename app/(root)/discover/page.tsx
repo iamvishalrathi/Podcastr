@@ -239,9 +239,9 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                             </div>
                         </div>
                     )}
-                    {/* Enhanced language filter with glass morphism */}
+                    {/* Enhanced language filter with alphabetical dropdown */}
                     {showLanguageFilter && (
-                        <div className="bg-white-1/10 backdrop-blur-sm p-6 rounded-xl border border-white-1/10 shadow-lg animate-fadeIn">
+                        <div className="bg-gradient-to-br from-white-1/10 to-white-1/5 backdrop-blur-sm p-6 rounded-xl border border-white-1/10 shadow-lg animate-fadeIn">
                             <div className="flex justify-between items-center mb-5">
                                 <h3 className="text-white-1 font-semibold flex items-center gap-2 text-lg">
                                     <Globe size={18} className="text-orange-1" />
@@ -251,32 +251,63 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     {selectedLanguages.length > 0 && (
                                         <button
                                             onClick={clearLanguages}
-                                            className="text-sm text-white-2 hover:text-orange-1 flex items-center gap-1.5 transition-colors px-3 py-1 rounded-lg hover:bg-white-1/5"
+                                            className="text-sm text-white-2 hover:text-orange-1 flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-lg hover:bg-black/20"
                                         >
                                             Clear all <X size={14} />
                                         </button>
                                     )}
                                     <button
                                         onClick={() => setShowLanguageFilter(false)}
-                                        className="text-sm bg-white-1/10 hover:bg-white-1/20 px-3 py-1 rounded-lg text-white-2 transition-colors"
+                                        className="text-sm bg-black/20 hover:bg-white-1/10 px-3 py-1.5 rounded-lg text-white-2 transition-colors"
                                     >
                                         Close
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex flex-wrap gap-3 max-h-[200px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
-                                {languageOptions.map((language) => (
-                                    <button
-                                        key={language.value}
-                                        onClick={() => toggleLanguage(language.value)}
-                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedLanguages.includes(language.value)
-                                            ? 'bg-orange-1 text-black shadow-md scale-105'
-                                            : 'bg-white-1/10 text-white-2 hover:bg-white-1/20 hover:scale-105'
-                                            }`}
-                                    >
-                                        {language.label}
-                                    </button>
-                                ))}
+                            
+                            {/* Alphabetical language groups */}
+                            <div className="max-h-[300px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
+                                {/* Group languages alphabetically */}
+                                {(() => {
+                                    // Sort languages alphabetically by label
+                                    const sortedLanguages = [...languageOptions].sort((a, b) => 
+                                        a.label.localeCompare(b.label)
+                                    );
+                                    
+                                    // Group by first letter
+                                    const groups = sortedLanguages.reduce((acc, lang) => {
+                                        const firstLetter = lang.label[0].toUpperCase();
+                                        if (!acc[firstLetter]) acc[firstLetter] = [];
+                                        acc[firstLetter].push(lang);
+                                        return acc;
+                                    }, {} as Record<string, typeof languageOptions>);
+                                    
+                                    // Get sorted letters
+                                    const letters = Object.keys(groups).sort();
+                                    
+                                    return letters.map(letter => (
+                                        <div key={letter} className="mb-4">
+                                            <div className="text-orange-1 font-bold text-lg mb-2 border-b border-white-1/10 pb-1">
+                                                {letter}
+                                            </div>
+                                            <div className="flex flex-wrap gap-3 pl-2">
+                                                {groups[letter].map((language) => (
+                                                    <button
+                                                        key={language.value}
+                                                        onClick={() => toggleLanguage(language.value)}
+                                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                                                            selectedLanguages.includes(language.value)
+                                                                ? 'bg-orange-1 text-black shadow-md scale-105'
+                                                                : 'bg-black/20 text-white-2 hover:bg-white-1/10 hover:scale-105'
+                                                        }`}
+                                                    >
+                                                        {language.label}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ));
+                                })()}
                             </div>
                         </div>
                     )}
