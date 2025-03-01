@@ -1,6 +1,5 @@
 "use client"
 
-import PodcastCard from '@/components/PodcastCard'
 import Searchbar from '@/components/Searchbar'
 import { api } from '@/convex/_generated/api'
 import { podcastTypes, languageOptions } from '@/constants/PodcastFields'
@@ -21,7 +20,6 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
 
     const router = useRouter()
     const podcastsData = useQuery(api.podcasts.getPodcastBySearch, { search: search || '' })
-    const featuredPodcasts = useQuery(api.podcasts.getTrendingPodcasts)
 
     useEffect(() => {
         if (podcastsData) {
@@ -75,49 +73,61 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
     }
 
     return (
-        <div className="flex flex-col gap-9 pb-10 pt-10">
-            {/* Enhanced header section */}
-            <div className="bg-gradient-to-r from-white-1/5 to-white-1/10 rounded-xl p-8 shadow-lg border border-white-1/5">
-                <h1 className="text-3xl font-bold text-white-1 mb-5">Discover Podcasts</h1>
-                <Searchbar />
+        <div className="flex flex-col gap-9 pb-12 pt-6">
+            {/* Enhanced header section with glass morphism effect */}
+            <div className="bg-gradient-to-r from-white-1/10 to-white-1/5 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white-1/10 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-1/10 to-transparent opacity-50"></div>
+                <div className="relative z-10">
+                    <h1 className="text-3xl font-bold text-white-1 mb-5 flex items-center gap-2">
+                        Discover Podcasts
+                        <span className="bg-orange-1/20 text-orange-1 text-sm px-3 py-1 rounded-full">Beta</span>
+                    </h1>
+                    <Searchbar />
+                </div>
             </div>
 
             <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-5">
-                    {/* Improved header and filter controls */}
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    {/* Improved header and filter controls with better visual hierarchy */}
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 bg-white-1/5 p-4 rounded-xl border border-white-1/10">
                         <h2 className="text-2xl font-bold text-white-1">
                             {!search ? 'Browse Community Podcasts' : 'Search results for '}
                             {search && <span className="text-orange-1 ml-1">"{search}"</span>}
                         </h2>
 
                         <div className="flex flex-wrap items-center gap-3">
-                            {/* View toggle */}
-                            <div className="bg-white-1/5 p-1 rounded-lg flex">
+                            {/* View toggle with improved styling */}
+                            <div className="bg-white-1/10 p-1 rounded-lg flex shadow-inner">
                                 <button
                                     onClick={() => setViewMode('grid')}
-                                    className={`p-1.5 rounded ${viewMode === 'grid' ? 'bg-orange-1 text-black' : 'text-white-2'}`}
+                                    className={`p-1.5 rounded-md ${viewMode === 'grid' 
+                                        ? 'bg-orange-1 text-black shadow-md' 
+                                        : 'text-white-2 hover:bg-white-1/5'}`}
                                     aria-label="Grid view"
                                 >
                                     <LayoutGrid size={18} />
                                 </button>
                                 <button
                                     onClick={() => setViewMode('list')}
-                                    className={`p-1.5 rounded ${viewMode === 'list' ? 'bg-orange-1 text-black' : 'text-white-2'}`}
+                                    className={`p-1.5 rounded-md ${viewMode === 'list' 
+                                        ? 'bg-orange-1 text-black shadow-md' 
+                                        : 'text-white-2 hover:bg-white-1/5'}`}
                                     aria-label="List view"
                                 >
                                     <List size={18} />
                                 </button>
                             </div>
 
+                            {/* Enhanced filter buttons */}
                             <button
                                 onClick={() => {
                                     setShowCategoryFilter(!showCategoryFilter)
                                     if (showLanguageFilter) setShowLanguageFilter(false)
                                 }}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${showCategoryFilter || selectedCategories.length > 0
-                                    ? 'bg-orange-1 text-black'
-                                    : 'bg-white-1/5 text-white-2 hover:bg-white-1/10'
+                                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
+                                    showCategoryFilter || selectedCategories.length > 0
+                                        ? 'bg-orange-1 text-black shadow-md' 
+                                        : 'bg-white-1/10 text-white-2 hover:bg-white-1/15'
                                     }`}
                             >
                                 <Filter size={16} />
@@ -133,9 +143,10 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     setShowLanguageFilter(!showLanguageFilter)
                                     if (showCategoryFilter) setShowCategoryFilter(false)
                                 }}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${showLanguageFilter || selectedLanguages.length > 0
-                                    ? 'bg-orange-1 text-black'
-                                    : 'bg-white-1/5 text-white-2 hover:bg-white-1/10'
+                                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
+                                    showLanguageFilter || selectedLanguages.length > 0
+                                        ? 'bg-orange-1 text-black shadow-md' 
+                                        : 'bg-white-1/10 text-white-2 hover:bg-white-1/15'
                                     }`}
                             >
                                 <Globe size={16} />
@@ -146,12 +157,14 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                 )}
                             </button>
 
-                            <div className="flex items-center gap-2 bg-white-1/5 p-1.5 rounded-lg">
+                            {/* Enhanced sort options */}
+                            <div className="flex items-center gap-2 bg-white-1/10 p-1.5 rounded-lg shadow-inner">
                                 <button
                                     onClick={() => setFilterOption('trending')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-colors ${filterOption === 'trending'
-                                        ? 'bg-orange-1 text-black'
-                                        : 'text-white-2 hover:bg-white-1/10'
+                                    className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all ${
+                                        filterOption === 'trending'
+                                            ? 'bg-orange-1 text-black shadow-md' 
+                                            : 'text-white-2 hover:bg-white-1/5'
                                         }`}
                                 >
                                     <TrendingUp size={15} />
@@ -159,9 +172,10 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                 </button>
                                 <button
                                     onClick={() => setFilterOption('latest')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-colors ${filterOption === 'latest'
-                                        ? 'bg-orange-1 text-black'
-                                        : 'text-white-2 hover:bg-white-1/10'
+                                    className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all ${
+                                        filterOption === 'latest'
+                                            ? 'bg-orange-1 text-black shadow-md' 
+                                            : 'text-white-2 hover:bg-white-1/5'
                                         }`}
                                 >
                                     <Clock size={15} />
@@ -169,9 +183,10 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                 </button>
                                 <button
                                     onClick={() => setFilterOption('popular')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-colors ${filterOption === 'popular'
-                                        ? 'bg-orange-1 text-black'
-                                        : 'text-white-2 hover:bg-white-1/10'
+                                    className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all ${
+                                        filterOption === 'popular'
+                                            ? 'bg-orange-1 text-black shadow-md' 
+                                            : 'text-white-2 hover:bg-white-1/5'
                                         }`}
                                 >
                                     <Heart size={15} />
@@ -181,11 +196,11 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                         </div>
                     </div>
 
-                    {/* Enhanced category filter */}
+                    {/* Enhanced category filter with glass morphism */}
                     {showCategoryFilter && (
-                        <div className="bg-white-1/5 p-5 rounded-xl border border-white-1/10 shadow-lg animate-fadeIn">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-white-1 font-semibold flex items-center gap-2">
+                        <div className="bg-white-1/10 backdrop-blur-sm p-6 rounded-xl border border-white-1/10 shadow-lg animate-fadeIn">
+                            <div className="flex justify-between items-center mb-5">
+                                <h3 className="text-white-1 font-semibold flex items-center gap-2 text-lg">
                                     <Filter size={18} className="text-orange-1" />
                                     Filter by Category
                                 </h3>
@@ -193,7 +208,7 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     {selectedCategories.length > 0 && (
                                         <button
                                             onClick={clearCategories}
-                                            className="text-sm text-white-2 hover:text-orange-1 flex items-center gap-1.5 transition-colors"
+                                            className="text-sm text-white-2 hover:text-orange-1 flex items-center gap-1.5 transition-colors px-3 py-1 rounded-lg hover:bg-white-1/5"
                                         >
                                             Clear all <X size={14} />
                                         </button>
@@ -206,14 +221,15 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex flex-wrap gap-2.5 max-h-[200px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
+                            <div className="flex flex-wrap gap-3 max-h-[200px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
                                 {podcastTypes.map((category) => (
                                     <button
                                         key={category.value}
                                         onClick={() => toggleCategory(category.value)}
-                                        className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all ${selectedCategories.includes(category.value)
-                                            ? 'bg-orange-1 text-black shadow-md shadow-orange-1/20 scale-105'
-                                            : 'bg-white-1/10 text-white-2 hover:bg-white-1/20'
+                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                            selectedCategories.includes(category.value)
+                                                ? 'bg-orange-1 text-black shadow-md scale-105'
+                                                : 'bg-white-1/10 text-white-2 hover:bg-white-1/20 hover:scale-105'
                                             }`}
                                     >
                                         {category.label}
@@ -222,11 +238,11 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                             </div>
                         </div>
                     )}
-                    {/* Language filter */}
+                    {/* Enhanced language filter with glass morphism */}
                     {showLanguageFilter && (
-                        <div className="bg-white-1/5 p-5 rounded-xl border border-white-1/10 shadow-lg animate-fadeIn">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-white-1 font-semibold flex items-center gap-2">
+                        <div className="bg-white-1/10 backdrop-blur-sm p-6 rounded-xl border border-white-1/10 shadow-lg animate-fadeIn">
+                            <div className="flex justify-between items-center mb-5">
+                                <h3 className="text-white-1 font-semibold flex items-center gap-2 text-lg">
                                     <Globe size={18} className="text-orange-1" />
                                     Filter by Language
                                 </h3>
@@ -234,7 +250,7 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     {selectedLanguages.length > 0 && (
                                         <button
                                             onClick={clearLanguages}
-                                            className="text-sm text-white-2 hover:text-orange-1 flex items-center gap-1.5 transition-colors"
+                                            className="text-sm text-white-2 hover:text-orange-1 flex items-center gap-1.5 transition-colors px-3 py-1 rounded-lg hover:bg-white-1/5"
                                         >
                                             Clear all <X size={14} />
                                         </button>
@@ -247,14 +263,15 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex flex-wrap gap-2.5 max-h-[200px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
+                            <div className="flex flex-wrap gap-3 max-h-[200px] overflow-y-auto pr-2 pb-2 custom-scrollbar">
                                 {languageOptions.map((language) => (
                                     <button
                                         key={language.value}
                                         onClick={() => toggleLanguage(language.value)}
-                                        className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all ${selectedLanguages.includes(language.value)
-                                                ? 'bg-orange-1 text-black shadow-md shadow-orange-1/20 scale-105'
-                                                : 'bg-white-1/10 text-white-2 hover:bg-white-1/20'
+                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                            selectedLanguages.includes(language.value)
+                                                ? 'bg-orange-1 text-black shadow-md scale-105'
+                                                : 'bg-white-1/10 text-white-2 hover:bg-white-1/20 hover:scale-105'
                                             }`}
                                     >
                                         {language.label}
@@ -264,14 +281,14 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                         </div>
                     )}
 
-                    {/* Selected languages display */}
+                    {/* Enhanced selected languages display */}
                     {selectedLanguages.length > 0 && !showLanguageFilter && (
-                        <div className="flex flex-wrap gap-2.5 items-center bg-white-1/5 p-3 rounded-lg border border-white-1/10">
-                            <span className="text-white-1 text-sm font-medium">Language:</span>
+                        <div className="flex flex-wrap gap-2.5 items-center bg-white-1/5 p-4 rounded-xl border border-white-1/10">
+                            <span className="text-white-1 text-sm font-medium bg-white-1/10 px-3 py-1 rounded-lg">Language:</span>
                             {selectedLanguages.map(lang => {
                                 const languageLabel = languageOptions.find(l => l.value === lang)?.label || lang;
                                 return (
-                                    <div key={lang} className="bg-orange-1/20 text-orange-1 px-3 py-1 rounded-full text-sm flex items-center gap-1.5 shadow-sm">
+                                    <div key={lang} className="bg-orange-1/20 text-orange-1 px-3 py-1.5 rounded-full text-sm flex items-center gap-1.5 shadow-sm">
                                         {languageLabel}
                                         <button
                                             onClick={() => toggleLanguage(lang)}
@@ -285,33 +302,37 @@ const Discover = ({ searchParams: { search } }: { searchParams: { search: string
                             })}
                             <button
                                 onClick={clearLanguages}
-                                className="text-sm text-orange-1 hover:text-orange-2 font-medium transition-colors ml-2"
+                                className="text-sm text-orange-1 hover:text-orange-2 font-medium transition-colors ml-2 bg-orange-1/5 px-3 py-1 rounded-lg hover:bg-orange-1/10"
                             >
                                 Clear all
                             </button>
                         </div>
                     )}
 
-                    {/* Combined filters display */}
+                    {/* Enhanced combined filters display */}
                     {(selectedCategories.length > 0 || selectedLanguages.length > 0) && (
                         <div className="flex justify-end">
                             <button
                                 onClick={clearAllFilters}
-                                className="text-sm text-white-2 hover:text-orange-1 underline"
+                                className="text-sm text-white-2 hover:text-orange-1 px-4 py-2 rounded-lg bg-white-1/5 hover:bg-white-1/10 transition-all flex items-center gap-2"
                             >
+                                <X size={14} />
                                 Clear all filters
                             </button>
                         </div>
                     )}
                 </div>
 
-                {/* Loading state with improved skeleton UI */}
+                {/* Enhanced loading state with improved skeleton UI */}
                 {isLoading ? (
                     <div className={viewMode === 'grid' ? "podcast_grid" : "flex flex-col gap-4"}>
                         {[...Array(8)].map((_, index) => (
-                            <div key={index} className={`bg-white-1/5 rounded-xl overflow-hidden border border-white-1/10 shadow-md ${viewMode === 'list' ? "flex" : ""
+                            <div key={index} className={`bg-white-1/5 rounded-xl overflow-hidden border border-white-1/10 shadow-md ${
+                                viewMode === 'list' ? "flex" : ""
                                 }`}>
-                                <div className={`${viewMode === 'grid' ? "w-full aspect-square" : "w-[120px] h-[120px]"} bg-white-1/10 animate-pulse`} />
+                                <div className={`${viewMode === 'grid' ? "w-full aspect-square" : "w-[120px] h-[120px]"} bg-white-1/10 animate-pulse relative`}>
+                                    <div className="absolute inset-0 bg-gradient-to-br from-white-1/5 to-transparent"></div>
+                                </div>
                                 <div className="p-5 space-y-3 flex-1">
                                     <div className="h-5 bg-white-1/10 rounded-md animate-pulse" style={{ width: `${70 + Math.random() * 25}%` }} />
                                     <div className="h-4 bg-white-1/10 rounded-md animate-pulse w-full" />
