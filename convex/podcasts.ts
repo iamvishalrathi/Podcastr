@@ -110,7 +110,7 @@ export const getTrendingPodcasts = query({
     const podcast = await ctx.db.query("podcasts").collect();
 
     // return podcast;
-    return podcast.sort((a, b) => b.views - a.views).slice(0, 4);
+    return podcast.sort((a, b) => b.views - a.views).slice(0, 6);
   },
 });
 
@@ -120,7 +120,9 @@ export const getLatestPodcasts = query({
     const podcasts = await ctx.db.query("podcasts").collect();
 
     // Sort podcasts by their creation time in descending order
-    return podcasts.sort((a, b) => b._creationTime - a._creationTime).slice(0, 4);
+    return podcasts
+      .sort((a, b) => b._creationTime - a._creationTime)
+      .slice(0, 5);
   },
 });
 
@@ -237,14 +239,14 @@ export const likePodcast = mutation({
       // Unlike
       await ctx.db.patch(podcastId, {
         likes: likes.filter((id) => id !== userId),
-        likeCount: Math.max(0, likeCount - 1) // Ensure count never goes below 0
+        likeCount: Math.max(0, likeCount - 1), // Ensure count never goes below 0
       });
       return false;
     } else {
       // Like
       await ctx.db.patch(podcastId, {
         likes: [...likes, userId],
-        likeCount: likeCount + 1
+        likeCount: likeCount + 1,
       });
       return true;
     }

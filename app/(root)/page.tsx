@@ -207,22 +207,17 @@ const Home = () => {
               />
             ))
           ) : (
-            <div className="podcast_grid">
+            <>
               {[...Array(6)].map((_, index) => (
                 <div key={index} className="bg-white-1/5 rounded-xl overflow-hidden">
                   <div className="w-full aspect-square bg-white-1/10 animate-pulse " />
                   <div className="p-4 space-y-3">
                     <div className="h-5 bg-white-1/10 rounded animate-pulse w-3/4" />
                     <div className="h-4 bg-white-1/10 rounded animate-pulse w-full" />
-                    <div className="h-4 bg-white-1/10 rounded animate-pulse w-1/2" />
-                    <div className="flex justify-between pt-2">
-                      <div className="h-4 bg-white-1/10 rounded animate-pulse w-16" />
-                      <div className="h-4 bg-white-1/10 rounded animate-pulse w-16" />
-                    </div>
                   </div>
                 </div>
               ))}
-            </div>
+            </>
           )}
         </div>
       </section>
