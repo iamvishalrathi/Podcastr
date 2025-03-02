@@ -12,10 +12,9 @@ import { useEffect, useState } from 'react';
 const Home = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [featuredPodcasts, setFeaturedPodcasts] = useState([]);
-  const trendingPodcasts = useQuery(api.podcasts.getTrendingPodcasts);
-  const latestPodcasts = useQuery(api.podcasts.getLatestPodcasts);
-  const allPodcasts = useQuery(api.podcasts.getAllPodcasts);
+  const latestPodcasts = useQuery(api.podcasts.getFilteredPodcasts, { type: 'latest' })?.slice(0, 5);
+  const featuredPodcasts = useQuery(api.podcasts.getFilteredPodcasts, { type: 'popular' })?.slice(0, 3);
+  const trendingPodcasts = useQuery(api.podcasts.getFilteredPodcasts, { type: 'trending' })?.slice(0, 6);
   const router = useRouter();
 
   // Add auto-scroll functionality
@@ -47,17 +46,6 @@ const Home = () => {
 
     return formattedHours + formattedMinutes + formattedSeconds;
   }
-
-  // Get top 3 featured podcasts
-  useEffect(() => {
-    if (!allPodcasts) return;
-
-    const featured = allPodcasts
-      .sort((a, b) => (b.likeCount && b.views || 0) - (a.likeCount && a.views || 0))
-      .slice(0, 3);
-
-    setFeaturedPodcasts(featured);
-  }, [allPodcasts]);
 
   useEffect(() => {
     if (!emblaApi) return;

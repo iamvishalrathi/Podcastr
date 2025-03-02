@@ -4,11 +4,10 @@ import LoaderSpinner from '@/components/LoaderSpinner'
 import PodcastCard from '@/components/PodcastCard'
 import PodcastDetailPlayer from '@/components/PodcastDetailPlayer'
 import { api } from '@/convex/_generated/api'
-import { cn } from '@/lib/utils'
 import { useUser } from '@clerk/nextjs'
 import { useMutation, useQuery } from 'convex/react'
 import { useEffect, useState } from 'react'
-import { Headphones, Clock, Calendar, BookText, Mic2, Layers } from 'lucide-react'
+import { Headphones, Clock, Calendar, Mic2, Layers } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 
 const PodcastDetails = ({ params: { podcastId } }: { params: { podcastId: Id<'podcasts'> } }) => {

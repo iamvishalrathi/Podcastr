@@ -104,25 +104,43 @@ export const getPodcastById = query({
   },
 });
 
-// this query will get the podcasts based on the views of the podcast , which we are showing in the Trending Podcasts section.
-export const getTrendingPodcasts = query({
-  handler: async (ctx) => {
-    const podcast = await ctx.db.query("podcasts").collect();
-
-    // return podcast;
-    return podcast.sort((a, b) => b.views - a.views).slice(0, 6);
+// Featured/Popular, Trending, Latest Podcasts section
+export const getFilteredPodcasts = query({
+  args: {
+    type: v.string(),
   },
-});
-
-// this query will get the latest podcasts
-export const getLatestPodcasts = query({
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
     const podcasts = await ctx.db.query("podcasts").collect();
 
-    // Sort podcasts by their creation time in descending order
-    return podcasts
-      .sort((a, b) => b._creationTime - a._creationTime)
-      .slice(0, 5);
+    // Sort the podcasts based on the requested type
+    let sortedPodcasts = [];
+
+    switch (args.type) {
+      case "popular":
+        // Sort by views and take the top 6
+        sortedPodcasts = podcasts.sort(
+          (a, b) =>
+            ((b.likeCount && b.views) || 0) - ((a.likeCount && a.views) || 0)
+        );
+        break;
+      case "trending":
+        // Sort by views and take the top 6 (similar to popular for now)
+        sortedPodcasts = podcasts.sort(
+          (a, b) =>
+            ((b.views && b.likeCount) || 0) - ((a.views && a.likeCount) || 0)
+        );
+        break;
+      case "latest":
+        // Sort by creation time and take the latest 5
+        sortedPodcasts = podcasts.sort(
+          (a, b) => b._creationTime - a._creationTime
+        );
+        break;
+      default:
+        throw new Error("Invalid podcast type");
+    }
+
+    return sortedPodcasts;
   },
 });
 
