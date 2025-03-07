@@ -117,21 +117,18 @@ export const getFilteredPodcasts = query({
 
     switch (args.type) {
       case "popular":
-        // Sort by views and take the top 6
         sortedPodcasts = podcasts.sort(
           (a, b) =>
             ((b.likeCount && b.views) || 0) - ((a.likeCount && a.views) || 0)
         );
         break;
       case "trending":
-        // Sort by views and take the top 6 (similar to popular for now)
         sortedPodcasts = podcasts.sort(
           (a, b) =>
             ((b.views && b.likeCount) || 0) - ((a.views && a.likeCount) || 0)
         );
         break;
       case "latest":
-        // Sort by creation time and take the latest 5
         sortedPodcasts = podcasts.sort(
           (a, b) => b._creationTime - a._creationTime
         );
